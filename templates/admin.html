@@ -1,0 +1,969 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>MACE Connect - Admin Panel</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="/static/js/firebase-client.js"></script>
+  <style>
+    :root {
+      --primary-color: #5E35B1;
+      --primary-dark: #4527A0;
+      --primary-light: #7B1FA2;
+      --surface-color: #F5F5F7;
+      --card-radius: 16px;
+      --shadow-sm: 0 2px 10px rgba(0,0,0,0.1);
+      --shadow-md: 0 4px 15px rgba(0,0,0,0.15);
+      --shadow-lg: 0 8px 25px rgba(0,0,0,0.2);
+    }
+
+    body {
+      background-color: #E0D8FC;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Header Styling */
+    .app-header {
+      background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+      color: white;
+      padding: 2rem 0;
+      position: relative;
+      overflow: hidden;
+      border-radius: 0 0 24px 24px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    .app-header::before {
+      content: '';
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 160px;
+      height: 160px;
+      background-color: rgba(255,255,255,0.15);
+      border-radius: 50%;
+    }
+
+    .app-header::after {
+      content: '';
+      position: absolute;
+      left: -20px;
+      bottom: -50px;
+      width: 120px;
+      height: 120px;
+      background-color: rgba(0,255,255,0.1);
+      border-radius: 50%;
+    }
+
+    .logo-container {
+      width: 50px;
+      height: 50px;
+      background: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      z-index: 2;
+    }
+
+    .logo-container i {
+      color: var(--primary-color);
+      font-size: 1.5rem;
+    }
+
+    .logo-underline {
+      position: absolute;
+      bottom: 8px;
+      width: 22px;
+      height: 5px;
+      background: #FFD54F;
+      border-radius: 3px;
+    }
+
+    /* Welcome Section */
+    .welcome-section {
+      background: linear-gradient(to bottom, white, var(--surface-color));
+      border-radius: 0 0 24px 24px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Feature Cards */
+    .feature-card {
+      background: white;
+      border-radius: var(--card-radius);
+      padding: 1.5rem;
+      border: none;
+      transition: all 0.3s ease;
+      box-shadow: var(--shadow-sm);
+      height: 100%;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .feature-card .icon-container {
+      width: 60px;
+      height: 60px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Stat Cards */
+    .stat-card {
+      background: white;
+      border-radius: var(--card-radius);
+      padding: 1.5rem;
+      text-align: center;
+      border: none;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+      height: 100%;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .stat-number {
+      font-size: 2.5rem;
+      font-weight: bold;
+      margin: 0.5rem 0;
+    }
+
+    /* Upload Section */
+    .upload-section {
+      background: white;
+      border-radius: var(--card-radius);
+      padding: 2rem;
+      margin: 1.5rem 0;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .upload-area {
+      border: 2px dashed #D1C4E9;
+      border-radius: 12px;
+      padding: 2rem;
+      text-align: center;
+      transition: all 0.3s ease;
+      background: #F8F5FF;
+    }
+
+    .upload-area:hover, .upload-area.dragover {
+      border-color: var(--primary-color);
+      background: #F3E5F5;
+    }
+
+    /* Department Stats Modal */
+    .dept-stats-card {
+      border-radius: 12px;
+      border: none;
+      margin-bottom: 12px;
+      transition: all 0.3s ease;
+    }
+
+    .dept-stats-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Buttons */
+    .btn-primary-custom {
+      background: var(--primary-color);
+      border: none;
+      border-radius: 25px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+
+    .btn-primary-custom:hover {
+      background: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .btn-outline-custom {
+      border: 2px solid var(--primary-color);
+      color: var(--primary-color);
+      border-radius: 25px;
+      padding: 0.75rem 1.5rem;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      background: transparent;
+    }
+
+    .btn-outline-custom:hover {
+      background: var(--primary-color);
+      color: white;
+      transform: translateY(-2px);
+    }
+
+    /* Progress Bar */
+    .progress-modern {
+      height: 8px;
+      border-radius: 10px;
+      background: #E8EAF6;
+      overflow: hidden;
+    }
+
+    .progress-modern .progress-bar {
+      background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
+      border-radius: 10px;
+      transition: width 0.3s ease;
+    }
+
+    /* Loading Spinner */
+    .loading-spinner {
+      border: 4px solid rgba(94, 53, 177, 0.1);
+      border-top: 4px solid var(--primary-color);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .app-header {
+        padding: 1.5rem 0;
+      }
+      
+      .feature-card {
+        margin-bottom: 1rem;
+      }
+      
+      .upload-area {
+        padding: 1.5rem;
+      }
+    }
+
+    /* Alert Styling */
+    .alert-modern {
+      border: none;
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .alert-success-modern {
+      background: #E8F5E9;
+      color: #2E7D32;
+      border-left: 4px solid #4CAF50;
+    }
+
+    .alert-danger-modern {
+      background: #FFEBEE;
+      color: #C62828;
+      border-left: 4px solid #F44336;
+    }
+
+    .alert-info-modern {
+      background: #E3F2FD;
+      color: #1565C0;
+      border-left: 4px solid #2196F3;
+    }
+
+    /* Footer */
+    .footer-section {
+      text-align: center;
+      padding: 2rem;
+      color: #90A4AE;
+      font-size: 0.875rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Navigation Header -->
+  <div class="app-header">
+    <div class="container">
+      <div class="row align-items-center">
+        <div class="col-auto">
+          <div class="logo-container">
+            <i class="fas fa-school"></i>
+            <div class="logo-underline"></div>
+          </div>
+        </div>
+        <div class="col">
+          <h2 class="mb-0 fw-bold" style="text-shadow: 0 2px 8px rgba(0,0,0,0.3);">MACE Connect</h2>
+          <p class="mb-0 opacity-75">Administrative Dashboard</p>
+        </div>
+        <div class="col-auto">
+          <div class="dropdown">
+            <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+              <i class="fas fa-user-circle me-2"></i><span id="userEmail">Admin</span>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" href="#" id="signoutBtn"><i class="fas fa-sign-out-alt me-2"></i>Sign Out</a></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Welcome Section -->
+  <div class="container mt-4">
+    <div class="welcome-section">
+      <div class="row align-items-center">
+        <div class="col-auto">
+          <div class="rounded-circle d-flex align-items-center justify-content-center" 
+               style="width: 48px; height: 48px; background: #D1C4E9;">
+            <i class="fas fa-user-shield" style="color: var(--primary-color); font-size: 1.2rem;"></i>
+          </div>
+        </div>
+        <div class="col">
+          <p class="text-muted mb-1">Welcome, Admin</p>
+          <h5 class="mb-0 fw-bold text-dark">Administrative Dashboard</h5>
+        </div>
+        <div class="col-auto d-none d-md-block">
+          <span class="badge bg-success">System Online</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loadingDiv" class="text-center py-5">
+      <div class="loading-spinner mx-auto mb-3"></div>
+      <p class="text-muted">Loading dashboard...</p>
+    </div>
+
+    <!-- Main Content -->
+    <div id="mainContent" style="display: none;">
+      <!-- Administrative Tools Section -->
+      <div class="mb-4">
+        <h6 class="text-muted fw-bold mb-3 ps-2">
+          <i class="fas fa-tools me-2"></i>Administrative Tools
+        </h6>
+        <div class="row g-3">
+          <!-- Staff Directory Card -->
+          <div class="col-lg-3 col-md-6">
+            <div class="feature-card" onclick="window.location.href='/staff_list.html'">
+              <div class="icon-container" style="background: #E1F5FE;">
+                <i class="fas fa-users" style="color: #039BE5; font-size: 1.5rem;"></i>
+              </div>
+              <h6 class="fw-bold text-dark mb-2">Staff Directory</h6>
+              <p class="text-muted small mb-0">View all staff records</p>
+            </div>
+          </div>
+
+          <!-- Department Stats Card -->
+          <div class="col-lg-3 col-md-6">
+            <div class="feature-card" onclick="showDepartmentStats()">
+              <div class="icon-container" style="background: #E0F2F1;">
+                <i class="fas fa-chart-bar" style="color: #26A69A; font-size: 1.5rem;"></i>
+              </div>
+              <h6 class="fw-bold text-dark mb-2">Department Stats</h6>
+              <p class="text-muted small mb-0">View staff by department</p>
+            </div>
+          </div>
+
+          <!-- Upload Data Card -->
+          <div class="col-lg-3 col-md-6">
+            <div class="feature-card" onclick="document.getElementById('uploadSection').scrollIntoView({behavior: 'smooth'})">
+              <div class="icon-container" style="background: #E8F5E9;">
+                <i class="fas fa-upload" style="color: #66BB6A; font-size: 1.5rem;"></i>
+              </div>
+              <h6 class="fw-bold text-dark mb-2">Upload Data</h6>
+              <p class="text-muted small mb-0">Import Excel records</p>
+            </div>
+          </div>
+
+          <!-- System Management Card -->
+          <div class="col-lg-3 col-md-6">
+            <div class="feature-card" onclick="showSystemManagement()">
+              <div class="icon-container" style="background: #FFF3E0;">
+                <i class="fas fa-cogs" style="color: #FF9800; font-size: 1.5rem;"></i>
+              </div>
+              <h6 class="fw-bold text-dark mb-2">System Tools</h6>
+              <p class="text-muted small mb-0">Advanced operations</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Staff Statistics Section -->
+      <div class="mb-4">
+        <h6 class="text-muted fw-bold mb-3 ps-2">
+          <i class="fas fa-chart-line me-2"></i>Staff Statistics
+        </h6>
+        <div class="row g-3" id="statsContainer">
+          <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+              <i class="fas fa-users text-primary fa-2x mb-2"></i>
+              <div class="stat-number text-primary" id="totalStaff">-</div>
+              <small class="text-muted">Total Staff</small>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+              <i class="fas fa-building text-success fa-2x mb-2"></i>
+              <div class="stat-number text-success" id="totalDepartments">-</div>
+              <small class="text-muted">Departments</small>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+              <i class="fas fa-chalkboard-teacher text-info fa-2x mb-2"></i>
+              <div class="stat-number text-info" id="teachingStaff">-</div>
+              <small class="text-muted">Teaching Staff</small>
+            </div>
+          </div>
+          <div class="col-lg-3 col-md-6">
+            <div class="stat-card">
+              <i class="fas fa-user-tie text-warning fa-2x mb-2"></i>
+              <div class="stat-number text-warning" id="nonTeachingStaff">-</div>
+              <small class="text-muted">Non-Teaching Staff</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Excel Upload Section -->
+      <div class="upload-section" id="uploadSection">
+        <div class="row">
+          <div class="col-lg-8">
+            <h5 class="fw-bold mb-3">
+              <i class="fas fa-file-excel text-success me-2"></i>Import Staff Data
+            </h5>
+            
+            <div class="upload-area" id="uploadArea">
+              <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+              <h6 class="text-muted mb-2">Drag & Drop Excel File Here</h6>
+              <p class="text-muted small mb-3">or click to browse (.xlsx, .xls, .csv)</p>
+              <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" class="d-none">
+              <button class="btn btn-outline-custom" onclick="document.getElementById('excelFile').click()">
+                <i class="fas fa-folder-open me-2"></i>Choose File
+              </button>
+            </div>
+
+            <div id="fileInfo" class="mt-3" style="display: none;">
+              <div class="alert alert-info-modern">
+                <i class="fas fa-file-excel me-2"></i>
+                <strong>Selected File:</strong> <span id="fileName"></span>
+                <br><small>Size: <span id="fileSize"></span></small>
+              </div>
+            </div>
+
+            <div id="uploadProgress" class="mt-3" style="display: none;">
+              <div class="d-flex justify-content-between mb-2">
+                <span class="text-muted">Uploading...</span>
+                <span id="progressPercent">0%</span>
+              </div>
+              <div class="progress-modern">
+                <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+              </div>
+            </div>
+
+            <div class="mt-3">
+              <button id="uploadBtn" class="btn btn-primary-custom me-2" disabled>
+                <i class="fas fa-upload me-2"></i>Upload & Process
+              </button>
+              <button id="clearBtn" class="btn btn-outline-secondary" onclick="clearUpload()">
+                <i class="fas fa-times me-2"></i>Clear
+              </button>
+            </div>
+          </div>
+          
+          <div class="col-lg-4">
+            <div class="card border-0" style="background: #F8F5FF;">
+              <div class="card-body">
+                <h6 class="fw-bold text-primary mb-3">
+                  <i class="fas fa-info-circle me-2"></i>Upload Guidelines
+                </h6>
+                <ul class="list-unstyled small text-muted">
+                  <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Excel format (.xlsx, .xls) or CSV</li>
+                  <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Maximum file size: 10MB</li>
+                  <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Required columns: Name, Email, Department</li>
+                  <li class="mb-2"><i class="fas fa-check text-success me-2"></i>Mobile number will be used as password</li>
+                </ul>
+                <div class="mt-3">
+                  <button class="btn btn-sm btn-outline-primary" onclick="downloadTemplate()">
+                    <i class="fas fa-download me-1"></i>Download Template
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Results Section -->
+      <div id="resultsSection" class="upload-section" style="display: none;">
+        <h5 class="fw-bold mb-3">
+          <i class="fas fa-list-check me-2"></i>Upload Results
+        </h5>
+        <pre id="uploadResults" class="bg-light p-3 rounded"></pre>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer-section">
+      <p class="mb-1">College Staff Management System v1.0.0</p>
+      <p class="mb-0">Mar Athanasius College of Engineering</p>
+    </div>
+  </div>
+
+  <!-- Department Stats Modal -->
+  <div class="modal fade" id="departmentStatsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+      <div class="modal-content" style="border-radius: var(--card-radius);">
+        <div class="modal-header border-0 pb-0">
+          <h5 class="modal-title">
+            <i class="fas fa-chart-bar text-primary me-2"></i>Department Statistics
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="departmentStatsContent">
+          <div class="text-center py-4">
+            <div class="loading-spinner mx-auto mb-3"></div>
+            <p class="text-muted">Loading department data...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- System Management Modal -->
+  <div class="modal fade" id="systemManagementModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content" style="border-radius: var(--card-radius);">
+        <div class="modal-header border-0">
+          <h5 class="modal-title">
+            <i class="fas fa-cogs text-warning me-2"></i>System Management
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <div class="d-grid gap-3">
+            <button class="btn btn-outline-danger" onclick="fixPhoneNumbers()">
+              <i class="fas fa-wrench me-2"></i>Fix Phone Number Format
+            </button>
+            <button class="btn btn-outline-info" onclick="refreshCache()">
+              <i class="fas fa-sync me-2"></i>Refresh Data Cache
+            </button>
+            <button class="btn btn-outline-secondary" onclick="exportData()">
+              <i class="fas fa-download me-2"></i>Export All Data
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+let allStaffData = [];
+
+// Initialize on page load
+document.addEventListener('DOMContentLoaded', function() {
+  setupEventListeners();
+  setupDragAndDrop();
+});
+
+function setupEventListeners() {
+  // File input change
+  document.getElementById('excelFile').addEventListener('change', handleFileSelect);
+  
+  // Upload button
+  document.getElementById('uploadBtn').addEventListener('click', uploadFile);
+  
+  // Sign out button - Updated to use getElementById
+  document.getElementById('signoutBtn').addEventListener('click', async () => {
+    try {
+      await firebase.auth().signOut();
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Sign out error:', error);
+      showAlert('Error signing out. Please try again.', 'danger');
+    }
+  });
+}
+
+// Firebase auth state listener
+firebase.auth().onAuthStateChanged(async (user) => {
+  if (user) {
+    document.getElementById('userEmail').textContent = user.email;
+    await loadStaffData();
+  } else {
+    window.location.href = '/';
+  }
+});
+
+function setupDragAndDrop() {
+  const uploadArea = document.getElementById('uploadArea');
+  
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, preventDefaults, false);
+  });
+
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
+  ['dragenter', 'dragover'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, () => uploadArea.classList.add('dragover'), false);
+  });
+
+  ['dragleave', 'drop'].forEach(eventName => {
+    uploadArea.addEventListener(eventName, () => uploadArea.classList.remove('dragover'), false);
+  });
+
+  uploadArea.addEventListener('drop', handleDrop, false);
+
+  function handleDrop(e) {
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      document.getElementById('excelFile').files = files;
+      handleFileSelect();
+    }
+  }
+}
+
+function handleFileSelect() {
+  const file = document.getElementById('excelFile').files[0];
+  if (file) {
+    const fileInfo = document.getElementById('fileInfo');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    
+    fileName.textContent = file.name;
+    fileSize.textContent = formatFileSize(file.size);
+    fileInfo.style.display = 'block';
+    
+    document.getElementById('uploadBtn').disabled = false;
+  }
+}
+
+function formatFileSize(bytes) {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+function clearUpload() {
+  document.getElementById('excelFile').value = '';
+  document.getElementById('fileInfo').style.display = 'none';
+  document.getElementById('uploadProgress').style.display = 'none';
+  document.getElementById('resultsSection').style.display = 'none';
+  document.getElementById('uploadBtn').disabled = true;
+}
+
+async function uploadFile() {
+  const file = document.getElementById('excelFile').files[0];
+  if (!file) {
+    showAlert('Please select a file first.', 'danger');
+    return;
+  }
+
+  const token = await getIdTokenIfSignedIn();
+  if (!token) return;
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  // Show progress
+  const progressDiv = document.getElementById('uploadProgress');
+  const progressBar = document.getElementById('progressBar');
+  const progressPercent = document.getElementById('progressPercent');
+  
+  progressDiv.style.display = 'block';
+  document.getElementById('uploadBtn').disabled = true;
+
+  try {
+    const response = await fetch('/api/upload_excel', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        'Authorization': 'Bearer ' + token
+      }
+    });
+
+    const result = await response.json();
+    
+    // Show results
+    document.getElementById('uploadResults').textContent = JSON.stringify(result, null, 2);
+    document.getElementById('resultsSection').style.display = 'block';
+    document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+
+    if (response.ok) {
+      showAlert('File uploaded successfully!', 'success');
+      await loadStaffData(); // Refresh stats
+    } else {
+      showAlert('Upload failed: ' + (result.error || 'Unknown error'), 'danger');
+    }
+  } catch (error) {
+    showAlert('Upload error: ' + error.message, 'danger');
+  } finally {
+    progressDiv.style.display = 'none';
+    document.getElementById('uploadBtn').disabled = false;
+  }
+}
+
+async function loadStaffData() {
+  try {
+    const token = await getIdTokenIfSignedIn();
+    if (!token) return;
+
+    const response = await fetch('/api/staffs', {
+      method: 'GET',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const data = await response.json();
+
+    if (data.staffs) {
+      allStaffData = data.staffs;
+      updateStatistics();
+      document.getElementById('loadingDiv').style.display = 'none';
+      document.getElementById('mainContent').style.display = 'block';
+    } else {
+      showAlert('Error loading staff data', 'danger');
+    }
+  } catch (error) {
+    console.error('Error loading staff:', error);
+    showAlert('Error loading staff data', 'danger');
+  }
+}
+
+function updateStatistics() {
+  const totalStaff = allStaffData.length;
+  const departments = new Set(allStaffData.map(s => s.department).filter(d => d));
+  const teachingStaff = allStaffData.filter(s => s.type === 'Teaching Staff').length;
+  const nonTeachingStaff = allStaffData.filter(s => s.type === 'Non Teaching Staff').length;
+
+  document.getElementById('totalStaff').textContent = totalStaff;
+  document.getElementById('totalDepartments').textContent = departments.size;
+  document.getElementById('teachingStaff').textContent = teachingStaff;
+  document.getElementById('nonTeachingStaff').textContent = nonTeachingStaff;
+}
+
+async function showDepartmentStats() {
+  const modal = new bootstrap.Modal(document.getElementById('departmentStatsModal'));
+  modal.show();
+
+  // Load department data
+  const departmentCounts = {};
+  const departmentTypeCount = {};
+
+  allStaffData.forEach(staff => {
+    const dept = staff.department || 'Unassigned';
+    const type = staff.type || 'Unspecified';
+
+    departmentCounts[dept] = (departmentCounts[dept] || 0) + 1;
+    departmentTypeCount[dept] = departmentTypeCount[dept] || {};
+    departmentTypeCount[dept][type] = (departmentTypeCount[dept][type] || 0) + 1;
+  });
+
+  const deptColors = [
+    '#E8F5E9', '#E1F5FE', '#F3E5F5', '#FFF8E1',
+    '#E8EAF6', '#E0F2F1', '#F1F8E9', '#E0F7FA'
+  ];
+
+  let html = '';
+  Object.entries(departmentCounts).forEach(([dept, count], index) => {
+    const color = deptColors[index % deptColors.length];
+    const types = departmentTypeCount[dept] || {};
+
+    html += `
+      <div class="dept-stats-card card" style="background-color: ${color};">
+        <div class="card-body">
+          <div class="row align-items-center mb-3">
+            <div class="col">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-building text-primary me-2"></i>
+                <h6 class="mb-0 fw-bold">${dept}</h6>
+              </div>
+            </div>
+            <div class="col-auto">
+              <span class="badge bg-white text-primary fw-bold">${count} Staff</span>
+            </div>
+          </div>
+          <div class="row g-2">
+    `;
+
+    Object.entries(types).forEach(([type, typeCount]) => {
+      const icon = type.toLowerCase().includes('teach') ? 'fa-chalkboard-teacher' : 'fa-user-tie';
+      const iconColor = type.toLowerCase().includes('teach') ? '#1E88E5' : '#E67E22';
+      
+      html += `
+        <div class="col-6">
+          <div class="d-flex align-items-center">
+            <i class="fas ${icon} me-2" style="color: ${iconColor}; font-size: 0.9rem;"></i>
+            <small class="text-muted me-auto">${type}</small>
+            <small class="fw-bold">${typeCount}</small>
+          </div>
+        </div>
+      `;
+    });
+
+    html += `
+          </div>
+        </div>
+      </div>
+    `;
+  });
+
+  document.getElementById('departmentStatsContent').innerHTML = html;
+}
+
+function showSystemManagement() {
+  const modal = new bootstrap.Modal(document.getElementById('systemManagementModal'));
+  modal.show();
+}
+
+async function fixPhoneNumbers() {
+  try {
+    const token = await getIdTokenIfSignedIn();
+    if (!token) return;
+
+    showAlert('Fixing phone number formats...', 'info');
+
+    const response = await fetch('/api/fix_phone_numbers', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'Bearer ' + token,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    const result = await response.json();
+    
+    if (response.ok) {
+      showAlert('Phone numbers fixed successfully!', 'success');
+      await loadStaffData(); // Refresh data
+    } else {
+      showAlert('Error fixing phone numbers: ' + (result.error || 'Unknown error'), 'danger');
+    }
+  } catch (error) {
+    showAlert('Error: ' + error.message, 'danger');
+  }
+}
+
+async function refreshCache() {
+  showAlert('Cache refreshed successfully!', 'success');
+  await loadStaffData();
+}
+
+function exportData() {
+  const dataStr = JSON.stringify(allStaffData, null, 2);
+  const dataBlob = new Blob([dataStr], {type: 'application/json'});
+  const url = URL.createObjectURL(dataBlob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'staff_data_export.json';
+  link.click();
+  URL.revokeObjectURL(url);
+  showAlert('Data exported successfully!', 'success');
+}
+
+function downloadTemplate() {
+  const template = [
+    ['Sl No', 'Name', 'Email', 'Department', 'Type', 'Mobile No', 'Designation'],
+    ['1', 'John Doe', 'john@example.com', 'Computer Science', 'Teaching Staff', '9876543210', 'Professor'],
+    ['2', 'Jane Smith', 'jane@example.com', 'Human Resources', 'Non Teaching Staff', '9876543211', 'HR Manager']
+  ];
+  
+  let csvContent = template.map(row => row.join(',')).join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = 'staff_template.csv';
+  link.click();
+  URL.revokeObjectURL(url);
+  showAlert('Template downloaded!', 'success');
+}
+
+async function getIdTokenIfSignedIn() {
+  const user = firebase.auth().currentUser;
+  if (!user) {
+    showAlert('Please sign in as admin first.', 'danger');
+    return null;
+  }
+  return await user.getIdToken(true);
+}
+
+function showAlert(message, type) {
+  // Remove existing alerts
+  const existingAlerts = document.querySelectorAll('.alert-floating');
+  existingAlerts.forEach(alert => alert.remove());
+
+  const alertClass = type === 'success' ? 'alert-success-modern' : 
+                   type === 'danger' ? 'alert-danger-modern' : 'alert-info-modern';
+  
+  const icon = type === 'success' ? 'fa-check-circle' : 
+               type === 'danger' ? 'fa-exclamation-triangle' : 'fa-info-circle';
+
+  const alertDiv = document.createElement('div');
+  alertDiv.className = `alert alert-modern ${alertClass} alert-floating position-fixed`;
+  alertDiv.style.cssText = `
+    top: 20px; 
+    right: 20px; 
+    z-index: 9999; 
+    min-width: 300px;
+    animation: slideInRight 0.3s ease;
+  `;
+  alertDiv.innerHTML = `
+    <i class="fas ${icon} me-2"></i>${message}
+    <button type="button" class="btn-close float-end" onclick="this.parentElement.remove()"></button>
+  `;
+
+  document.body.appendChild(alertDiv);
+
+  // Auto-remove after 5 seconds
+  setTimeout(() => {
+    if (alertDiv.parentElement) {
+      alertDiv.style.animation = 'slideOutRight 0.3s ease';
+      setTimeout(() => alertDiv.remove(), 300);
+    }
+  }, 5000);
+}
+
+// Add CSS animations
+const style = document.createElement('style');
+style.textContent = `
+  @keyframes slideInRight {
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
+  }
+  
+  @keyframes slideOutRight {
+    from { transform: translateX(0); opacity: 1; }
+    to { transform: translateX(100%); opacity: 0; }
+  }
+`;
+document.head.appendChild(style);
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
