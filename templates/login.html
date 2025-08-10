@@ -9,116 +9,537 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="/static/js/firebase-client.js"></script>
   <style>
-    body {
-      background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
-      min-height: 100vh;
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
-    .login-card {
-      border-radius: 16px;
-      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      overflow-x: hidden;
+      position: relative;
+    }
+    
+    /* Animated Background Elements */
+    .bg-decoration {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
       overflow: hidden;
     }
-    .login-header {
-      background-color: #1e3c72;
-      color: white;
-      padding: 24px;
-      text-align: center;
-    }
-    .form-control {
-      border-radius: 12px;
-      padding: 12px 16px;
-    }
-    .btn-primary {
-      background-color: #1e3c72;
-      border-color: #1e3c72;
-      border-radius: 12px;
-      padding: 12px;
-      font-weight: 600;
-    }
-    .btn-primary:hover {
-      background-color: #2a5298;
-      border-color: #2a5298;
-    }
-    .btn-secondary {
-      border-radius: 12px;
-      padding: 8px 16px;
-    }
-    .password-toggle {
-      cursor: pointer;
+    
+    .floating-shape {
       position: absolute;
-      right: 10px;
+      opacity: 0.1;
+      animation: float 6s ease-in-out infinite;
+    }
+    
+    .floating-shape:nth-child(1) {
+      top: 10%;
+      left: 10%;
+      width: 80px;
+      height: 80px;
+      background: rgba(255,255,255,0.3);
+      border-radius: 50%;
+      animation-delay: 0s;
+    }
+    
+    .floating-shape:nth-child(2) {
+      top: 20%;
+      right: 15%;
+      width: 60px;
+      height: 60px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 30%;
+      animation-delay: 2s;
+    }
+    
+    .floating-shape:nth-child(3) {
+      bottom: 20%;
+      left: 5%;
+      width: 100px;
+      height: 100px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 25%;
+      animation-delay: 4s;
+    }
+    
+    .floating-shape:nth-child(4) {
+      bottom: 30%;
+      right: 20%;
+      width: 70px;
+      height: 70px;
+      background: rgba(255,255,255,0.25);
+      border-radius: 50%;
+      animation-delay: 1s;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-20px) rotate(10deg); }
+    }
+    
+    /* Doodle SVG Patterns */
+    .doodle-container {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    
+    .doodle {
+      position: absolute;
+      opacity: 0.15;
+      animation: pulse 4s ease-in-out infinite;
+    }
+    
+    .doodle.top-left {
+      top: 15%;
+      left: 8%;
+    }
+    
+    .doodle.top-right {
+      top: 25%;
+      right: 10%;
+    }
+    
+    .doodle.bottom-left {
+      bottom: 25%;
+      left: 12%;
+    }
+    
+    .doodle.bottom-right {
+      bottom: 15%;
+      right: 8%;
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 0.1; transform: scale(1); }
+      50% { opacity: 0.2; transform: scale(1.05); }
+    }
+    
+    /* Main Container */
+    .main-container {
+      position: relative;
+      z-index: 10;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+    }
+    
+    .login-wrapper {
+      display: flex;
+      max-width: 1200px;
+      width: 100%;
+      margin: 0 auto;
+      gap: 3rem;
+      padding: 2rem;
+    }
+    
+    /* Left Side - Illustration */
+    .left-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      text-align: center;
+      padding: 2rem;
+    }
+    
+    .illustration {
+      width: 100%;
+      max-width: 400px;
+      margin-bottom: 2rem;
+    }
+    
+    .welcome-text h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    
+    .welcome-text p {
+      font-size: 1.2rem;
+      font-weight: 300;
+      opacity: 0.9;
+      line-height: 1.6;
+    }
+    
+    /* Right Side - Login Form */
+    .right-panel {
+      flex: 0 0 450px;
+    }
+    
+    .login-card {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .login-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+    }
+    
+    .login-header {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      color: white;
+      padding: 2rem;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .login-header::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+      animation: rotate 20s linear infinite;
+    }
+    
+    .login-header .icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .login-header h2 {
+      font-size: 1.8rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .login-header p {
+      opacity: 0.9;
+      position: relative;
+      z-index: 1;
+    }
+    
+    @keyframes rotate {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    
+    .card-body {
+      padding: 2.5rem;
+    }
+    
+    .form-label {
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+    }
+    
+    .input-group {
+      position: relative;
+      margin-bottom: 1.5rem;
+    }
+    
+    .input-group-text {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      border: none;
+      color: white;
+      border-radius: 12px 0 0 12px;
+      padding: 0.75rem 1rem;
+    }
+    
+    .form-control {
+      border: 2px solid #e5e7eb;
+      border-left: none;
+      border-radius: 0 12px 12px 0;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.8);
+    }
+    
+    .form-control:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      background: white;
+    }
+    
+    .password-toggle {
+      position: absolute;
+      right: 15px;
       top: 50%;
       transform: translateY(-50%);
+      cursor: pointer;
+      color: #6b7280;
       z-index: 5;
+      transition: color 0.3s ease;
     }
-    .spinner-border {
-      width: 1.5rem;
-      height: 1.5rem;
-      border-width: 0.2em;
+    
+    .password-toggle:hover {
+      color: #6366f1;
     }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      border: none;
+      border-radius: 12px;
+      padding: 0.875rem;
+      font-weight: 600;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-primary::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+    
+    .btn-primary:hover::before {
+      left: 100%;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+    }
+    
+    .btn-secondary {
+      background: rgba(99, 102, 241, 0.1);
+      border: 2px solid rgba(99, 102, 241, 0.2);
+      color: #6366f1;
+      border-radius: 8px;
+      padding: 0.5rem 1rem;
+      font-weight: 500;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-secondary:hover {
+      background: rgba(99, 102, 241, 0.2);
+      border-color: #6366f1;
+      transform: translateY(-1px);
+    }
+    
     .quick-links {
-      background-color: #f8f9fa;
-      border-top: 1px solid #dee2e6;
-      padding: 20px;
+      background: rgba(248, 250, 252, 0.8);
+      border-top: 1px solid rgba(99, 102, 241, 0.1);
+      padding: 1.5rem 2.5rem;
+    }
+    
+    .quick-links h6 {
+      color: #374151;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    
+    .alert {
+      border: none;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      font-weight: 500;
+    }
+    
+    .alert-danger {
+      background: rgba(239, 68, 68, 0.1);
+      color: #dc2626;
+    }
+    
+    .alert-success {
+      background: rgba(34, 197, 94, 0.1);
+      color: #16a34a;
+    }
+    
+    .text-muted {
+      color: #6b7280 !important;
+    }
+    
+    a {
+      color: #6366f1;
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+    
+    a:hover {
+      color: #4f46e5;
+    }
+    
+    .spinner-border {
+      width: 1.25rem;
+      height: 1.25rem;
+      border-width: 0.15em;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      .login-wrapper {
+        flex-direction: column;
+        gap: 2rem;
+        padding: 1rem;
+      }
+      
+      .left-panel {
+        order: 2;
+        padding: 1rem;
+      }
+      
+      .welcome-text h1 {
+        font-size: 2rem;
+      }
+      
+      .right-panel {
+        flex: none;
+        order: 1;
+      }
+      
+      .card-body {
+        padding: 1.5rem;
+      }
+      
+      .quick-links {
+        padding: 1.5rem;
+      }
+    }
+    
+    /* Accessibility */
+    @media (prefers-reduced-motion: reduce) {
+      .floating-shape,
+      .doodle,
+      .login-header::before {
+        animation: none;
+      }
     }
   </style>
 </head>
-<body class="d-flex align-items-center">
-  <div class="container py-5">
-    <div class="row justify-content-center">
-      <div class="col-md-8 col-lg-6">
-        <div class="login-card card">
-          <div class="login-header">
-            <i class="fas fa-school fa-4x mb-3"></i>
-            <h2>MACE Staff Management</h2>
-            <p class="mb-0">Sign in to access your dashboard</p>
+<body>
+  <!-- Background Decorations -->
+  <div class="bg-decoration">
+    <div class="floating-shape"></div>
+    <div class="floating-shape"></div>
+    <div class="floating-shape"></div>
+    <div class="floating-shape"></div>
+  </div>
+  
+  <!-- Doodle Elements -->
+  <div class="doodle-container">
+    <svg class="doodle top-left" width="60" height="60" viewBox="0 0 60 60" fill="none">
+      <path d="M30 5L35 20L50 15L40 30L55 35L40 45L50 55L30 50L25 65L15 50L5 55L15 40L0 35L15 25L5 15L25 20L30 5Z" fill="white"/>
+    </svg>
+    
+    <svg class="doodle top-right" width="50" height="50" viewBox="0 0 50 50" fill="none">
+      <circle cx="25" cy="25" r="20" fill="none" stroke="white" stroke-width="3" stroke-dasharray="5,5"/>
+      <circle cx="25" cy="25" r="10" fill="white"/>
+    </svg>
+    
+    <svg class="doodle bottom-left" width="70" height="70" viewBox="0 0 70 70" fill="none">
+      <path d="M35 5L45 25L65 15L50 35L70 45L50 55L60 70L35 60L25 75L15 60L5 70L15 50L0 40L20 30L10 15L30 25L35 5Z" fill="white"/>
+    </svg>
+    
+    <svg class="doodle bottom-right" width="55" height="55" viewBox="0 0 55 55" fill="none">
+      <rect x="5" y="5" width="45" height="45" rx="10" fill="none" stroke="white" stroke-width="3"/>
+      <circle cx="27.5" cy="27.5" r="8" fill="white"/>
+    </svg>
+  </div>
+
+  <div class="main-container">
+    <div class="container-fluid">
+      <div class="login-wrapper">
+        <!-- Left Panel - Welcome Section -->
+        <div class="left-panel">
+          <div class="illustration">
+            <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect width="400" height="300" fill="none"/>
+              <circle cx="200" cy="80" r="40" fill="rgba(255,255,255,0.3)"/>
+              <rect x="160" y="120" width="80" height="100" rx="10" fill="rgba(255,255,255,0.4)"/>
+              <rect x="50" y="180" width="300" height="80" rx="15" fill="rgba(255,255,255,0.2)"/>
+              <circle cx="100" cy="220" r="15" fill="rgba(255,255,255,0.5)"/>
+              <circle cx="200" cy="220" r="15" fill="rgba(255,255,255,0.5)"/>
+              <circle cx="300" cy="220" r="15" fill="rgba(255,255,255,0.5)"/>
+              <path d="M80 100L120 140L80 180" stroke="rgba(255,255,255,0.6)" stroke-width="3" fill="none"/>
+              <path d="M320 100L280 140L320 180" stroke="rgba(255,255,255,0.6)" stroke-width="3" fill="none"/>
+            </svg>
           </div>
-          <div class="card-body p-5">
-            <form id="loginForm">
-              <div class="mb-4">
-                <label for="email" class="form-label">Email</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="fas fa-envelope"></i></span>
-                  <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
-                </div>
-              </div>
-              
-              <div class="mb-4 position-relative">
-                <label for="password" class="form-label">Password</label>
-                <div class="input-group">
-                  <span class="input-group-text"><i class="fas fa-lock"></i></span>
-                  <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
-                  <span class="password-toggle" id="togglePassword">
-                    <i class="fas fa-eye"></i>
-                  </span>
-                </div>
-              </div>
-              
-              <div class="mb-4 d-flex justify-content-end">
-                <a href="#" class="text-decoration-none" id="forgotPassword">Forgot Password?</a>
-              </div>
-              
-              <div id="errorMsg" class="alert alert-danger d-none mb-4"></div>
-              <div id="successMsg" class="alert alert-success d-none mb-4"></div>
-              
-              <button class="btn btn-primary w-100" type="submit" id="loginButton">
-                <span id="buttonText">Sign In</span>
-                <span id="buttonSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
-              </button>
-              
-              <div class="text-center mt-4">
-                <p class="text-muted">Don't have an account? <a href="#" class="text-decoration-none" id="contactAdmin">Contact Admin</a></p>
-              </div>
-            </form>
+          <div class="welcome-text">
+            <h1>Welcome Back!</h1>
+            <p>Access your MACE staff management dashboard with secure authentication and modern interface design.</p>
           </div>
-          
-          <!-- Quick Links Section -->
-          <div class="quick-links">
-            <h6 class="mb-3">Quick Links</h6>
-            <div class="d-flex gap-2 flex-wrap">
-              <a href="/admin.html" class="btn btn-secondary btn-sm">Admin Panel</a>
-              <a href="/staff_list.html" class="btn btn-secondary btn-sm">Browse Staff</a>
+        </div>
+
+        <!-- Right Panel - Login Form -->
+        <div class="right-panel">
+          <div class="login-card">
+            <div class="login-header">
+              <div class="icon">
+                <i class="fas fa-graduation-cap"></i>
+              </div>
+              <h2>MACE Staff Portal</h2>
+              <p>Sign in to access your dashboard</p>
             </div>
+            
+            <div class="card-body">
+              <form id="loginForm">
+                <div class="mb-4">
+                  <label for="email" class="form-label">Email Address</label>
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i class="fas fa-envelope"></i>
+                    </span>
+                    <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                  </div>
+                </div>
+                
+                <div class="mb-4">
+                  <label for="password" class="form-label">Password</label>
+                  <div class="input-group">
+                    <span class="input-group-text">
+                      <i class="fas fa-lock"></i>
+                    </span>
+                    <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
+                    <span class="password-toggle" id="togglePassword">
+                      <i class="fas fa-eye"></i>
+                    </span>
+                  </div>
+                </div>
+                
+
+                
+                <div id="errorMsg" class="alert alert-danger d-none mb-4"></div>
+                <div id="successMsg" class="alert alert-success d-none mb-4"></div>
+                
+                <button class="btn btn-primary w-100" type="submit" id="loginButton">
+                  <span id="buttonText">Sign In</span>
+                  <span id="buttonSpinner" class="spinner-border d-none" role="status"></span>
+                </button>
+                
+
+              </form>
+            </div>
+
           </div>
         </div>
       </div>
@@ -229,28 +650,6 @@
       } finally {
         hideLoading();
       }
-    });
-
-
-
-    // Forgot password handler
-    document.getElementById('forgotPassword').addEventListener('click', async (e) => {
-      e.preventDefault();
-      const email = prompt('Please enter your email address to reset your password:');
-      if (email && email.trim()) {
-        try {
-          await firebase.auth().sendPasswordResetEmail(email.trim());
-          showSuccess('Password reset email sent! Please check your inbox.');
-        } catch (error) {
-          showError('Error sending reset email: ' + error.message);
-        }
-      }
-    });
-
-    // Contact admin handler
-    document.getElementById('contactAdmin').addEventListener('click', (e) => {
-      e.preventDefault();
-      alert('Please contact your system administrator to request an account.');
     });
 
     // Check if user is already logged in
