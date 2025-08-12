@@ -58,6 +58,7 @@ def init_google_sheets():
         print(f"Error initializing Google Sheets: {e}")
         return None
 
+PENDING_SHEET_ID = os.environ.get("PENDING_SHEET_ID")
 # Global sheets client
 sheets_client = init_google_sheets()
   # Replace with your actual sheet ID
