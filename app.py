@@ -9,6 +9,26 @@ from auth_utils import admin_required, login_required, web_login_required
 from flask_cors import CORS
 from processing.file_processors import process_uploaded_file  # placeholder
 from firebase_config import db, bucket
+import openpyxl
+from openpyxl.drawing.image import Image
+from PIL import Image as PILImage
+import io
+import base64
+from datetime import datetime
+import time
+import gspread
+from google.oauth2.service_account import Credentials
+from datetime import datetime
+import json
+import os
+
+# Add these configurations after your existing config
+GOOGLE_SHEETS_SCOPES = [
+    'https://www.googleapis.com/auth/spreadsheets',
+    'https://www.googleapis.com/auth/drive'
+]
+
+# Initialize Google Sheets client
 
 
 UPLOAD_FOLDER = 'uploads'
@@ -21,6 +41,235 @@ app.secret_key = os.environ.get('SECRET_KEY', 'your-secret-key-change-this')  # 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
+def init_google_sheets():
+    try:
+        # For Render deployment, use environment variable
+        creds_json = os.environ.get('GOOGLE_SHEETS_CREDENTIALS')
+        if creds_json:
+            creds_info = json.loads(creds_json)
+            creds = Credentials.from_service_account_info(creds_info, scopes=GOOGLE_SHEETS_SCOPES)
+        else:
+            # For local development, use file
+            creds = Credentials.from_service_account_file('test123456.json', scopes=GOOGLE_SHEETS_SCOPES)
+        
+        client = gspread.authorize(creds)
+        return client
+    except Exception as e:
+        print(f"Error initializing Google Sheets: {e}")
+        return None
+
+# Global sheets client
+sheets_client = init_google_sheets()
+  # Replace with your actual sheet ID
+
+# Add these new routes to your app.py
+
+@app.route('/staff-registration')
+def staff_registration():
+    return render_template('staff_registration.html')
+
+@app.route('/api/submit_registration', methods=['POST'])
+def submit_registration():
+    try:
+        if not sheets_client:
+            return jsonify({'success': False, 'error': 'Google Sheets not configured'})
+        
+        data = request.get_json()
+        
+        # Validate required fields - email is now primary identifier
+        required_fields = ['name', 'email', 'department', 'mobile_no', 'designation']
+        for field in required_fields:
+            if not data.get(field):
+                return jsonify({'success': False, 'error': f'Missing required field gjhgjhg: {field}'})
+        
+        # Open the pending registrations sheet
+        sheet = sheets_client.open_by_key(PENDING_SHEET_ID).sheet1
+        
+        # Check if email already exists in pending (use email as unique identifier)
+        existing_records = sheet.get_all_records()
+        for record in existing_records:
+            if record.get('Email') == data.get('email'):
+                return jsonify({'success': False, 'error': 'Registration already exists for this email address'})
+        
+        # Also check if employee number exists if provided
+        if data.get('emp_no'):
+            for record in existing_records:
+                if record.get('Employee ID') == data.get('emp_no'):
+                    return jsonify({'success': False, 'error': 'Registration already exists for this Employee ID'})
+        
+        # Prepare row data (match your sheet columns)
+        row_data = [
+            datetime.now().strftime('%Y-%m-%d %H:%M:%S'),  # Timestamp
+            data.get('name', ''),
+            data.get('emp_no', ''),  # Can be empty now
+            data.get('email', ''),
+            data.get('department', ''),
+            data.get('designation', ''),
+            data.get('mobile_no', ''),
+            data.get('type', ''),
+            data.get('contract_type', ''),
+            data.get('category', ''),
+            data.get('gender', ''),
+            data.get('blood_group', ''),
+            data.get('permanent_address', ''),
+            'PENDING'  # Status column
+        ]
+        
+        # Add row to sheet
+        sheet.append_row(row_data)
+        
+        return jsonify({'success': True, 'message': 'Registration submitted successfully! Please wait for admin approval.'})
+        
+    except Exception as e:
+        print(f"Registration submission error: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+@app.route('/api/pending_registrations', methods=['GET'])
+@admin_required
+def get_pending_registrations():
+    try:
+        if not sheets_client:
+            return jsonify({'success': False, 'error': 'Google Sheets not configured'})
+        
+        # Open the pending registrations sheet
+        sheet = sheets_client.open_by_key(PENDING_SHEET_ID).sheet1
+        
+        # Get all records
+        records = sheet.get_all_records()
+        
+        # Filter only pending records
+        pending_records = [record for record in records if record.get('Status') == 'PENDING']
+        
+        return jsonify({'success': True, 'registrations': pending_records})
+        
+    except Exception as e:
+        print(f"Error fetching pending registrations: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+        
+@app.route('/api/approve_registration', methods=['POST'])
+@admin_required
+def approve_registration():
+    try:
+        if not sheets_client:
+            return jsonify({'success': False, 'error': 'Google Sheets not configured'})
+        
+        data = request.get_json()
+        # Use email as primary identifier instead of emp_no
+        email = data.get('email')
+        
+        if not email:
+            return jsonify({'success': False, 'error': 'Email address required'})
+        
+        # Open the pending registrations sheet
+        sheet = sheets_client.open_by_key(PENDING_SHEET_ID).sheet1
+        records = sheet.get_all_records()
+        
+        # Find the record to approve using email
+        record_to_approve = None
+        row_index = None
+        
+        for idx, record in enumerate(records, start=2):  # Start from 2 because row 1 is header
+            if record.get('Email') == email and record.get('Status') == 'PENDING':
+                record_to_approve = record
+                row_index = idx
+                break
+        
+        if not record_to_approve:
+            return jsonify({'success': False, 'error': 'Registration not found'})
+        
+        # Add to main database
+        staff_data = {
+            'slNo': get_next_sl_no(),
+            'empNo': record_to_approve.get('Employee ID', ''),  # Can be empty
+            'name': record_to_approve.get('Name', ''),
+            'type': record_to_approve.get('Type', ''),
+            'contractType': record_to_approve.get('Contract Type', ''),
+            'department': record_to_approve.get('Department', ''),
+            'category': record_to_approve.get('Category', ''),
+            'gender': record_to_approve.get('Gender', ''),
+            'designation': record_to_approve.get('Designation', ''),
+            'mobileNo': record_to_approve.get('Mobile No', ''),
+            'bloodGroup': record_to_approve.get('Blood Group', ''),
+            'permanentAddress': record_to_approve.get('Permanent Address', ''),
+            'email': record_to_approve.get('Email', ''),
+            'photo': ''  # Empty for now
+        }
+        
+        # Use email as doc ID since emp_no might be empty
+        doc_id = staff_data['email'].replace('@', '_at_').replace('.', '_dot_')  # Make email Firebase-safe
+        doc_ref = db.collection('staff').document(doc_id)
+        
+        # Check if staff already exists in database
+        if doc_ref.get().exists:
+            return jsonify({'success': False, 'error': 'Staff member already exists in database'})
+        
+        # Set the document
+        doc_ref.set(staff_data)
+        
+        # Verify the write succeeded
+        if not doc_ref.get().exists:
+            raise Exception('Failed to verify staff addition in Firestore')
+        
+        # Delete the row from Google Sheets
+        sheet.delete_rows(row_index)
+        
+        return jsonify({'success': True, 'message': 'Registration approved and added to database'})
+        
+    except Exception as e:
+        print(f"Error approving registration: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+
+@app.route('/api/reject_registration', methods=['POST'])
+@admin_required
+def reject_registration():
+    try:
+        if not sheets_client:
+            return jsonify({'success': False, 'error': 'Google Sheets not configured'})
+        
+        data = request.get_json()
+        # Use email as primary identifier instead of emp_no
+        email = data.get('email')
+        
+        if not email:
+            return jsonify({'success': False, 'error': 'Email address required'})
+        
+        # Open the pending registrations sheet
+        sheet = sheets_client.open_by_key(PENDING_SHEET_ID).sheet1
+        records = sheet.get_all_records()
+        
+        # Find and delete the record using email
+        for idx, record in enumerate(records, start=2):  # Start from 2 because row 1 is header
+            if record.get('Email') == email and record.get('Status') == 'PENDING':
+                sheet.delete_rows(idx)
+                return jsonify({'success': True, 'message': 'Registration rejected and removed'})
+        
+        return jsonify({'success': False, 'error': 'Registration not found'})
+        
+    except Exception as e:
+        print(f"Error rejecting registration: {e}")
+        return jsonify({'success': False, 'error': str(e)})
+
+# Helper function to get next serial number
+def get_next_sl_no():
+    try:
+        staffs = db.collection('staff').get()
+        if not staffs:
+            return 1
+        
+        max_sl = 0
+        for staff in staffs:
+            staff_data = staff.to_dict()
+            sl_no = staff_data.get('slNo', 0)
+            if isinstance(sl_no, (int, str)) and str(sl_no).isdigit():
+                max_sl = max(max_sl, int(sl_no))
+        
+        return max_sl + 1
+    except:
+        return 1
+
+
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
@@ -29,62 +278,208 @@ def index():
     return render_template('login.html')
 
 
-# Endpoint used by admin UI to upload Excel and create staff users
+# Updated Excel upload endpoint to match Flutter functionality exactly
 @app.route('/api/upload_excel', methods=['POST'])
 @admin_required
 def upload_excel():
     if 'file' not in request.files:
         return jsonify({'error': 'No file provided'}), 400
+    
     f = request.files['file']
     if f.filename == '':
         return jsonify({'error': 'Empty filename'}), 400
+    
     filename = secure_filename(f.filename)
     path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     f.save(path)
 
-    # Parse Excel; adapt column names to your Excel format
+    # Required columns exactly as in Flutter
+    required_columns = [
+        'Sl No', 'Emp No', 'Name', 'Type', 'Contract Type', 'Department', 
+        'Category', 'Gender', 'Designation', 'Mobile No', 'Blood Group', 
+        'Permanent Address', 'Email', 'Photo'
+    ]
+
     try:
-        df = pd.read_excel(path)
-    except Exception as e:
-        return jsonify({'error': 'Failed to read Excel', 'detail': str(e)}), 400
-
-    created = []
-    errors = []
-    for idx, row in df.iterrows():
-        try:
-            email = str(row.get('Mail') or row.get('email') or '').strip()
-            phone = str(row.get('Phone') or row.get('mobileNo') or row.get('mobile') or '').strip()
-            slno = str(row.get('Sl No') or row.get('SlNo') or row.get('slno') or '')
-            name = str(row.get('Name') or row.get('name') or '')
-            if not email or not phone:
-                errors.append({'row': int(idx), 'reason': 'missing email or phone'})
-                continue
-            # create auth user if not exists
+        # Load workbook to handle images
+        workbook = openpyxl.load_workbook(path)
+        sheet = workbook.active
+        
+        # Get headers from first row
+        headers = []
+        for cell in sheet[1]:
+            headers.append(cell.value.strip() if cell.value else '')
+        
+        # Create column indices mapping
+        column_indices = {}
+        for i, header in enumerate(headers):
+            if header:
+                column_indices[header] = i
+        
+        # Check for missing required columns (Photo is optional)
+        missing_columns = []
+        for col in required_columns:
+            if col != 'Photo' and col not in column_indices:
+                missing_columns.append(col)
+        
+        if missing_columns:
+            return jsonify({
+                'error': f'Missing columns: {", ".join(missing_columns)}'
+            }), 400
+        
+        has_photo_column = 'Photo' in column_indices
+        staff_data = []
+        total_records = sheet.max_row - 1  # Exclude header row
+        processed_records = 0
+        errors = []
+        
+        # Process data rows (starting from row 2)
+        for row_num in range(2, sheet.max_row + 1):
             try:
-                user = auth.create_user(email=email, password=phone)
-                # create users doc
-                db.collection('users').document(user.uid).set({
-                    'email': email,
-                    'isAdmin': False,
-                    'staffId': slno or '',
-                    'createdAt': firestore.SERVER_TIMESTAMP
+                row = sheet[row_num]
+                
+                # Skip empty rows
+                if not row[0].value:
+                    total_records -= 1
+                    continue
+                
+                staff = {}
+                photo_url = ''
+                
+                # Process text columns
+                for column in required_columns:
+                    if column == 'Photo':
+                        continue
+                    
+                    if column not in column_indices:
+                        staff[column] = ''
+                        continue
+                    
+                    col_index = column_indices[column]
+                    if col_index >= len(row):
+                        staff[column] = ''
+                        continue
+                    
+                    cell_value = row[col_index].value
+                    
+                    # Special handling for Mobile No
+                    if column == 'Mobile No' and cell_value:
+                        cell_value = str(cell_value).replace('.0', '')
+                    
+                    staff[column] = str(cell_value).strip() if cell_value else ''
+                
+                # Handle photo if column exists
+                if has_photo_column:
+                    photo_col_index = column_indices['Photo']
+                    
+                    # Check if there's an image in this cell
+                    photo_url = process_excel_image(sheet, row_num, photo_col_index, staff.get('Email', staff.get('Sl No', str(int(time.time())))))
+                
+                staff['photoUrl'] = photo_url
+                staff_data.append(staff)
+                processed_records += 1
+                
+            except Exception as e:
+                errors.append({
+                    'row': row_num,
+                    'error': str(e)
                 })
-                created.append({'email': email, 'uid': user.uid})
-            except Exception as create_err:
-                # user likely exists; try to find by email and just ensure staff doc exists
-                errors.append({'row': int(idx), 'email': email, 'error': str(create_err)})
-            # create staff document
-            staff_doc_id = slno if slno else email
-            db.collection('staff').document(staff_doc_id).set({
-                'name': name,
-                'email': email,
-                'mobileNo': phone,
-                'Sl No': slno
-            }, merge=True)
-        except Exception as e:
-            errors.append({'row': int(idx), 'error': str(e)})
+        
+        # Batch upload to Firestore exactly like Flutter
+        batch = db.batch()
+        
+        for staff in staff_data:
+            # Use Email as document ID if available, otherwise use Emp No, otherwise auto-generate
+            doc_id = None
+            if staff.get('Email') and staff.get('Email').strip():
+                # Make email Firebase-safe by replacing special characters
+                doc_id = staff.get('Email').strip().replace('@', '_at_').replace('.', '_dot_')
+            elif staff.get('Emp No') and staff.get('Emp No').strip():
+                doc_id = str(staff.get('Emp No')).strip()
+            
+            if doc_id:
+                doc_ref = db.collection('staff').document(doc_id)
+            else:
+                doc_ref = db.collection('staff').document()
+            
+            # Structure exactly matching Flutter
+            batch.set(doc_ref, {
+                'slNo': staff.get('Sl No', ''),
+                'empNo': staff.get('Emp No', ''),
+                'name': staff.get('Name', ''),
+                'type': staff.get('Type', ''),
+                'contractType': staff.get('Contract Type', ''),
+                'department': staff.get('Department', ''),
+                'category': staff.get('Category', ''),
+                'gender': staff.get('Gender', ''),
+                'designation': staff.get('Designation', ''),
+                'mobileNo': staff.get('Mobile No', ''),
+                'bloodGroup': staff.get('Blood Group', ''),
+                'permanentAddress': staff.get('Permanent Address', ''),
+                'email': staff.get('Email', ''),
+                'photoUrl': staff.get('photoUrl', ''),
+                'timestamp': firestore.SERVER_TIMESTAMP,
+            })
+        
+        # Commit batch
+        batch.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Successfully uploaded {len(staff_data)} staff records!',
+            'totalRecords': total_records,
+            'processedRecords': processed_records,
+            'uploadedRecords': len(staff_data),
+            'errors': errors
+        })
 
-    return jsonify({'created': created, 'errors': errors})
+    except Exception as e:
+        return jsonify({'error': f'Failed to process Excel file: {str(e)}'}), 500
+
+
+def process_excel_image(sheet, row_num, col_index, identifier):
+    """Process image from Excel cell and upload to Firebase Storage"""
+    try:
+        # Get images from the worksheet
+        for image in sheet._images:
+            # Check if image is in the target cell
+            if (image.anchor._from.row + 1 == row_num and 
+                image.anchor._from.col == col_index):
+                
+                # Extract image bytes
+                image_bytes = image._data()
+                
+                if image_bytes:
+                    # Create filename using identifier (email or emp_id)
+                    safe_identifier = str(identifier).replace('@', '_at_').replace('.', '_dot_')
+                    filename = f'staff_photos/{safe_identifier}_photo.jpg'
+                    
+                    # Upload to Firebase Storage
+                    blob = bucket.blob(filename)
+                    blob.upload_from_string(image_bytes, content_type='image/jpeg')
+                    
+                    # Make public and get URL
+                    blob.make_public()
+                    return blob.public_url
+        
+        return ''
+    except Exception as e:
+        print(f'Error processing image: {e}')
+        return ''
+
+
+# Progress endpoint for real-time updates during upload
+@app.route('/api/upload_progress/<task_id>', methods=['GET'])
+@admin_required
+def get_upload_progress(task_id):
+    # This would be used with a task queue like Celery for real progress tracking
+    # For now, return a simple response
+    return jsonify({
+        'status': 'processing',
+        'progress': 50,
+        'message': 'Processing records...'
+    })
+
 
 # Endpoint used by web client to create firebase auth user if login fails (mirrors Flutter fallback)
 @app.route('/api/create_if_staff', methods=['POST'])
@@ -111,7 +506,7 @@ def create_if_staff():
                 db.collection('users').document(new_user.uid).set({
                     'email': email,
                     'isAdmin': False,
-                    'staffId': staff.get('Sl No') or staff.get('SlNo') or '',
+                    'staffId': staff.get('slNo') or staff.get('SlNo') or '',
                     'createdAt': firestore.SERVER_TIMESTAMP
                 })
                 return jsonify({'created': True, 'uid': new_user.uid}), 201

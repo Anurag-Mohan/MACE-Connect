@@ -1,9 +1,11 @@
-<!doctype html>
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>MACE Staff - Web Login</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MACE Staff Portal - Login & Registration</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -395,6 +397,107 @@
       border-width: 0.15em;
     }
     
+    /* Tabs for login/registration */
+    .nav-tabs {
+      border-bottom: 2px solid rgba(99, 102, 241, 0.2);
+      margin-bottom: 1.5rem;
+    }
+    
+    .nav-tabs .nav-item {
+      margin-bottom: -2px;
+    }
+    
+    .nav-tabs .nav-link {
+      border: none;
+      border-bottom: 3px solid transparent;
+      padding: 0.75rem 1.25rem;
+      font-weight: 600;
+      color: #6b7280;
+      background: transparent;
+      transition: all 0.3s;
+    }
+    
+    .nav-tabs .nav-link.active {
+      color: #6366f1;
+      border-bottom: 3px solid #6366f1;
+      background: transparent;
+    }
+    
+    .nav-tabs .nav-link:hover {
+      color: #6366f1;
+      border-bottom: 3px solid rgba(99, 102, 241, 0.5);
+    }
+    
+    /* Registration form styling */
+    .registration-form .row {
+      margin-bottom: 0.5rem;
+    }
+    
+    .registration-form label {
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+      font-size: 0.9rem;
+    }
+    
+    .required {
+      color: #dc3545;
+    }
+    
+    .form-select {
+      border: 2px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.8);
+    }
+    
+    .form-select:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      background: white;
+    }
+    
+    .registration-form .form-control, 
+    .registration-form .form-select {
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 12px;
+      border: 2px solid #e5e7eb;
+      padding: 0.75rem;
+    }
+    
+    .registration-form .form-control:focus, 
+    .registration-form .form-select:focus {
+      border-color: #6366f1;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+      background: white;
+    }
+    
+    .info-alert {
+      background: rgba(99, 102, 241, 0.1);
+      border-radius: 12px;
+      padding: 1rem;
+      border-left: 4px solid #6366f1;
+      margin: 1rem 0;
+      font-size: 0.9rem;
+    }
+    
+    .loading-spinner {
+      border: 4px solid rgba(94, 53, 177, 0.1);
+      border-top: 4px solid #6366f1;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      margin-right: 8px;
+    }
+    
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+    
     /* Responsive Design */
     @media (max-width: 768px) {
       .login-wrapper {
@@ -485,8 +588,8 @@
             </svg>
           </div>
           <div class="welcome-text">
-            <h1>Welcome Back!</h1>
-            <p>Access your MACE staff management dashboard with secure authentication and modern interface design.</p>
+            <h1>Welcome to MACE</h1>
+            <p>Access your staff portal with secure authentication and manage your profile seamlessly.</p>
           </div>
         </div>
 
@@ -498,54 +601,189 @@
                 <i class="fas fa-graduation-cap"></i>
               </div>
               <h2>MACE Staff Portal</h2>
-              <p>Sign in to access your dashboard</p>
+              <p>Sign in or register to access your account</p>
             </div>
             
             <div class="card-body">
-              <form id="loginForm">
-                <div class="mb-4">
-                  <label for="email" class="form-label">Email Address</label>
-                  <div class="input-group">
-                    <span class="input-group-text">
-                      <i class="fas fa-envelope"></i>
-                    </span>
-                    <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
-                  </div>
+              <!-- Tabs for Login/Registration -->
+              <ul class="nav nav-tabs" id="authTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab" aria-controls="login" aria-selected="true">
+                    <i class="fas fa-sign-in-alt me-2"></i>Login
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab" aria-controls="register" aria-selected="false">
+                    <i class="fas fa-user-plus me-2"></i>Register
+                  </button>
+                </li>
+              </ul>
+              
+              <div class="tab-content" id="authTabsContent">
+                <!-- Login Tab -->
+                <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
+                  <form id="loginForm">
+                    <div class="mb-4">
+                      <label for="email" class="form-label">Email Address</label>
+                      <div class="input-group">
+                        <span class="input-group-text">
+                          <i class="fas fa-envelope"></i>
+                        </span>
+                        <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
+                      </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                      <label for="password" class="form-label">Password</label>
+                      <div class="input-group">
+                        <span class="input-group-text">
+                          <i class="fas fa-lock"></i>
+                        </span>
+                        <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
+                        <span class="password-toggle" id="togglePassword">
+                          <i class="fas fa-eye"></i>
+                        </span>
+                      </div>
+                    </div>
+                    
+                    <div id="errorMsg" class="alert alert-danger d-none mb-4"></div>
+                    <div id="successMsg" class="alert alert-success d-none mb-4"></div>
+                    
+                    <button class="btn btn-primary w-100" type="submit" id="loginButton">
+                      <span id="buttonText">Sign In</span>
+                      <span id="buttonSpinner" class="spinner-border d-none" role="status"></span>
+                    </button>
+                  </form>
                 </div>
                 
-                <div class="mb-4">
-                  <label for="password" class="form-label">Password</label>
-                  <div class="input-group">
-                    <span class="input-group-text">
-                      <i class="fas fa-lock"></i>
-                    </span>
-                    <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
-                    <span class="password-toggle" id="togglePassword">
-                      <i class="fas fa-eye"></i>
-                    </span>
-                  </div>
+                <!-- Registration Tab -->
+                <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
+                  <form id="registrationForm" class="registration-form">
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label for="name" class="form-label">Full Name <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label for="emp_no" class="form-label">Employee Number <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="emp_no" name="emp_no">
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label for="email" class="form-label">Email Address <span class="required">*</span></label>
+                        <input type="email" class="form-control" id="reg_email" name="email" required>
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label for="mobile_no" class="form-label">Mobile Number <span class="required">*</span></label>
+                        <input type="tel" class="form-control" id="mobile_no" name="mobile_no" required>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label for="department" class="form-label">Department <span class="required">*</span></label>
+                        <select class="form-select" id="department" name="department" required>
+                          <option value="">Select Department</option>
+                          <option value="Electronics and Communication Engineering">Electronics and Communication Engineering</option>
+                          <option value="Civil Engineering">Civil Engineering</option>
+                          <option value="Mechanical Engineering">Mechanical Engineering</option>
+                          <option value="Computer Science and Engineering">Computer Science and Engineering</option>
+                          <option value="Administrative">Administrative</option>
+                          <option value="Electrical and Electronics Engineering">Electrical and Electronics Engineering</option>
+                          <option value="Mathematics">Mathematics</option>
+                          <option value="Science and Humanities">Science and Humanities</option>
+                          <option value="Computer Applications">Computer Applications</option>
+                        </select>
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label for="designation" class="form-label">Designation <span class="required">*</span></label>
+                        <input type="text" class="form-control" id="designation" name="designation" required>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label for="type" class="form-label">Staff Type</label>
+                        <select class="form-select" id="type" name="type">
+                          <option value="">Select Type</option>
+                          <option value="Teaching Staff">Teaching Staff</option>
+                          <option value="Non Teaching Staff">Non Teaching Staff</option>
+                        </select>
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label for="contract_type" class="form-label">Contract Type</label>
+                        <select class="form-select" id="contract_type" name="contract_type">
+                          <option value="">Select Contract Type</option>
+                          <option value="Permanent">Permanent</option>
+                          <option value="Contract">Contract</option>
+                          <option value="Temporary">Temporary</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label for="category" class="form-label">Category</label>
+                        <input type="text" class="form-control" id="category" name="category">
+                      </div>
+                      <div class="col-md-6 mb-3">
+                        <label for="gender" class="form-label">Gender</label>
+                        <select class="form-select" id="gender" name="gender">
+                          <option value="">Select Gender</option>
+                          <option value="Male">Male</option>
+                          <option value="Female">Female</option>
+                          <option value="Other">Other</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-6 mb-3">
+                        <label for="blood_group" class="form-label">Blood Group</label>
+                        <select class="form-select" id="blood_group" name="blood_group">
+                          <option value="">Select Blood Group</option>
+                          <option value="A+">A+</option>
+                          <option value="A-">A-</option>
+                          <option value="B+">B+</option>
+                          <option value="B-">B-</option>
+                          <option value="AB+">AB+</option>
+                          <option value="AB-">AB-</option>
+                          <option value="O+">O+</option>
+                          <option value="O-">O-</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="mb-3">
+                      <label for="permanent_address" class="form-label">Permanent Address</label>
+                      <textarea class="form-control" id="permanent_address" name="permanent_address" rows="3"></textarea>
+                    </div>
+
+                    <div class="info-alert">
+                      <i class="fas fa-info-circle me-2"></i>
+                      <strong>Important:</strong> Your registration will be reviewed by the admin. You will be notified once approved.
+                    </div>
+
+                    <div id="regErrorMsg" class="alert alert-danger d-none mb-4"></div>
+                    <div id="regSuccessMsg" class="alert alert-success d-none mb-4"></div>
+                    
+                    <button type="submit" class="btn btn-primary w-100" id="submitBtn">
+                      <i class="fas fa-paper-plane me-2"></i>Submit Registration
+                    </button>
+                  </form>
                 </div>
-                
-
-                
-                <div id="errorMsg" class="alert alert-danger d-none mb-4"></div>
-                <div id="successMsg" class="alert alert-success d-none mb-4"></div>
-                
-                <button class="btn btn-primary w-100" type="submit" id="loginButton">
-                  <span id="buttonText">Sign In</span>
-                  <span id="buttonSpinner" class="spinner-border d-none" role="status"></span>
-                </button>
-                
-
-              </form>
+              </div>
             </div>
-
           </div>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
   <!-- Font Awesome for icons -->
   <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
@@ -601,6 +839,28 @@
       document.getElementById('successMsg').classList.add('d-none');
     }
 
+    // Registration message functions
+    function showRegError(message) {
+      const errorMsg = document.getElementById('regErrorMsg');
+      const successMsg = document.getElementById('regSuccessMsg');
+      errorMsg.textContent = message;
+      errorMsg.classList.remove('d-none');
+      successMsg.classList.add('d-none');
+    }
+
+    function showRegSuccess(message) {
+      const errorMsg = document.getElementById('regErrorMsg');
+      const successMsg = document.getElementById('regSuccessMsg');
+      successMsg.textContent = message;
+      successMsg.classList.remove('d-none');
+      errorMsg.classList.add('d-none');
+    }
+
+    function hideRegMessages() {
+      document.getElementById('regErrorMsg').classList.add('d-none');
+      document.getElementById('regSuccessMsg').classList.add('d-none');
+    }
+
     // Handle login form submission
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -624,7 +884,7 @@
         // Use the firebase-client.js function (matches Flutter logic exactly)
         await signInWithEmailAndPassword(email, password);
         
-        // Add a delay to allow auth state to update (like Flutter - 5 seconds)
+        // Add a delay to allow auth state to update (like Flutter - 2 seconds)
         await new Promise(resolve => setTimeout(resolve, 2000));
         
         // Check if user is logged in after delay
@@ -653,7 +913,7 @@
     });
 
     // Check if user is already logged in
-    onAuthStateChanged((user) => {
+    firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         // User is already signed in, redirect them
         checkAdminStatus(user).then(isAdmin => {
@@ -667,6 +927,78 @@
         });
       }
     });
+
+   // Handle registration form submission
+document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const submitBtn = document.getElementById('submitBtn');
+    const originalText = submitBtn.innerHTML;
+    
+    // Show loading
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<div class="loading-spinner"></div> Submitting...';
+    hideRegMessages();
+    
+    // Collect form data
+    const formData = {
+        name: document.getElementById('name').value.trim(),
+        emp_no: document.getElementById('emp_no').value.trim(),
+        email: document.getElementById('reg_email').value.trim(),
+        mobile_no: document.getElementById('mobile_no').value.trim(),
+        department: document.getElementById('department').value,
+        designation: document.getElementById('designation').value.trim(),
+        type: document.getElementById('type').value,
+        contract_type: document.getElementById('contract_type').value,
+        category: document.getElementById('category').value.trim(),
+        gender: document.getElementById('gender').value,
+        blood_group: document.getElementById('blood_group').value,
+        permanent_address: document.getElementById('permanent_address').value.trim()
+    };
+    
+    // Basic validation
+    if (!formData.name ||  !formData.email || !formData.mobile_no || 
+        !formData.department || !formData.designation) {
+        showRegError('Please fill in all required fields');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+        return;
+    }
+    
+    try {
+        // Send data to Flask backend
+        const response = await fetch('/api/submit_registration', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData)
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            showRegSuccess(result.message);
+            
+            // Reset form
+            this.reset();
+            
+            // Switch to login tab after successful registration
+            setTimeout(() => {
+                const loginTab = new bootstrap.Tab(document.getElementById('login-tab'));
+                loginTab.show();
+            }, 3000);
+        } else {
+            showRegError(result.error || 'Registration failed. Please try again.');
+        }
+    } catch (error) {
+        console.log('Registration error:', error);
+        showRegError('Network error. Please try again.');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
+    }
+});
   </script>
 </body>
 </html>
