@@ -51,6 +51,7 @@ def init_google_sheets():
         else:
             # For local development, use file
             creds = Credentials.from_service_account_file('test123456.json', scopes=GOOGLE_SHEETS_SCOPES)
+
         
         client = gspread.authorize(creds)
         return client
@@ -58,10 +59,8 @@ def init_google_sheets():
         print(f"Error initializing Google Sheets: {e}")
         return None
 
-PENDING_SHEET_ID = os.environ.get("PENDING_SHEET_ID")
 # Global sheets client
 sheets_client = init_google_sheets()
-  # Replace with your actual sheet ID
 
 # Add these new routes to your app.py
 
@@ -642,6 +641,49 @@ def delete_staff(staff_id):
         
     except Exception as e:
         return jsonify({'error': 'Failed to delete staff member', 'detail': str(e)}), 500
+
+
+# Add this endpoint to your app.py after the other staff routes
+
+@app.route('/api/staff/<staff_id>/type', methods=['PUT'])
+@admin_required
+def update_staff_type(staff_id):
+    """
+    Update staff type (Teaching Staff, Non Teaching Staff, or Retired)
+    """
+    try:
+        data = request.get_json()
+        new_type = data.get('type')
+        
+        if not new_type:
+            return jsonify({'error': 'Staff type is required'}), 400
+        
+        # Validate the type
+        valid_types = ['Teaching Staff', 'Non Teaching Staff', 'Retired']
+        if new_type not in valid_types:
+            return jsonify({'error': f'Invalid staff type. Must be one of: {", ".join(valid_types)}'}), 400
+        
+        # Get the staff document
+        staff_doc = db.collection('staff').document(staff_id).get()
+        if not staff_doc.exists:
+            return jsonify({'error': 'Staff member not found'}), 404
+        
+        # Update the staff type
+        db.collection('staff').document(staff_id).update({
+            'type': new_type,
+            'updatedAt': firestore.SERVER_TIMESTAMP
+        })
+        
+        return jsonify({
+            'success': True,
+            'message': f'Staff type updated to {new_type}',
+            'staff_id': staff_id,
+            'new_type': new_type
+        })
+        
+    except Exception as e:
+        print(f"Error updating staff type: {e}")
+        return jsonify({'error': 'Failed to update staff type', 'detail': str(e)}), 500
 
 
 @app.route('/api/staff/bulk_delete', methods=['POST'])
