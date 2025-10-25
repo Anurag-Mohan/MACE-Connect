@@ -61,6 +61,7 @@ def init_google_sheets():
 
 # Global sheets client
 sheets_client = init_google_sheets()
+PENDING_SHEET_ID = os.environ.get("PENDING_SHEET_ID")  # Replace with your actual sheet ID
 
 # Add these new routes to your app.py
 
