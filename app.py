@@ -279,6 +279,114 @@ def index():
     return render_template('login.html')
 
 
+# Manual staff entry endpoint
+@app.route('/api/add_staff_manual', methods=['POST'])
+@admin_required
+def add_staff_manual():
+    """
+    Add a single staff member manually through form submission
+    Accepts JSON data with staff details and optional base64 photo
+    """
+    try:
+        data = request.get_json()
+        
+        # Required fields validation
+        required_fields = ['name', 'email', 'department', 'designation', 'mobileNo', 
+                          'type', 'contractType', 'category', 'gender', 'bloodGroup', 
+                          'permanentAddress']
+        
+        missing_fields = []
+        for field in required_fields:
+            if not data.get(field) or not str(data.get(field)).strip():
+                missing_fields.append(field)
+        
+        if missing_fields:
+            return jsonify({
+                'success': False,
+                'error': f'Missing required fields: {", ".join(missing_fields)}'
+            }), 400
+        
+        # Check if email already exists
+        email = data.get('email').strip()
+        doc_id = email.replace('@', '_at_').replace('.', '_dot_')
+        
+        existing_doc = db.collection('staff').document(doc_id).get()
+        if existing_doc.exists:
+            return jsonify({
+                'success': False,
+                'error': 'A staff member with this email already exists'
+            }), 400
+        
+        # Generate next serial number
+        sl_no = get_next_sl_no()
+        
+        # Handle photo upload if provided
+        photo_url = ''
+        if data.get('photo'):
+            try:
+                # Extract base64 data
+                photo_data = data.get('photo')
+                if ',' in photo_data:
+                    photo_data = photo_data.split(',')[1]
+                
+                # Decode base64
+                image_bytes = base64.b64decode(photo_data)
+                
+                # Create filename
+                safe_identifier = email.replace('@', '_at_').replace('.', '_dot_')
+                filename = f'staff_photos/{safe_identifier}_photo.jpg'
+                
+                # Upload to Firebase Storage
+                blob = bucket.blob(filename)
+                blob.upload_from_string(image_bytes, content_type='image/jpeg')
+                blob.make_public()
+                photo_url = blob.public_url
+                
+            except Exception as photo_error:
+                print(f'Error uploading photo: {photo_error}')
+                # Continue without photo rather than failing
+        
+        # Prepare staff data
+        staff_data = {
+            'slNo': sl_no,
+            'empNo': data.get('empNo', '').strip(),
+            'name': data.get('name').strip(),
+            'type': data.get('type').strip(),
+            'contractType': data.get('contractType').strip(),
+            'department': data.get('department').strip(),
+            'category': data.get('category').strip(),
+            'gender': data.get('gender').strip(),
+            'designation': data.get('designation').strip(),
+            'mobileNo': data.get('mobileNo').strip(),
+            'bloodGroup': data.get('bloodGroup').strip(),
+            'permanentAddress': data.get('permanentAddress').strip(),
+            'email': email,
+            'photoUrl': photo_url,
+            'timestamp': firestore.SERVER_TIMESTAMP,
+        }
+        
+        # Save to Firestore
+        db.collection('staff').document(doc_id).set(staff_data)
+        
+        # Verify the write succeeded
+        if not db.collection('staff').document(doc_id).get().exists:
+            raise Exception('Failed to verify staff addition in Firestore')
+        
+        return jsonify({
+            'success': True,
+            'message': f'Staff member {data.get("name")} added successfully!',
+            'staff_id': doc_id,
+            'sl_no': sl_no
+        })
+        
+    except Exception as e:
+        print(f'Error adding staff manually: {e}')
+        return jsonify({
+            'success': False,
+            'error': f'Failed to add staff member: {str(e)}'
+        }), 500
+
+
 # Updated Excel upload endpoint to match Flutter functionality exactly
 @app.route('/api/upload_excel', methods=['POST'])
 @admin_required
