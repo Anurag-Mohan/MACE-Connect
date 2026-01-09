@@ -292,7 +292,7 @@ def add_staff_manual():
         
         # Required fields validation
         required_fields = ['name', 'email', 'department', 'designation', 'mobileNo', 
-                          'type', 'contractType', 'category', 'gender', 'bloodGroup', 
+                          'type', 'contractType', 'gender', 'bloodGroup', 
                           'permanentAddress']
         
         missing_fields = []
@@ -347,6 +347,7 @@ def add_staff_manual():
                 # Continue without photo rather than failing
         
         # Prepare staff data
+        designation = data.get('designation').strip()
         staff_data = {
             'slNo': sl_no,
             'empNo': data.get('empNo', '').strip(),
@@ -354,9 +355,9 @@ def add_staff_manual():
             'type': data.get('type').strip(),
             'contractType': data.get('contractType').strip(),
             'department': data.get('department').strip(),
-            'category': data.get('category').strip(),
+            'category': designation,  # Use designation as category
             'gender': data.get('gender').strip(),
-            'designation': data.get('designation').strip(),
+            'designation': designation,
             'mobileNo': data.get('mobileNo').strip(),
             'bloodGroup': data.get('bloodGroup').strip(),
             'permanentAddress': data.get('permanentAddress').strip(),

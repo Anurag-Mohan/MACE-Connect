@@ -681,14 +681,18 @@
                         <label class="form-label">Department <span class="text-danger">*</span></label>
                         <select class="form-select" id="manualDepartment" required>
                           <option value="">Select Department</option>
-                          <option value="Computer Science">Computer Science</option>
-                          <option value="Electronics">Electronics</option>
-                          <option value="Mechanical">Mechanical</option>
-                          <option value="Civil">Civil</option>
-                          <option value="Electrical">Electrical</option>
-                          <option value="Administration">Administration</option>
-                          <option value="Library">Library</option>
-                          <option value="Other">Other</option>
+                          <option value="Administrative">Administrative (ADM)</option>
+                          <option value="Computer Applications">Computer Applications (CA)</option>
+                          <option value="Civil Engineering">Civil Engineering (CE)</option>
+                          <option value="Computer Science and Engineering">Computer Science and Engineering (CSE)
+                          </option>
+                          <option value="Electronics and Communication Engineering">Electronics and Communication
+                            Engineering (ECE)</option>
+                          <option value="Electrical and Electronics Engineering">Electrical and Electronics Engineering
+                            (EEE)</option>
+                          <option value="Mathematics">Mathematics (MAT)</option>
+                          <option value="Mechanical Engineering">Mechanical Engineering (ME)</option>
+                          <option value="Science and Humanities">Science and Humanities (SH)</option>
                         </select>
                       </div>
 
@@ -713,19 +717,6 @@
                           <option value="Permanent">Permanent</option>
                           <option value="Contract">Contract</option>
                           <option value="Temporary">Temporary</option>
-                        </select>
-                      </div>
-
-                      <div class="mb-3">
-                        <label class="form-label">Category <span class="text-danger">*</span></label>
-                        <select class="form-select" id="manualCategory" required>
-                          <option value="">Select Category</option>
-                          <option value="Professor">Professor</option>
-                          <option value="Associate Professor">Associate Professor</option>
-                          <option value="Assistant Professor">Assistant Professor</option>
-                          <option value="Lecturer">Lecturer</option>
-                          <option value="Staff">Staff</option>
-                          <option value="Other">Other</option>
                         </select>
                       </div>
                     </div>
@@ -1740,8 +1731,7 @@
           department: document.getElementById('manualDepartment').value,
           designation: document.getElementById('manualDesignation').value.trim(),
           type: document.getElementById('manualType').value,
-          contractType: document.getElementById('manualContractType').value,
-          category: document.getElementById('manualCategory').value
+          contractType: document.getElementById('manualContractType').value
         };
 
         // Handle photo if present
