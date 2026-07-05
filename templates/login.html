@@ -6,504 +6,243 @@
   <title>MACE Staff Portal - Login & Registration</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <link href="/static/css/design-system.css" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="/static/js/firebase-client.js"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-    
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    
+    /* Page Specific Overrides & Layout */
     body {
-      font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      min-height: 100vh;
-      overflow-x: hidden;
-      position: relative;
+      background: radial-gradient(circle at 0% 0%, #FFFBEB 0%, #FAF9F6 50%, #FEF3C7 100%);
     }
-    
-    /* Animated Background Elements */
-    .bg-decoration {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-      overflow: hidden;
-    }
-    
-    .floating-shape {
-      position: absolute;
-      opacity: 0.1;
-      animation: float 6s ease-in-out infinite;
-    }
-    
-    .floating-shape:nth-child(1) {
-      top: 10%;
-      left: 10%;
-      width: 80px;
-      height: 80px;
-      background: rgba(255,255,255,0.3);
-      border-radius: 50%;
-      animation-delay: 0s;
-    }
-    
-    .floating-shape:nth-child(2) {
-      top: 20%;
-      right: 15%;
-      width: 60px;
-      height: 60px;
-      background: rgba(255,255,255,0.2);
-      border-radius: 30%;
-      animation-delay: 2s;
-    }
-    
-    .floating-shape:nth-child(3) {
-      bottom: 20%;
-      left: 5%;
-      width: 100px;
-      height: 100px;
-      background: rgba(255,255,255,0.15);
-      border-radius: 25%;
-      animation-delay: 4s;
-    }
-    
-    .floating-shape:nth-child(4) {
-      bottom: 30%;
-      right: 20%;
-      width: 70px;
-      height: 70px;
-      background: rgba(255,255,255,0.25);
-      border-radius: 50%;
-      animation-delay: 1s;
-    }
-    
-    @keyframes float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-20px) rotate(10deg); }
-    }
-    
-    /* Doodle SVG Patterns */
-    .doodle-container {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      pointer-events: none;
-    }
-    
-    .doodle {
-      position: absolute;
-      opacity: 0.15;
-      animation: pulse 4s ease-in-out infinite;
-    }
-    
-    .doodle.top-left {
-      top: 15%;
-      left: 8%;
-    }
-    
-    .doodle.top-right {
-      top: 25%;
-      right: 10%;
-    }
-    
-    .doodle.bottom-left {
-      bottom: 25%;
-      left: 12%;
-    }
-    
-    .doodle.bottom-right {
-      bottom: 15%;
-      right: 8%;
-    }
-    
-    @keyframes pulse {
-      0%, 100% { opacity: 0.1; transform: scale(1); }
-      50% { opacity: 0.2; transform: scale(1.05); }
-    }
-    
-    /* Main Container */
-    .main-container {
-      position: relative;
-      z-index: 10;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-    }
-    
+
     .login-wrapper {
       display: flex;
       max-width: 1200px;
       width: 100%;
       margin: 0 auto;
       gap: 3rem;
-      padding: 2rem;
+      padding: 3rem 2rem;
+      align-items: center;
+      position: relative;
+      z-index: 10;
     }
-    
-    /* Left Side - Illustration */
+
+    /* Left Panel Styling */
     .left-panel {
-      flex: 1;
+      flex: 1.2;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      color: white;
+      color: #374151;
       text-align: center;
       padding: 2rem;
     }
-    
+
     .illustration {
       width: 100%;
-      max-width: 400px;
-      margin-bottom: 2rem;
+      max-width: 420px;
+      margin-bottom: 2.5rem;
+      filter: drop-shadow(0 20px 30px rgba(217, 119, 6, 0.15));
     }
-    
+
     .welcome-text h1 {
       font-size: 3rem;
-      font-weight: 700;
+      font-weight: 800;
+      color: #78350F;
       margin-bottom: 1rem;
-      text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      letter-spacing: -0.5px;
     }
-    
+
     .welcome-text p {
-      font-size: 1.2rem;
-      font-weight: 300;
-      opacity: 0.9;
+      font-size: 1.15rem;
+      font-weight: 400;
+      color: #6B7280;
       line-height: 1.6;
+      max-width: 480px;
+      margin: 0 auto;
     }
-    
-    /* Right Side - Login Form */
+
+    /* Right Panel Styling */
     .right-panel {
-      flex: 0 0 450px;
+      flex: 0 0 480px;
     }
-    
+
     .login-card {
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 24px;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-      overflow: hidden;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: 28px;
     }
-    
-    .login-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
-    }
-    
+
     .login-header {
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-gold) 100%);
       color: white;
-      padding: 2rem;
+      padding: 2.5rem 2rem;
       text-align: center;
       position: relative;
       overflow: hidden;
+      border-radius: 26px 26px 0 0;
     }
-    
+
     .login-header::before {
       content: '';
       position: absolute;
-      top: -50%;
-      left: -50%;
-      width: 200%;
-      height: 200%;
-      background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-      animation: rotate 20s linear infinite;
+      top: -40%;
+      left: -40%;
+      width: 180%;
+      height: 180%;
+      background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
+      pointer-events: none;
     }
-    
+
     .login-header .icon {
-      font-size: 3rem;
-      margin-bottom: 1rem;
-      position: relative;
-      z-index: 1;
+      font-size: 2.8rem;
+      margin-bottom: 0.75rem;
+      display: inline-block;
+      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
     }
-    
+
     .login-header h2 {
       font-size: 1.8rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      position: relative;
-      z-index: 1;
+      font-weight: 800;
+      margin-bottom: 0.25rem;
     }
-    
+
     .login-header p {
+      font-size: 0.95rem;
       opacity: 0.9;
-      position: relative;
-      z-index: 1;
+      margin-bottom: 0;
     }
-    
-    @keyframes rotate {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-    
+
     .card-body {
       padding: 2.5rem;
     }
-    
-    .form-label {
-      font-weight: 600;
-      color: #374151;
-      margin-bottom: 0.5rem;
-      font-size: 0.95rem;
-    }
-    
-    .input-group {
-      position: relative;
-      margin-bottom: 1.5rem;
-    }
-    
-    .input-group-text {
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-      border: none;
-      color: white;
-      border-radius: 12px 0 0 12px;
-      padding: 0.75rem 1rem;
-    }
-    
-    .form-control {
-      border: 2px solid #e5e7eb;
-      border-left: none;
-      border-radius: 0 12px 12px 0;
-      padding: 0.75rem 1rem;
-      font-size: 1rem;
-      transition: all 0.3s ease;
-      background: rgba(255, 255, 255, 0.8);
-    }
-    
-    .form-control:focus {
-      border-color: #6366f1;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-      background: white;
-    }
-    
-    .password-toggle {
-      position: absolute;
-      right: 15px;
-      top: 50%;
-      transform: translateY(-50%);
-      cursor: pointer;
-      color: #6b7280;
-      z-index: 5;
-      transition: color 0.3s ease;
-    }
-    
-    .password-toggle:hover {
-      color: #6366f1;
-    }
-    
-    .btn-primary {
-      background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-      border: none;
-      border-radius: 12px;
-      padding: 0.875rem;
-      font-weight: 600;
-      font-size: 1rem;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .btn-primary::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-      transition: left 0.5s;
-    }
-    
-    .btn-primary:hover::before {
-      left: 100%;
-    }
-    
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
-    }
-    
-    .btn-secondary {
-      background: rgba(99, 102, 241, 0.1);
-      border: 2px solid rgba(99, 102, 241, 0.2);
-      color: #6366f1;
-      border-radius: 8px;
-      padding: 0.5rem 1rem;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
-    
-    .btn-secondary:hover {
-      background: rgba(99, 102, 241, 0.2);
-      border-color: #6366f1;
-      transform: translateY(-1px);
-    }
-    
-    .quick-links {
-      background: rgba(248, 250, 252, 0.8);
-      border-top: 1px solid rgba(99, 102, 241, 0.1);
-      padding: 1.5rem 2.5rem;
-    }
-    
-    .quick-links h6 {
-      color: #374151;
-      font-weight: 600;
-      margin-bottom: 1rem;
-    }
-    
-    .alert {
-      border: none;
-      border-radius: 12px;
-      padding: 1rem 1.25rem;
-      font-weight: 500;
-    }
-    
-    .alert-danger {
-      background: rgba(239, 68, 68, 0.1);
-      color: #dc2626;
-    }
-    
-    .alert-success {
-      background: rgba(34, 197, 94, 0.1);
-      color: #16a34a;
-    }
-    
-    .text-muted {
-      color: #6b7280 !important;
-    }
-    
-    a {
-      color: #6366f1;
-      text-decoration: none;
-      font-weight: 500;
-      transition: color 0.3s ease;
-    }
-    
-    a:hover {
-      color: #4f46e5;
-    }
-    
-    .spinner-border {
-      width: 1.25rem;
-      height: 1.25rem;
-      border-width: 0.15em;
-    }
-    
-    /* Tabs for login/registration */
+
+    /* Nav Tabs Styling */
     .nav-tabs {
-      border-bottom: 2px solid rgba(99, 102, 241, 0.2);
-      margin-bottom: 1.5rem;
+      border-bottom: 2px solid #F3F4F6;
+      margin-bottom: 2rem;
+      justify-content: center;
+      gap: 1rem;
     }
-    
+
     .nav-tabs .nav-item {
       margin-bottom: -2px;
     }
-    
+
     .nav-tabs .nav-link {
       border: none;
       border-bottom: 3px solid transparent;
-      padding: 0.75rem 1.25rem;
-      font-weight: 600;
-      color: #6b7280;
+      padding: 0.75rem 1.5rem;
+      font-weight: 700;
+      color: #9CA3AF;
       background: transparent;
       transition: all 0.3s;
+      font-size: 1rem;
     }
-    
+
     .nav-tabs .nav-link.active {
-      color: #6366f1;
-      border-bottom: 3px solid #6366f1;
+      color: var(--primary-color);
+      border-bottom: 3px solid var(--primary-color);
       background: transparent;
     }
-    
+
     .nav-tabs .nav-link:hover {
-      color: #6366f1;
-      border-bottom: 3px solid rgba(99, 102, 241, 0.5);
+      color: var(--primary-hover);
+      border-bottom: 3px solid rgba(217, 119, 6, 0.4);
     }
-    
-    /* Registration form styling */
-    .registration-form .row {
-      margin-bottom: 0.5rem;
+
+    /* Password field alignment */
+    .input-group-container {
+      position: relative;
+      display: flex;
+      align-items: center;
     }
-    
-    .registration-form label {
-      font-weight: 500;
-      margin-bottom: 0.25rem;
-      font-size: 0.9rem;
+
+    .password-toggle {
+      position: absolute;
+      right: 18px;
+      cursor: pointer;
+      color: #9CA3AF;
+      z-index: 10;
+      font-size: 1.1rem;
+      transition: color 0.2s ease;
     }
-    
-    .required {
-      color: #dc3545;
+
+    .password-toggle:hover {
+      color: var(--primary-color);
     }
-    
-    .form-select {
-      border: 2px solid #e5e7eb;
-      border-radius: 12px;
-      padding: 0.75rem 1rem;
-      font-size: 1rem;
-      transition: all 0.3s ease;
-      background: rgba(255, 255, 255, 0.8);
+
+    .alert {
+      border: none;
+      border-radius: 16px;
+      padding: 1rem 1.25rem;
+      font-weight: 600;
+      font-size: 0.95rem;
+      box-shadow: var(--shadow-inset-3d);
     }
-    
-    .form-select:focus {
-      border-color: #6366f1;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-      background: white;
+
+    .alert-danger {
+      background: #FEE2E2;
+      color: var(--accent-red-dark);
     }
-    
-    .registration-form .form-control, 
-    .registration-form .form-select {
-      background: rgba(255, 255, 255, 0.8);
-      border-radius: 12px;
-      border: 2px solid #e5e7eb;
-      padding: 0.75rem;
+
+    .alert-success {
+      background: #D1FAE5;
+      color: var(--accent-green-dark);
     }
-    
-    .registration-form .form-control:focus, 
-    .registration-form .form-select:focus {
-      border-color: #6366f1;
-      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-      background: white;
-    }
-    
+
     .info-alert {
-      background: rgba(99, 102, 241, 0.1);
-      border-radius: 12px;
-      padding: 1rem;
-      border-left: 4px solid #6366f1;
-      margin: 1rem 0;
-      font-size: 0.9rem;
+      background: #FEF3C7;
+      border-radius: 16px;
+      padding: 1.25rem;
+      border-left: 4px solid var(--primary-color);
+      margin: 1.5rem 0;
+      font-size: 0.925rem;
+      color: #78350F;
+      box-shadow: 0 4px 12px rgba(217, 119, 6, 0.05);
     }
-    
+
     .loading-spinner {
-      border: 4px solid rgba(94, 53, 177, 0.1);
-      border-top: 4px solid #6366f1;
+      border: 3px solid rgba(255, 255, 255, 0.3);
+      border-top: 3px solid white;
       border-radius: 50%;
-      width: 20px;
-      height: 20px;
+      width: 22px;
+      height: 22px;
       animation: spin 1s linear infinite;
       display: inline-block;
-      margin-right: 8px;
     }
-    
+
     @keyframes spin {
       0% { transform: rotate(0deg); }
       100% { transform: rotate(360deg); }
     }
-    
+
+    /* Form selectors override */
+    .form-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23374151' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 18px center;
+      background-size: 14px;
+    }
+
+    /* Form spacing adjustments */
+    .registration-form .row {
+      margin-bottom: 0.25rem;
+    }
+
+    .registration-form .mb-3 {
+      margin-bottom: 1.25rem !important;
+    }
+
     /* Responsive Design */
-    @media (max-width: 768px) {
+    @media (max-width: 992px) {
       .login-wrapper {
         flex-direction: column;
-        gap: 2rem;
-        padding: 1rem;
+        gap: 2.5rem;
+        padding: 2rem 1rem;
       }
       
       .left-panel {
@@ -512,268 +251,291 @@
       }
       
       .welcome-text h1 {
-        font-size: 2rem;
+        font-size: 2.25rem;
       }
       
       .right-panel {
-        flex: none;
+        width: 100%;
+        max-width: 480px;
         order: 1;
-      }
-      
-      .card-body {
-        padding: 1.5rem;
-      }
-      
-      .quick-links {
-        padding: 1.5rem;
-      }
-    }
-    
-    /* Accessibility */
-    @media (prefers-reduced-motion: reduce) {
-      .floating-shape,
-      .doodle,
-      .login-header::before {
-        animation: none;
       }
     }
   </style>
 </head>
 <body>
-  <!-- Background Decorations -->
-  <div class="bg-decoration">
-    <div class="floating-shape"></div>
-    <div class="floating-shape"></div>
-    <div class="floating-shape"></div>
-    <div class="floating-shape"></div>
-  </div>
-  
-  <!-- Doodle Elements -->
-  <div class="doodle-container">
-    <svg class="doodle top-left" width="60" height="60" viewBox="0 0 60 60" fill="none">
-      <path d="M30 5L35 20L50 15L40 30L55 35L40 45L50 55L30 50L25 65L15 50L5 55L15 40L0 35L15 25L5 15L25 20L30 5Z" fill="white"/>
+
+  <!-- Floating 3D Doodles Background -->
+  <div class="doodle-bg">
+    <!-- Doodle 1: 3D Cylinder -->
+    <svg class="floating-doodle" width="100" height="100" viewBox="0 0 100 100">
+      <defs>
+        <linearGradient id="cylinderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#FBBF24" />
+          <stop offset="60%" stop-color="#D97706" />
+          <stop offset="100%" stop-color="#78350F" />
+        </linearGradient>
+      </defs>
+      <ellipse cx="50" cy="30" rx="30" ry="12" fill="#FCD34D" />
+      <path d="M20,30 L20,70 A30,12 0 0,0 80,70 L80,30 A30,12 0 0,1 20,30 Z" fill="url(#cylinderGrad)" />
+      <ellipse cx="50" cy="30" rx="30" ry="12" fill="#FDE68A" />
     </svg>
-    
-    <svg class="doodle top-right" width="50" height="50" viewBox="0 0 50 50" fill="none">
-      <circle cx="25" cy="25" r="20" fill="none" stroke="white" stroke-width="3" stroke-dasharray="5,5"/>
-      <circle cx="25" cy="25" r="10" fill="white"/>
+
+    <!-- Doodle 2: 3D Book -->
+    <svg class="floating-doodle" width="120" height="120" viewBox="0 0 120 120">
+      <defs>
+        <linearGradient id="bookCoverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#34D399" />
+          <stop offset="100%" stop-color="#047857" />
+        </linearGradient>
+        <linearGradient id="bookPageGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#FFFFFF" />
+          <stop offset="100%" stop-color="#E5E7EB" />
+        </linearGradient>
+      </defs>
+      <!-- Base Shadow -->
+      <path d="M25,80 L60,95 L95,80 L60,65 Z" fill="rgba(0,0,0,0.06)" filter="blur(4px)" />
+      <!-- Book Back Cover -->
+      <path d="M25,75 L60,90 L95,75 L95,78 L60,93 L25,78 Z" fill="#064E3B" />
+      <!-- Pages thickness -->
+      <path d="M28,73 L60,86 L92,73 L92,75 L60,88 L28,75 Z" fill="url(#bookPageGrad)" />
+      <!-- Book Front Cover -->
+      <path d="M25,72 L60,85 L95,72 L60,57 Z" fill="url(#bookCoverGrad)" />
+      <!-- Pages Top Details -->
+      <path d="M60,85 L91,72 L60,59 Z" fill="rgba(255,255,255,0.4)" />
     </svg>
-    
-    <svg class="doodle bottom-left" width="70" height="70" viewBox="0 0 70 70" fill="none">
-      <path d="M35 5L45 25L65 15L50 35L70 45L50 55L60 70L35 60L25 75L15 60L5 70L15 50L0 40L20 30L10 15L30 25L35 5Z" fill="white"/>
-    </svg>
-    
-    <svg class="doodle bottom-right" width="55" height="55" viewBox="0 0 55 55" fill="none">
-      <rect x="5" y="5" width="45" height="45" rx="10" fill="none" stroke="white" stroke-width="3"/>
-      <circle cx="27.5" cy="27.5" r="8" fill="white"/>
+
+    <!-- Doodle 3: 3D Sphere -->
+    <div class="floating-doodle" style="border-radius: 50%; background: radial-gradient(circle at 30% 30%, #EC4899 0%, #BE185D 70%, #50072B 100%); box-shadow: 0 10px 20px rgba(236, 72, 153, 0.25);"></div>
+
+    <!-- Doodle 4: 3D Graduation Cap -->
+    <svg class="floating-doodle" width="110" height="110" viewBox="0 0 100 100">
+      <defs>
+        <linearGradient id="capGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#F59E0B" />
+          <stop offset="100%" stop-color="#B45309" />
+        </linearGradient>
+      </defs>
+      <!-- Skull cap body -->
+      <path d="M35,55 L35,68 C35,74 65,74 65,68 L65,55 Z" fill="#9A3412" />
+      <path d="M35,55 L35,66 C35,72 65,72 65,66 L65,55 Z" fill="url(#capGrad)" />
+      <!-- Diamond top -->
+      <path d="M50,30 L85,45 L50,60 L15,45 Z" fill="#78350F" />
+      <path d="M50,28 L85,43 L50,58 L15,43 Z" fill="url(#capGrad)" />
+      <!-- Tassel -->
+      <path d="M50,43 L30,55 L28,68" stroke="#FDE68A" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <circle cx="28" cy="70" r="3" fill="#F59E0B" />
     </svg>
   </div>
 
-  <div class="main-container">
-    <div class="container-fluid">
-      <div class="login-wrapper">
-        <!-- Left Panel - Welcome Section -->
-        <div class="left-panel">
-          <div class="illustration">
-            <svg viewBox="0 0 400 300" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect width="400" height="300" fill="none"/>
-              <circle cx="200" cy="80" r="40" fill="rgba(255,255,255,0.3)"/>
-              <rect x="160" y="120" width="80" height="100" rx="10" fill="rgba(255,255,255,0.4)"/>
-              <rect x="50" y="180" width="300" height="80" rx="15" fill="rgba(255,255,255,0.2)"/>
-              <circle cx="100" cy="220" r="15" fill="rgba(255,255,255,0.5)"/>
-              <circle cx="200" cy="220" r="15" fill="rgba(255,255,255,0.5)"/>
-              <circle cx="300" cy="220" r="15" fill="rgba(255,255,255,0.5)"/>
-              <path d="M80 100L120 140L80 180" stroke="rgba(255,255,255,0.6)" stroke-width="3" fill="none"/>
-              <path d="M320 100L280 140L320 180" stroke="rgba(255,255,255,0.6)" stroke-width="3" fill="none"/>
-            </svg>
-          </div>
-          <div class="welcome-text">
-            <h1>Welcome to MACE</h1>
-            <p>Access your staff portal with secure authentication and manage your profile seamlessly.</p>
-          </div>
-        </div>
-
-        <!-- Right Panel - Login Form -->
-        <div class="right-panel">
-          <div class="login-card">
-            <div class="login-header">
-              <div class="icon">
-                <i class="fas fa-graduation-cap"></i>
-              </div>
-              <h2>MACE Staff Portal</h2>
-              <p>Sign in or register to access your account</p>
-            </div>
+  <div class="container-fluid">
+    <div class="login-wrapper">
+      <!-- Left Panel - Welcome Section -->
+      <div class="left-panel">
+        <div class="illustration">
+          <svg viewBox="0 0 400 320" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Background base circle -->
+            <circle cx="200" cy="160" r="130" fill="#FEF3C7" opacity="0.6"/>
+            <circle cx="200" cy="160" r="100" fill="#FDE68A" opacity="0.8"/>
             
-            <div class="card-body">
-              <!-- Tabs for Login/Registration -->
-              <ul class="nav nav-tabs" id="authTabs" role="tablist">
-                <li class="nav-item" role="presentation">
-                  <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab" aria-controls="login" aria-selected="true">
-                    <i class="fas fa-sign-in-alt me-2"></i>Login
+            <!-- 3D styled laptop / screen -->
+            <rect x="90" y="80" width="220" height="140" rx="14" fill="#D97706" />
+            <rect x="95" y="85" width="210" height="120" rx="10" fill="#FFFFFF" />
+            <rect x="80" y="215" width="240" height="15" rx="6" fill="#B45309" />
+            <rect x="180" y="230" width="40" height="6" rx="3" fill="#78350F" />
+            
+            <!-- 3D Floating elements on screen -->
+            <rect x="115" y="105" width="170" height="22" rx="6" fill="#FEF3C7" />
+            <rect x="115" y="135" width="80" height="50" rx="8" fill="#10B981" />
+            <circle cx="245" cy="160" r="25" fill="#EC4899" />
+            <path d="M237,160 L242,165 L255,152" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none" />
+            
+            <!-- Cute details around -->
+            <!-- Stars -->
+            <path d="M60,90 L63,98 L71,98 L65,103 L67,111 L60,106 L53,111 L55,103 L49,98 L57,98 Z" fill="#F59E0B" />
+            <path d="M330,200 L332,205 L337,205 L333,208 L334,213 L330,210 L326,213 L327,208 L323,205 L328,205 Z" fill="#F59E0B" />
+            <!-- Tiny spheres -->
+            <circle cx="80" cy="260" r="12" fill="#14B8A6" />
+            <circle cx="310" cy="90" r="15" fill="#8B5CF6" />
+          </svg>
+        </div>
+        <div class="welcome-text">
+          <h1>Welcome to MACE</h1>
+          <p>Access your staff portal with secure authentication and manage your profile seamlessly.</p>
+        </div>
+      </div>
+
+      <!-- Right Panel - Login Form -->
+      <div class="right-panel">
+        <div class="card-3d login-card">
+          <div class="login-header">
+            <div class="icon">
+              <i class="fas fa-graduation-cap"></i>
+            </div>
+            <h2>MACE Staff Portal</h2>
+            <p>Sign in or register to access your account</p>
+          </div>
+          
+          <div class="card-body">
+            <!-- Tabs for Login/Registration -->
+            <ul class="nav nav-tabs" id="authTabs" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab" aria-controls="login" aria-selected="true">
+                  <i class="fas fa-sign-in-alt me-2"></i>Login
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab" aria-controls="register" aria-selected="false">
+                  <i class="fas fa-user-plus me-2"></i>Register
+                </button>
+              </li>
+            </ul>
+            
+            <div class="tab-content" id="authTabsContent">
+              <!-- Login Tab -->
+              <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
+                <form id="loginForm">
+                  <div class="mb-4">
+                    <label for="email" class="label-3d">Email Address</label>
+                    <input type="email" id="email" class="input-3d" placeholder="Enter your email" required>
+                  </div>
+                  
+                  <div class="mb-4">
+                    <label for="password" class="label-3d">Password</label>
+                    <div class="input-group-container">
+                      <input type="password" id="password" class="input-3d" placeholder="Enter your password" required>
+                      <span class="password-toggle" id="togglePassword">
+                        <i class="fas fa-eye"></i>
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <div id="errorMsg" class="alert alert-danger d-none mb-4"></div>
+                  <div id="successMsg" class="alert alert-success d-none mb-4"></div>
+                  
+                  <button class="btn-3d btn-3d-orange w-100" type="submit" id="loginButton">
+                    <span id="buttonText">Sign In</span>
+                    <span id="buttonSpinner" class="spinner-border d-none" style="width: 1.25rem; height: 1.25rem; border-width: 0.15em;" role="status"></span>
                   </button>
-                </li>
-                <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab" aria-controls="register" aria-selected="false">
-                    <i class="fas fa-user-plus me-2"></i>Register
-                  </button>
-                </li>
-              </ul>
+                </form>
+              </div>
               
-              <div class="tab-content" id="authTabsContent">
-                <!-- Login Tab -->
-                <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
-                  <form id="loginForm">
-                    <div class="mb-4">
-                      <label for="email" class="form-label">Email Address</label>
-                      <div class="input-group">
-                        <span class="input-group-text">
-                          <i class="fas fa-envelope"></i>
-                        </span>
-                        <input type="email" id="email" class="form-control" placeholder="Enter your email" required>
-                      </div>
+              <!-- Registration Tab -->
+              <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
+                <form id="registrationForm" class="registration-form">
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="name" class="label-3d">Full Name <span class="text-danger">*</span></label>
+                      <input type="text" class="input-3d" id="name" name="name" required>
                     </div>
-                    
-                    <div class="mb-4">
-                      <label for="password" class="form-label">Password</label>
-                      <div class="input-group">
-                        <span class="input-group-text">
-                          <i class="fas fa-lock"></i>
-                        </span>
-                        <input type="password" id="password" class="form-control" placeholder="Enter your password" required>
-                        <span class="password-toggle" id="togglePassword">
-                          <i class="fas fa-eye"></i>
-                        </span>
-                      </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="emp_no" class="label-3d">Employee Number <span class="text-danger">*</span></label>
+                      <input type="text" class="input-3d" id="emp_no" name="emp_no">
                     </div>
-                    
-                    <div id="errorMsg" class="alert alert-danger d-none mb-4"></div>
-                    <div id="successMsg" class="alert alert-success d-none mb-4"></div>
-                    
-                    <button class="btn btn-primary w-100" type="submit" id="loginButton">
-                      <span id="buttonText">Sign In</span>
-                      <span id="buttonSpinner" class="spinner-border d-none" role="status"></span>
-                    </button>
-                  </form>
-                </div>
-                
-                <!-- Registration Tab -->
-                <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
-                  <form id="registrationForm" class="registration-form">
-                    <div class="row">
-                      <div class="col-md-6 mb-3">
-                        <label for="name" class="form-label">Full Name <span class="required">*</span></label>
-                        <input type="text" class="form-control" id="name" name="name" required>
-                      </div>
-                      <div class="col-md-6 mb-3">
-                        <label for="emp_no" class="form-label">Employee Number <span class="required">*</span></label>
-                        <input type="text" class="form-control" id="emp_no" name="emp_no">
-                      </div>
-                    </div>
+                  </div>
 
-                    <div class="row">
-                      <div class="col-md-6 mb-3">
-                        <label for="email" class="form-label">Email Address <span class="required">*</span></label>
-                        <input type="email" class="form-control" id="reg_email" name="email" required>
-                      </div>
-                      <div class="col-md-6 mb-3">
-                        <label for="mobile_no" class="form-label">Mobile Number <span class="required">*</span></label>
-                        <input type="tel" class="form-control" id="mobile_no" name="mobile_no" required>
-                      </div>
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="reg_email" class="label-3d">Email Address <span class="text-danger">*</span></label>
+                      <input type="email" class="input-3d" id="reg_email" name="email" required>
                     </div>
-
-                    <div class="row">
-                      <div class="col-md-6 mb-3">
-                        <label for="department" class="form-label">Department <span class="required">*</span></label>
-                        <select class="form-select" id="department" name="department" required>
-                          <option value="">Select Department</option>
-                          <option value="Electronics and Communication Engineering">Electronics and Communication Engineering</option>
-                          <option value="Civil Engineering">Civil Engineering</option>
-                          <option value="Mechanical Engineering">Mechanical Engineering</option>
-                          <option value="Computer Science and Engineering">Computer Science and Engineering</option>
-                          <option value="Administrative">Administrative</option>
-                          <option value="Electrical and Electronics Engineering">Electrical and Electronics Engineering</option>
-                          <option value="Mathematics">Mathematics</option>
-                          <option value="Science and Humanities">Science and Humanities</option>
-                          <option value="Computer Applications">Computer Applications</option>
-                        </select>
-                      </div>
-                      <div class="col-md-6 mb-3">
-                        <label for="designation" class="form-label">Designation <span class="required">*</span></label>
-                        <input type="text" class="form-control" id="designation" name="designation" required>
-                      </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="mobile_no" class="label-3d">Mobile Number <span class="text-danger">*</span></label>
+                      <input type="tel" class="input-3d" id="mobile_no" name="mobile_no" required>
                     </div>
+                  </div>
 
-                    <div class="row">
-                      <div class="col-md-6 mb-3">
-                        <label for="type" class="form-label">Staff Type</label>
-                        <select class="form-select" id="type" name="type">
-                          <option value="">Select Type</option>
-                          <option value="Teaching Staff">Teaching Staff</option>
-                          <option value="Non Teaching Staff">Non Teaching Staff</option>
-                        </select>
-                      </div>
-                      <div class="col-md-6 mb-3">
-                        <label for="contract_type" class="form-label">Contract Type</label>
-                        <select class="form-select" id="contract_type" name="contract_type">
-                          <option value="">Select Contract Type</option>
-                          <option value="Permanent">Permanent</option>
-                          <option value="Contract">Contract</option>
-                          <option value="Temporary">Temporary</option>
-                        </select>
-                      </div>
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="department" class="label-3d">Department <span class="text-danger">*</span></label>
+                      <select class="input-3d form-select" id="department" name="department" required>
+                        <option value="">Select Department</option>
+                        <option value="Electronics and Communication Engineering">Electronics & Communication</option>
+                        <option value="Civil Engineering">Civil Engineering</option>
+                        <option value="Mechanical Engineering">Mechanical Engineering</option>
+                        <option value="Computer Science and Engineering">Computer Science & Engineering</option>
+                        <option value="Administrative">Administrative</option>
+                        <option value="Electrical and Electronics Engineering">Electrical & Electronics</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="Science and Humanities">Science & Humanities</option>
+                        <option value="Computer Applications">Computer Applications</option>
+                      </select>
                     </div>
-
-                    <div class="row">
-                      <div class="col-md-6 mb-3">
-                        <label for="category" class="form-label">Category</label>
-                        <input type="text" class="form-control" id="category" name="category">
-                      </div>
-                      <div class="col-md-6 mb-3">
-                        <label for="gender" class="form-label">Gender</label>
-                        <select class="form-select" id="gender" name="gender">
-                          <option value="">Select Gender</option>
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
-                          <option value="Other">Other</option>
-                        </select>
-                      </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="designation" class="label-3d">Designation <span class="text-danger">*</span></label>
+                      <input type="text" class="input-3d" id="designation" name="designation" required>
                     </div>
+                  </div>
 
-                    <div class="row">
-                      <div class="col-md-6 mb-3">
-                        <label for="blood_group" class="form-label">Blood Group</label>
-                        <select class="form-select" id="blood_group" name="blood_group">
-                          <option value="">Select Blood Group</option>
-                          <option value="A+">A+</option>
-                          <option value="A-">A-</option>
-                          <option value="B+">B+</option>
-                          <option value="B-">B-</option>
-                          <option value="AB+">AB+</option>
-                          <option value="AB-">AB-</option>
-                          <option value="O+">O+</option>
-                          <option value="O-">O-</option>
-                        </select>
-                      </div>
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="type" class="label-3d">Staff Type</label>
+                      <select class="input-3d form-select" id="type" name="type">
+                        <option value="">Select Type</option>
+                        <option value="Teaching Staff">Teaching Staff</option>
+                        <option value="Non Teaching Staff">Non Teaching Staff</option>
+                      </select>
                     </div>
-
-                    <div class="mb-3">
-                      <label for="permanent_address" class="form-label">Permanent Address</label>
-                      <textarea class="form-control" id="permanent_address" name="permanent_address" rows="3"></textarea>
+                    <div class="col-md-6 mb-3">
+                      <label for="contract_type" class="label-3d">Contract Type</label>
+                      <select class="input-3d form-select" id="contract_type" name="contract_type">
+                        <option value="">Select Contract Type</option>
+                        <option value="Permanent">Permanent</option>
+                        <option value="Contract">Contract</option>
+                        <option value="Temporary">Temporary</option>
+                      </select>
                     </div>
+                  </div>
 
-                    <div class="info-alert">
-                      <i class="fas fa-info-circle me-2"></i>
-                      <strong>Important:</strong> Your registration will be reviewed by the admin. You will be notified once approved.
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="category" class="label-3d">Category</label>
+                      <input type="text" class="input-3d" id="category" name="category">
                     </div>
+                    <div class="col-md-6 mb-3">
+                      <label for="gender" class="label-3d">Gender</label>
+                      <select class="input-3d form-select" id="gender" name="gender">
+                        <option value="">Select Gender</option>
+                        <option value="Male">Male</option>
+                        <option value="Female">Female</option>
+                        <option value="Other">Other</option>
+                      </select>
+                    </div>
+                  </div>
 
-                    <div id="regErrorMsg" class="alert alert-danger d-none mb-4"></div>
-                    <div id="regSuccessMsg" class="alert alert-success d-none mb-4"></div>
-                    
-                    <button type="submit" class="btn btn-primary w-100" id="submitBtn">
-                      <i class="fas fa-paper-plane me-2"></i>Submit Registration
-                    </button>
-                  </form>
-                </div>
+                  <div class="row">
+                    <div class="col-md-6 mb-3">
+                      <label for="blood_group" class="label-3d">Blood Group</label>
+                      <select class="input-3d form-select" id="blood_group" name="blood_group">
+                        <option value="">Select Blood Group</option>
+                        <option value="A+">A+</option>
+                        <option value="A-">A-</option>
+                        <option value="B+">B+</option>
+                        <option value="B-">B-</option>
+                        <option value="AB+">AB+</option>
+                        <option value="AB-">AB-</option>
+                        <option value="O+">O+</option>
+                        <option value="O-">O-</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="mb-3">
+                    <label for="permanent_address" class="label-3d">Permanent Address</label>
+                    <textarea class="input-3d" id="permanent_address" name="permanent_address" rows="3"></textarea>
+                  </div>
+
+                  <div class="info-alert">
+                    <i class="fas fa-info-circle me-2"></i>
+                    <strong>Important:</strong> Your registration will be reviewed by the admin. You will be notified once approved.
+                  </div>
+
+                  <div id="regErrorMsg" class="alert alert-danger d-none mb-4"></div>
+                  <div id="regSuccessMsg" class="alert alert-success d-none mb-4"></div>
+                  
+                  <button type="submit" class="btn-3d btn-3d-orange w-100" id="submitBtn">
+                    <i class="fas fa-paper-plane me-2"></i>Submit Registration
+                  </button>
+                </form>
               </div>
             </div>
           </div>
@@ -784,8 +546,6 @@
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- Font Awesome for icons -->
-  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
   <script>
     // Toggle password visibility
@@ -856,6 +616,7 @@
       errorMsg.classList.add('d-none');
     }
 
+    // Hide registration messages
     function hideRegMessages() {
       document.getElementById('regErrorMsg').classList.add('d-none');
       document.getElementById('regSuccessMsg').classList.add('d-none');
@@ -881,18 +642,12 @@
       hideMessages();
       
       try {
-        // Use the firebase-client.js function (matches Flutter logic exactly)
         await signInWithEmailAndPassword(email, password);
-        
-        // Add a delay to allow auth state to update (like Flutter - 2 seconds)
         await new Promise(resolve => setTimeout(resolve, 2000));
         
-        // Check if user is logged in after delay
         const currentUser = firebase.auth().currentUser;
         if (currentUser) {
-          // Successfully logged in, check role and redirect
           const isAdmin = await checkAdminStatus(currentUser);
-          
           showSuccess('Login successful! Redirecting...');
           setTimeout(() => {
             if (isAdmin) {
@@ -915,7 +670,6 @@
     // Check if user is already logged in
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
-        // User is already signed in, redirect them
         checkAdminStatus(user).then(isAdmin => {
           if (isAdmin) {
             window.location.href = '/admin.html';
@@ -928,77 +682,69 @@
       }
     });
 
-   // Handle registration form submission
-document.getElementById('registrationForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
-    const submitBtn = document.getElementById('submitBtn');
-    const originalText = submitBtn.innerHTML;
-    
-    // Show loading
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '<div class="loading-spinner"></div> Submitting...';
-    hideRegMessages();
-    
-    // Collect form data
-    const formData = {
-        name: document.getElementById('name').value.trim(),
-        emp_no: document.getElementById('emp_no').value.trim(),
-        email: document.getElementById('reg_email').value.trim(),
-        mobile_no: document.getElementById('mobile_no').value.trim(),
-        department: document.getElementById('department').value,
-        designation: document.getElementById('designation').value.trim(),
-        type: document.getElementById('type').value,
-        contract_type: document.getElementById('contract_type').value,
-        category: document.getElementById('category').value.trim(),
-        gender: document.getElementById('gender').value,
-        blood_group: document.getElementById('blood_group').value,
-        permanent_address: document.getElementById('permanent_address').value.trim()
-    };
-    
-    // Basic validation
-    if (!formData.name ||  !formData.email || !formData.mobile_no || 
-        !formData.department || !formData.designation) {
-        showRegError('Please fill in all required fields');
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-        return;
-    }
-    
-    try {
-        // Send data to Flask backend
-        const response = await fetch('/api/submit_registration', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData)
-        });
-        
-        const result = await response.json();
-        
-        if (result.success) {
-            showRegSuccess(result.message);
-            
-            // Reset form
-            this.reset();
-            
-            // Switch to login tab after successful registration
-            setTimeout(() => {
-                const loginTab = new bootstrap.Tab(document.getElementById('login-tab'));
-                loginTab.show();
-            }, 3000);
-        } else {
-            showRegError(result.error || 'Registration failed. Please try again.');
-        }
-    } catch (error) {
-        console.log('Registration error:', error);
-        showRegError('Network error. Please try again.');
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = originalText;
-    }
-});
+    // Handle registration form submission
+    document.getElementById('registrationForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const submitBtn = document.getElementById('submitBtn');
+      const originalText = submitBtn.innerHTML;
+      
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<div class="loading-spinner"></div> Submitting...';
+      hideRegMessages();
+      
+      const formData = {
+          name: document.getElementById('name').value.trim(),
+          emp_no: document.getElementById('emp_no').value.trim(),
+          email: document.getElementById('reg_email').value.trim(),
+          mobile_no: document.getElementById('mobile_no').value.trim(),
+          department: document.getElementById('department').value,
+          designation: document.getElementById('designation').value.trim(),
+          type: document.getElementById('type').value,
+          contract_type: document.getElementById('contract_type').value,
+          category: document.getElementById('category').value.trim(),
+          gender: document.getElementById('gender').value,
+          blood_group: document.getElementById('blood_group').value,
+          permanent_address: document.getElementById('permanent_address').value.trim()
+      };
+      
+      if (!formData.name || !formData.email || !formData.mobile_no || 
+          !formData.department || !formData.designation) {
+          showRegError('Please fill in all required fields');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+          return;
+      }
+      
+      try {
+          const response = await fetch('/api/submit_registration', {
+              method: 'POST',
+              headers: {
+                  'Content-Type': 'application/json',
+              },
+              body: JSON.stringify(formData)
+          });
+          
+          const result = await response.json();
+          
+          if (result.success) {
+              showRegSuccess(result.message);
+              this.reset();
+              setTimeout(() => {
+                  const loginTab = new bootstrap.Tab(document.getElementById('login-tab'));
+                  loginTab.show();
+              }, 3000);
+          } else {
+              showRegError(result.error || 'Registration failed. Please try again.');
+          }
+      } catch (error) {
+          console.log('Registration error:', error);
+          showRegError('Network error. Please try again.');
+      } finally {
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
+      }
+    });
   </script>
 </body>
 </html>

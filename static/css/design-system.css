@@ -1,0 +1,388 @@
+/* static/css/design-system.css */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --primary-color: #D97706;
+  --primary-hover: #B45309;
+  --primary-active: #78350F;
+  --primary-glow: rgba(217, 119, 6, 0.15);
+  
+  /* Vibrant Multi-Color Accents (No Indigo/Blue) */
+  --accent-green: #10B981;
+  --accent-green-dark: #047857;
+  --accent-teal: #14B8A6;
+  --accent-teal-dark: #0F766E;
+  --accent-purple: #8B5CF6;
+  --accent-purple-dark: #6D28D9;
+  --accent-pink: #EC4899;
+  --accent-pink-dark: #BE185D;
+  --accent-red: #EF4444;
+  --accent-red-dark: #B91C1C;
+  --accent-gold: #F59E0B;
+  --accent-gold-dark: #D97706;
+  
+  /* Light Theme Backgrounds and Text */
+  --bg-page: #FAF9F6; /* Warm alabaster/cream off-white */
+  --bg-card: #FFFFFF;
+  --text-main: #1F2937;
+  --text-muted: #6B7280;
+  --border-light: #E5E7EB;
+  
+  /* Claymorphic & Neomorphic Shadows */
+  --shadow-3d-card: 0 16px 32px -4px rgba(217, 119, 6, 0.06), 0 8px 16px -2px rgba(0, 0, 0, 0.03);
+  --shadow-3d-card-hover: 0 24px 48px -6px rgba(217, 119, 6, 0.12), 0 12px 24px -4px rgba(0, 0, 0, 0.06);
+  --shadow-3d-btn-orange: 0 4px 0 #78350F, 0 8px 16px rgba(217, 119, 6, 0.2);
+  --shadow-3d-btn-green: 0 4px 0 #047857, 0 8px 16px rgba(16, 185, 129, 0.2);
+  --shadow-3d-btn-red: 0 4px 0 #7F1D1D, 0 8px 16px rgba(239, 68, 68, 0.2);
+  --shadow-3d-btn-purple: 0 4px 0 #4C1D95, 0 8px 16px rgba(139, 92, 246, 0.2);
+  --shadow-3d-btn-teal: 0 4px 0 #115E59, 0 8px 16px rgba(20, 184, 166, 0.2);
+  --shadow-inset-3d: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-page);
+  color: var(--text-main);
+  font-family: 'Outfit', 'Poppins', sans-serif;
+  overflow-x: hidden;
+  position: relative;
+  min-height: 100vh;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-page);
+}
+::-webkit-scrollbar-thumb {
+  background: #D1D5DB;
+  border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary-color);
+}
+
+/* Floating 3D Doodles Background */
+.doodle-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.floating-doodle {
+  position: absolute;
+  opacity: 0.8;
+  animation: float-bob 8s ease-in-out infinite alternate;
+}
+
+.floating-doodle:nth-child(1) {
+  top: 15%;
+  left: 5%;
+  width: 100px;
+  height: 100px;
+  animation-duration: 9s;
+}
+
+.floating-doodle:nth-child(2) {
+  top: 25%;
+  right: 8%;
+  width: 120px;
+  height: 120px;
+  animation-duration: 11s;
+  animation-delay: 1.5s;
+}
+
+.floating-doodle:nth-child(3) {
+  bottom: 20%;
+  left: 10%;
+  width: 80px;
+  height: 80px;
+  animation-duration: 7s;
+  animation-delay: 0.5s;
+}
+
+.floating-doodle:nth-child(4) {
+  bottom: 15%;
+  right: 12%;
+  width: 110px;
+  height: 110px;
+  animation-duration: 10s;
+  animation-delay: 2s;
+}
+
+@keyframes float-bob {
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  100% {
+    transform: translateY(-25px) rotate(15deg);
+  }
+}
+
+/* Claymorphic 3D Cards */
+.card-3d {
+  background: var(--bg-card);
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  border-radius: 24px;
+  box-shadow: var(--shadow-3d-card);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-3d:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-3d-card-hover);
+}
+
+.card-3d::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 8px;
+  background: linear-gradient(90deg, var(--primary-color), var(--accent-gold));
+}
+
+.card-3d.green::before { background: linear-gradient(90deg, var(--accent-green), #34D399); }
+.card-3d.teal::before { background: linear-gradient(90deg, var(--accent-teal), #2DD4BF); }
+.card-3d.purple::before { background: linear-gradient(90deg, var(--accent-purple), #A78BFA); }
+.card-3d.pink::before { background: linear-gradient(90deg, var(--accent-pink), #F472B6); }
+.card-3d.red::before { background: linear-gradient(90deg, var(--accent-red), #F87171); }
+
+/* Physical 3D Buttons */
+.btn-3d {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  border-radius: 16px;
+  padding: 14px 28px;
+  cursor: pointer;
+  position: relative;
+  top: 0;
+  transition: all 0.1s ease;
+  user-select: none;
+  text-decoration: none;
+}
+
+.btn-3d-orange {
+  background: var(--primary-color);
+  color: white;
+  box-shadow: var(--shadow-3d-btn-orange);
+}
+.btn-3d-orange:hover {
+  background: var(--primary-hover);
+  top: -1px;
+  box-shadow: 0 5px 0 #78350F, 0 10px 20px rgba(217, 119, 6, 0.25);
+}
+.btn-3d-orange:active {
+  top: 3px;
+  box-shadow: 0 1px 0 #78350F, 0 4px 8px rgba(217, 119, 6, 0.15);
+}
+
+.btn-3d-green {
+  background: var(--accent-green);
+  color: white;
+  box-shadow: var(--shadow-3d-btn-green);
+}
+.btn-3d-green:hover {
+  background: var(--accent-green-dark);
+  top: -1px;
+  box-shadow: 0 5px 0 #047857, 0 10px 20px rgba(16, 185, 129, 0.25);
+}
+.btn-3d-green:active {
+  top: 3px;
+  box-shadow: 0 1px 0 #047857, 0 4px 8px rgba(16, 185, 129, 0.15);
+}
+
+.btn-3d-red {
+  background: var(--accent-red);
+  color: white;
+  box-shadow: var(--shadow-3d-btn-red);
+}
+.btn-3d-red:hover {
+  background: var(--accent-red-dark);
+  top: -1px;
+  box-shadow: 0 5px 0 #7F1D1D, 0 10px 20px rgba(239, 68, 68, 0.25);
+}
+.btn-3d-red:active {
+  top: 3px;
+  box-shadow: 0 1px 0 #7F1D1D, 0 4px 8px rgba(239, 68, 68, 0.15);
+}
+
+.btn-3d-purple {
+  background: var(--accent-purple);
+  color: white;
+  box-shadow: var(--shadow-3d-btn-purple);
+}
+.btn-3d-purple:hover {
+  background: var(--accent-purple-dark);
+  top: -1px;
+  box-shadow: 0 5px 0 #4C1D95, 0 10px 20px rgba(139, 92, 246, 0.25);
+}
+.btn-3d-purple:active {
+  top: 3px;
+  box-shadow: 0 1px 0 #4C1D95, 0 4px 8px rgba(139, 92, 246, 0.15);
+}
+
+.btn-3d-teal {
+  background: var(--accent-teal);
+  color: white;
+  box-shadow: var(--shadow-3d-btn-teal);
+}
+.btn-3d-teal:hover {
+  background: var(--accent-teal-dark);
+  top: -1px;
+  box-shadow: 0 5px 0 #115E59, 0 10px 20px rgba(20, 184, 166, 0.25);
+}
+.btn-3d-teal:active {
+  top: 3px;
+  box-shadow: 0 1px 0 #115E59, 0 4px 8px rgba(20, 184, 166, 0.15);
+}
+
+.btn-3d:disabled {
+  background: #D1D5DB !important;
+  color: #9CA3AF !important;
+  box-shadow: 0 4px 0 #9CA3AF !important;
+  top: 0 !important;
+  cursor: not-allowed;
+}
+
+/* 3D Inset Input Fields */
+.input-3d {
+  background: #F9FAFB;
+  border: 2px solid #E5E7EB;
+  border-radius: 16px;
+  padding: 14px 18px;
+  font-family: 'Outfit', sans-serif;
+  color: var(--text-main);
+  box-shadow: var(--shadow-inset-3d);
+  transition: all 0.3s ease;
+  width: 100%;
+  outline: none;
+}
+
+.input-3d:focus {
+  border-color: var(--primary-color);
+  background: white;
+  box-shadow: var(--shadow-inset-3d), 0 0 0 4px var(--primary-glow);
+}
+
+.label-3d {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 600;
+  color: #374151;
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* Neomorphic Stats Cards */
+.stat-card-3d {
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-3d-card);
+  transition: transform 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.stat-card-3d:hover {
+  transform: translateY(-4px);
+}
+
+.stat-card-3d .stat-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin-bottom: 14px;
+  box-shadow: var(--shadow-3d-card);
+}
+
+.stat-card-3d.orange .stat-icon { background: #FEF3C7; color: var(--primary-color); }
+.stat-card-3d.green .stat-icon { background: #D1FAE5; color: var(--accent-green); }
+.stat-card-3d.teal .stat-icon { background: #CCFBF1; color: var(--accent-teal); }
+.stat-card-3d.purple .stat-icon { background: #F3E8FF; color: var(--accent-purple); }
+.stat-card-3d.pink .stat-icon { background: #FCE7F3; color: var(--accent-pink); }
+.stat-card-3d.red .stat-icon { background: #FEE2E2; color: var(--accent-red); }
+
+.stat-card-3d .stat-number {
+  font-size: 32px;
+  font-weight: 800;
+  font-family: 'Outfit', sans-serif;
+  margin: 6px 0;
+  line-height: 1;
+}
+
+/* 3D Soft Badges */
+.badge-3d {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-block;
+}
+
+.badge-3d-orange { background: #FFEDD5; color: #9A3412; }
+.badge-3d-green { background: #D1FAE5; color: #065F46; }
+.badge-3d-teal { background: #CCFBF1; color: #075985; }
+.badge-3d-purple { background: #F3E8FF; color: #5B21B6; }
+.badge-3d-red { background: #FEE2E2; color: #991B1B; }
+
+/* Custom Modals styling */
+.modal-content-3d {
+  border-radius: 28px;
+  border: none;
+  box-shadow: 0 30px 60px rgba(217, 119, 6, 0.15);
+  background: white;
+  overflow: hidden;
+}
+
+.modal-header-3d {
+  background: linear-gradient(135deg, var(--primary-color), var(--accent-gold));
+  color: white;
+  border: none;
+  padding: 24px;
+}
+
+.modal-header-3d .modal-title {
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+}
+
+/* Pulse animation helper */
+@keyframes pulse-ring {
+  0% { transform: scale(0.95); opacity: 0.5; }
+  50% { transform: scale(1.05); opacity: 0.8; }
+  100% { transform: scale(0.95); opacity: 0.5; }
+}
+
+.pulse-element {
+  animation: pulse-ring 3s infinite ease-in-out;
+}
