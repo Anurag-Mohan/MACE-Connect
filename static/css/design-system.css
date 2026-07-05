@@ -36,7 +36,7 @@
   --shadow-3d-btn-red: 0 4px 0 #7F1D1D, 0 8px 16px rgba(239, 68, 68, 0.2);
   --shadow-3d-btn-purple: 0 4px 0 #4C1D95, 0 8px 16px rgba(139, 92, 246, 0.2);
   --shadow-3d-btn-teal: 0 4px 0 #115E59, 0 8px 16px rgba(20, 184, 166, 0.2);
-  --shadow-inset-3d: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+  --shadow-inset-3d: inset 0 2px 5px rgba(0, 0, 0, 0.06);
 }
 
 * {
@@ -103,6 +103,275 @@ body {
 .card-3d.purple::before { background: linear-gradient(90deg, var(--accent-purple), #A78BFA); }
 .card-3d.pink::before { background: linear-gradient(90deg, var(--accent-pink), #F472B6); }
 .card-3d.red::before { background: linear-gradient(90deg, var(--accent-red), #F87171); }
+
+/* Overlapping 3D Card Stack (For new landing layouts) */
+.card-deck-3d {
+  position: relative;
+  perspective: 1000px;
+}
+
+.card-stacked-3d {
+  position: relative;
+  background: white;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 15px 35px rgba(217, 119, 6, 0.08);
+  z-index: 2;
+  transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.card-deck-3d::after {
+  content: '';
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  right: -15px;
+  bottom: -15px;
+  background: #FFFDF9;
+  border: 1.5px solid rgba(217, 119, 6, 0.15);
+  border-radius: 28px;
+  z-index: 1;
+  pointer-events: none;
+  transition: transform 0.4s ease;
+}
+
+.card-deck-3d:hover .card-stacked-3d {
+  transform: translate(-5px, -5px);
+}
+.card-deck-3d:hover::after {
+  transform: translate(5px, 5px);
+}
+
+/* Sliding Neomorphic Capsule Selectors (replaces raw tabs) */
+.tab-slider-container {
+  display: flex;
+  background: #FFFDF9;
+  border: 2px solid #E5E7EB;
+  border-radius: 20px;
+  padding: 6px;
+  position: relative;
+  box-shadow: var(--shadow-inset-3d);
+}
+
+.tab-slider-btn {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 12px 24px;
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  color: #9CA3AF;
+  z-index: 2;
+  cursor: pointer;
+  transition: color 0.3s ease;
+  text-align: center;
+}
+
+.tab-slider-btn.active {
+  color: white;
+}
+
+.tab-slider-indicator {
+  position: absolute;
+  top: 6px;
+  bottom: 6px;
+  left: 6px;
+  width: calc(50% - 6px);
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-gold) 100%);
+  border-radius: 14px;
+  z-index: 1;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 4px 12px var(--primary-glow);
+}
+
+/* 3D ID Badge Card Styling (for Directory overhaul) */
+.badge-card-3d {
+  background: white;
+  border-radius: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  box-shadow: var(--shadow-3d-card);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  position: relative;
+  padding-top: 40px; /* Offset room for overlapping avatar */
+  margin-top: 35px;  /* Clearance for floating avatar */
+  min-height: 240px;
+  display: flex;
+  flex-direction: column;
+}
+
+.badge-card-3d:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-3d-card-hover);
+}
+
+.badge-card-3d::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 8px;
+  background: var(--primary-color);
+  border-radius: 24px 0 0 24px;
+}
+
+.badge-card-3d.green::before { background: var(--accent-green); }
+.badge-card-3d.teal::before { background: var(--accent-teal); }
+.badge-card-3d.purple::before { background: var(--accent-purple); }
+.badge-card-3d.pink::before { background: var(--accent-pink); }
+.badge-card-3d.red::before { background: var(--accent-red); }
+
+.badge-avatar-overlap {
+  position: absolute;
+  top: -35px;
+  left: 30px;
+  width: 76px;
+  height: 76px;
+  border-radius: 22px;
+  border: 4px solid white;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  z-index: 10;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 24px;
+  color: white;
+}
+
+.badge-header-section {
+  padding: 10px 24px 10px 120px; /* Aligns content beside overlapping avatar */
+  min-height: 55px;
+}
+
+.badge-body-section {
+  padding: 12px 24px 20px 24px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.badge-footer-toolbar {
+  background: #FAF9F6;
+  border-top: 1px solid #F3F4F6;
+  border-radius: 0 0 24px 24px;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: auto;
+}
+
+/* Sidebar grid system layout */
+.app-layout-sidebar {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+@media (max-width: 992px) {
+  .app-layout-sidebar {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+}
+
+/* Persistent left navigation sidebar for admin console dashboard */
+.admin-layout-container {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  min-height: calc(100vh - 120px);
+  max-width: 1400px;
+  margin: 1.5rem auto;
+  gap: 2rem;
+  padding: 0 1rem;
+}
+
+.admin-sidebar-dock {
+  background: white;
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: var(--shadow-3d-card);
+  padding: 2rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  height: fit-content;
+  position: sticky;
+  top: 20px;
+}
+
+.admin-sidebar-btn {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 14px 20px;
+  background: #FAF9F6;
+  border: 2px solid transparent;
+  color: var(--text-muted);
+  font-family: 'Outfit', sans-serif;
+  font-weight: 700;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  text-align: left;
+  outline: none;
+  box-shadow: var(--shadow-inset-3d);
+}
+
+.admin-sidebar-btn:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+  transform: translateX(4px);
+}
+
+.admin-sidebar-btn.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+  box-shadow: 0 8px 16px var(--primary-glow);
+}
+
+.admin-sidebar-btn.active i {
+  color: white !important;
+}
+
+.admin-workspace-panel {
+  display: none;
+}
+
+.admin-workspace-panel.active {
+  display: block;
+  animation: panelFadeIn 0.4s ease;
+}
+
+@keyframes panelFadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 992px) {
+  .admin-layout-container {
+    grid-template-columns: 1fr;
+  }
+  .admin-sidebar-dock {
+    position: static;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: 1rem;
+  }
+  .admin-sidebar-btn {
+    white-space: nowrap;
+    padding: 10px 16px;
+    font-size: 0.9rem;
+  }
+}
 
 /* Physical 3D Buttons */
 .btn-3d {
