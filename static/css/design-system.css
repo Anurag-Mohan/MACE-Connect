@@ -70,67 +70,7 @@ body {
   background: var(--primary-color);
 }
 
-/* Floating 3D Doodles Background */
-.doodle-bg {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-}
-
-.floating-doodle {
-  position: absolute;
-  opacity: 0.8;
-  animation: float-bob 8s ease-in-out infinite alternate;
-}
-
-.floating-doodle:nth-child(1) {
-  top: 15%;
-  left: 5%;
-  width: 100px;
-  height: 100px;
-  animation-duration: 9s;
-}
-
-.floating-doodle:nth-child(2) {
-  top: 25%;
-  right: 8%;
-  width: 120px;
-  height: 120px;
-  animation-duration: 11s;
-  animation-delay: 1.5s;
-}
-
-.floating-doodle:nth-child(3) {
-  bottom: 20%;
-  left: 10%;
-  width: 80px;
-  height: 80px;
-  animation-duration: 7s;
-  animation-delay: 0.5s;
-}
-
-.floating-doodle:nth-child(4) {
-  bottom: 15%;
-  right: 12%;
-  width: 110px;
-  height: 110px;
-  animation-duration: 10s;
-  animation-delay: 2s;
-}
-
-@keyframes float-bob {
-  0% {
-    transform: translateY(0px) rotate(0deg);
-  }
-  100% {
-    transform: translateY(-25px) rotate(15deg);
-  }
-}
+/* Neomorphic 3D background elements are now handled via dynamic canvas in mesh-background.js */
 
 /* Claymorphic 3D Cards */
 .card-3d {

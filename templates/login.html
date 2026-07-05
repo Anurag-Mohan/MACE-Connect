@@ -11,6 +11,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="/static/js/firebase-client.js"></script>
+  <script src="/static/js/mesh-background.js"></script>
   <style>
     /* Page Specific Overrides & Layout */
     body {
@@ -264,68 +265,7 @@
 </head>
 <body>
 
-  <!-- Floating 3D Doodles Background -->
-  <div class="doodle-bg">
-    <!-- Doodle 1: 3D Cylinder -->
-    <svg class="floating-doodle" width="100" height="100" viewBox="0 0 100 100">
-      <defs>
-        <linearGradient id="cylinderGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#FBBF24" />
-          <stop offset="60%" stop-color="#D97706" />
-          <stop offset="100%" stop-color="#78350F" />
-        </linearGradient>
-      </defs>
-      <ellipse cx="50" cy="30" rx="30" ry="12" fill="#FCD34D" />
-      <path d="M20,30 L20,70 A30,12 0 0,0 80,70 L80,30 A30,12 0 0,1 20,30 Z" fill="url(#cylinderGrad)" />
-      <ellipse cx="50" cy="30" rx="30" ry="12" fill="#FDE68A" />
-    </svg>
-
-    <!-- Doodle 2: 3D Book -->
-    <svg class="floating-doodle" width="120" height="120" viewBox="0 0 120 120">
-      <defs>
-        <linearGradient id="bookCoverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#34D399" />
-          <stop offset="100%" stop-color="#047857" />
-        </linearGradient>
-        <linearGradient id="bookPageGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#FFFFFF" />
-          <stop offset="100%" stop-color="#E5E7EB" />
-        </linearGradient>
-      </defs>
-      <!-- Base Shadow -->
-      <path d="M25,80 L60,95 L95,80 L60,65 Z" fill="rgba(0,0,0,0.06)" filter="blur(4px)" />
-      <!-- Book Back Cover -->
-      <path d="M25,75 L60,90 L95,75 L95,78 L60,93 L25,78 Z" fill="#064E3B" />
-      <!-- Pages thickness -->
-      <path d="M28,73 L60,86 L92,73 L92,75 L60,88 L28,75 Z" fill="url(#bookPageGrad)" />
-      <!-- Book Front Cover -->
-      <path d="M25,72 L60,85 L95,72 L60,57 Z" fill="url(#bookCoverGrad)" />
-      <!-- Pages Top Details -->
-      <path d="M60,85 L91,72 L60,59 Z" fill="rgba(255,255,255,0.4)" />
-    </svg>
-
-    <!-- Doodle 3: 3D Sphere -->
-    <div class="floating-doodle" style="border-radius: 50%; background: radial-gradient(circle at 30% 30%, #EC4899 0%, #BE185D 70%, #50072B 100%); box-shadow: 0 10px 20px rgba(236, 72, 153, 0.25);"></div>
-
-    <!-- Doodle 4: 3D Graduation Cap -->
-    <svg class="floating-doodle" width="110" height="110" viewBox="0 0 100 100">
-      <defs>
-        <linearGradient id="capGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#F59E0B" />
-          <stop offset="100%" stop-color="#B45309" />
-        </linearGradient>
-      </defs>
-      <!-- Skull cap body -->
-      <path d="M35,55 L35,68 C35,74 65,74 65,68 L65,55 Z" fill="#9A3412" />
-      <path d="M35,55 L35,66 C35,72 65,72 65,66 L65,55 Z" fill="url(#capGrad)" />
-      <!-- Diamond top -->
-      <path d="M50,30 L85,45 L50,60 L15,45 Z" fill="#78350F" />
-      <path d="M50,28 L85,43 L50,58 L15,43 Z" fill="url(#capGrad)" />
-      <!-- Tassel -->
-      <path d="M50,43 L30,55 L28,68" stroke="#FDE68A" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <circle cx="28" cy="70" r="3" fill="#F59E0B" />
-    </svg>
-  </div>
+<!-- Mesh Constellation background is animated dynamically via canvas -->
 
   <div class="container-fluid">
     <div class="login-wrapper">
