@@ -14,13 +14,14 @@
   <style>
     body {
       background: var(--page-bg);
+      position: relative;
     }
 
-    /* Professional Admin Grid Layout */
+    /* Admin Grid Layout */
     .layout-admin {
       display: grid;
-      grid-template-columns: 260px 1fr;
-      gap: 1.75rem;
+      grid-template-columns: 280px 1fr;
+      gap: 2rem;
       max-width: 1360px;
       margin: 0 auto 2rem;
       padding: 0 1rem;
@@ -36,7 +37,7 @@
       height: fit-content;
       position: sticky;
       top: 1.5rem;
-      box-shadow: var(--shadow-xs);
+      box-shadow: var(--shadow-sm);
     }
 
     .sidebar-profile {
@@ -46,70 +47,49 @@
       margin-bottom: 1.25rem;
     }
 
-    .sidebar-nav-item {
-      display: flex;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 0.625rem 0.875rem;
-      border-radius: var(--radius-md);
-      font-size: 0.8125rem;
-      font-weight: 500;
-      color: var(--gray-600);
-      cursor: pointer;
-      transition: all 0.15s ease;
-      border: none;
-      background: none;
-      width: 100%;
-      text-align: left;
-      text-decoration: none;
-      margin-bottom: 0.25rem;
-    }
-
-    .sidebar-nav-item:hover {
-      background: var(--gray-50);
-      color: var(--gray-900);
-    }
-
-    .sidebar-nav-item.active {
-      background: var(--primary-subtle);
-      color: var(--primary);
-      font-weight: 600;
-    }
-
-    .sidebar-nav-item i {
-      width: 16px;
-      text-align: center;
-      font-size: 0.875rem;
-    }
-
     /* Toolbox Grid */
     .toolbox-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 1rem;
-      margin-bottom: 1.75rem;
+      gap: 1.25rem;
+      margin-bottom: 2rem;
     }
 
-    /* Custom File Dropzone */
+    /* Dropzone Custom SVG and animations */
     .dropzone-pro {
-      border: 1.5px dashed var(--gray-300);
+      border: 2px dashed var(--gray-300);
       background: var(--gray-50);
       border-radius: var(--radius-lg);
-      padding: 3rem 2rem;
+      padding: 3.5rem 2rem;
       text-align: center;
-      transition: all 0.2s ease;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
       cursor: pointer;
+      position: relative;
     }
 
     .dropzone-pro:hover, .dropzone-pro.dragover {
       border-color: var(--primary);
       background: var(--primary-subtle);
+      transform: scale(1.01);
     }
 
-    .dropzone-pro i {
-      font-size: 2.25rem;
+    .dropzone-icon-container {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
+      height: 72px;
+      background: white;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.25rem;
       color: var(--primary);
-      margin-bottom: 1rem;
+      transition: all 0.3s ease;
+    }
+    .dropzone-pro:hover .dropzone-icon-container {
+      transform: translateY(-5px) scale(1.05);
+      box-shadow: var(--shadow-md);
+      color: var(--secondary);
     }
 
     /* Photo Upload Box */
@@ -117,8 +97,12 @@
       border: 1px dashed var(--gray-300);
       background: var(--gray-50);
       border-radius: var(--radius-md);
-      padding: 1.25rem;
+      padding: 1.5rem;
       text-align: center;
+      transition: all 0.2s ease;
+    }
+    .photo-upload-container:hover {
+      border-color: var(--primary-border);
     }
 
     /* Workspace panels */
@@ -128,41 +112,60 @@
 
     .workspace-panel.active {
       display: block;
-      animation: fadeUp 0.2s ease;
+      animation: fadeUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(6px); }
+      from { opacity: 0; transform: translateY(12px); }
       to { opacity: 1; transform: translateY(0); }
     }
 
     @media (max-width: 992px) {
       .layout-admin {
         grid-template-columns: 1fr;
+        gap: 1.5rem;
       }
       .sidebar-pro {
         position: static;
         margin-bottom: 1rem;
       }
     }
+
+    /* Styled upload result widgets */
+    .upload-summary-card {
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: white;
+      padding: 1.25rem 1.5rem;
+      box-shadow: var(--shadow-xs);
+    }
+    .upload-stat-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .upload-stat-item:last-child {
+      border-bottom: none;
+    }
   </style>
 </head>
-<body class="tech-grid">
+<body>
 
-  <!-- Futuristic Blueprint Tech Doodles -->
-  <svg class="futur-doodle" style="top: 15%; right: 2%; width: 180px; height: 180px;" viewBox="0 0 100 100">
-    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="0.5" stroke-dasharray="2 2" />
-    <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" stroke-width="0.5" />
-    <line x1="50" y1="0" x2="50" y2="100" stroke="currentColor" stroke-width="0.25" />
-    <line x1="0" y1="50" x2="100" y2="50" stroke="currentColor" stroke-width="0.25" />
-    <path d="M 20 20 L 25 20 L 25 25" fill="none" stroke="currentColor" stroke-width="0.5" />
-    <path d="M 80 20 L 75 20 L 75 25" fill="none" stroke="currentColor" stroke-width="0.5" />
-    <path d="M 20 80 L 25 80 L 25 75" fill="none" stroke="currentColor" stroke-width="0.5" />
-    <path d="M 80 80 L 75 80 L 75 75" fill="none" stroke="currentColor" stroke-width="0.5" />
+  <!-- Floating abstract background glow colors -->
+  <div class="bg-blob bg-blob-1"></div>
+  <div class="bg-blob bg-blob-2"></div>
+
+  <!-- Decorative Background Doodles -->
+  <svg class="futur-doodle animate-float-delayed" style="top: 15%; right: 2%; width: 180px; height: 180px; opacity: 0.08;" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="45" fill="none" stroke="var(--primary)" stroke-width="0.75" stroke-dasharray="2 3" />
+    <circle cx="50" cy="50" r="30" fill="none" stroke="var(--primary)" stroke-width="0.5" />
+    <line x1="50" y1="0" x2="50" y2="100" stroke="var(--primary)" stroke-width="0.25" />
+    <line x1="0" y1="50" x2="100" y2="50" stroke="var(--primary)" stroke-width="0.25" />
   </svg>
 
   <!-- Floating Professional Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-pro">
+  <nav class="navbar navbar-expand-lg navbar-pro animate-fade-in">
     <div class="container-fluid p-0">
       <a class="navbar-brand-pro" href="#">
         <span class="brand-dot"></span>MACE Connect &mdash; Administrative Center
@@ -170,10 +173,10 @@
       <div class="d-flex align-items-center gap-3">
         <div class="dropdown">
           <button class="btn-pro btn-outline btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
-            <i class="fas fa-user-circle me-1.5"></i><span id="userEmail">Admin</span>
+            <i class="fas fa-user-circle me-1.5 text-primary"></i><span id="userEmail">Admin</span>
           </button>
-          <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="border-radius: var(--radius-md); font-size: 0.8125rem;">
-            <li><a class="dropdown-item fw-medium" href="#" id="signoutBtn"><i class="fas fa-sign-out-alt me-2 text-danger"></i>Sign Out</a></li>
+          <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-2" style="border-radius: var(--radius-md); font-size: 0.8125rem;">
+            <li><a class="dropdown-item fw-semibold py-2 rounded-2" href="#" id="signoutBtn"><i class="fas fa-sign-out-alt me-2 text-danger"></i>Sign Out</a></li>
           </ul>
         </div>
       </div>
@@ -184,24 +187,24 @@
     <!-- Loading Div -->
     <div id="loadingDiv" class="text-center py-5">
       <div class="loading-spinner-pro mx-auto mb-3"></div>
-      <p class="text-sm text-muted fw-medium">Securing credentials and booting dashboard...</p>
+      <p class="text-sm text-muted fw-semibold">Securing credentials and booting dashboard...</p>
     </div>
   </div>
 
   <!-- Persistent Desktop Dashboard Dock Container -->
-  <div class="layout-admin" id="mainContent" style="display: none; position: relative; z-index: 10;">
+  <div class="layout-admin animate-fade-up" id="mainContent" style="display: none; position: relative; z-index: 10;">
     
     <!-- Left Navigation Dock -->
     <div class="sidebar-pro">
       <div class="sidebar-profile">
-        <div class="rounded-circle d-flex align-items-center justify-content-center bg-light mx-auto mb-2" style="width: 48px; height: 48px; border: 1px solid var(--border);">
-          <i class="fas fa-user-shield text-muted" style="font-size: 1.25rem;"></i>
+        <div class="rounded-circle d-flex align-items-center justify-content-center bg-light mx-auto mb-2" style="width: 52px; height: 52px; border: 1px solid var(--border);">
+          <i class="fas fa-user-shield text-primary" style="font-size: 1.35rem;"></i>
         </div>
-        <h6 class="fw-semibold text-dark mb-1 text-truncate text-sm" id="sidebarEmail" style="max-width: 220px;">Admin Console</h6>
-        <span class="badge-pro badge-success"><span class="status-dot online me-1"></span>Active</span>
+        <h6 class="fw-bold text-dark mb-1 text-truncate text-sm" id="sidebarEmail" style="max-width: 220px;">Admin Console</h6>
+        <span class="badge-pro badge-success" style="font-size: 0.65rem;"><span class="status-dot online me-1.5"></span>Session Active</span>
       </div>
 
-      <div class="section-title ps-1 mb-1">Navigation</div>
+      <div class="sidebar-section-label">Navigation</div>
       
       <button class="sidebar-nav-item active" onclick="switchPanel('dashboard')">
         <i class="fas fa-chart-line"></i>Dashboard
@@ -221,20 +224,13 @@
       
       <div class="divider"></div>
 
-      <!-- Futuristic System HUD Widget -->
-      <div class="card-pro p-3 hud-bracket neon-glow mb-3" style="background: rgba(23, 23, 23, 0.95); border: 1px solid var(--gray-800); box-shadow: inset 0 0 10px rgba(0,0,0,0.5);">
-        <div class="d-flex align-items-center justify-content-between mb-2">
-          <span class="text-xs fw-semibold text-muted" style="font-family: monospace; color: #10B981 !important;"><i class="fas fa-circle-notch fa-spin me-1.5"></i>CORE INDEX</span>
-          <span class="badge-pro badge-success text-xxs" style="padding: 1px 6px; font-size: 0.625rem;">ONLINE</span>
-        </div>
-        <div style="font-family: monospace; font-size: 0.65rem; color: #A3A3A3; line-height: 1.4;">
-          <div class="text-white">LINK: SECURE_SSL</div>
-          <div>PEERS: 4 HOSTS</div>
-          <div class="text-primary">SYNC: OK</div>
-        </div>
+      <!-- Quick Tips Card (replaces core index logs widget) -->
+      <div class="card-pro p-3.5" style="background: var(--gray-50);">
+        <h6 class="fw-bold text-dark text-xs mb-1.5"><i class="fas fa-lightbulb text-primary me-2"></i>Quick Actions</h6>
+        <p class="text-xxs text-muted mb-0" style="line-height: 1.5;">To add users: use the Excel Importer for batch uploads or Manual Registry for individuals.</p>
       </div>
       
-      <button class="sidebar-nav-item text-danger" id="sidebarSignoutBtn">
+      <button class="sidebar-nav-item text-danger mt-3" id="sidebarSignoutBtn">
         <i class="fas fa-sign-out-alt"></i>Sign Out
       </button>
     </div>
@@ -245,22 +241,14 @@
       <!-- Panel 1: Dashboard -->
       <div id="dashboardPanel" class="workspace-panel active">
         <!-- Welcome Banner -->
-        <div class="card-pro p-4 mb-4 hud-bracket neon-glow" style="border-left: 3px solid var(--primary); overflow: hidden; position: relative;">
-          <!-- Beautiful background SVG tech doodle for fresh feeling -->
-          <svg class="position-absolute end-0 top-0 h-100 text-primary opacity-10" style="width: 260px; pointer-events: none;" viewBox="0 0 100 100" preserveAspectRatio="none">
-            <path d="M0,60 Q30,40 60,60 T100,60 L100,100 L0,100 Z" fill="currentColor" opacity="0.15"></path>
-            <circle cx="65" cy="35" r="14" fill="none" stroke="currentColor" stroke-width="0.5"></circle>
-            <circle cx="65" cy="35" r="8" fill="none" stroke="currentColor" stroke-dasharray="1 1.5" stroke-width="0.5"></circle>
-            <line x1="65" y1="20" x2="65" y2="50" stroke="currentColor" stroke-width="0.25"></line>
-            <line x1="50" y1="35" x2="80" y2="35" stroke="currentColor" stroke-width="0.25"></line>
-          </svg>
+        <div class="card-pro p-4 mb-4" style="border-left: 4px solid var(--primary); background: linear-gradient(135deg, white, var(--gray-50));">
           
           <div class="d-flex align-items-center gap-3" style="position: relative; z-index: 1;">
-            <div class="rounded-circle d-flex align-items-center justify-content-center bg-light" style="width: 44px; height: 44px; border: 1px solid var(--border);">
-              <i class="fas fa-shield-alt text-muted" style="font-size: 1.1rem;"></i>
+            <div class="rounded-circle d-flex align-items-center justify-content-center bg-light" style="width: 48px; height: 48px; border: 1px solid var(--border);">
+              <i class="fas fa-shield-alt text-primary" style="font-size: 1.25rem;"></i>
             </div>
             <div>
-              <p class="text-xs text-muted mb-0 fw-medium">Administrative console</p>
+              <p class="text-xs text-muted mb-0 fw-semibold">Administrative console</p>
               <h5 class="mb-0 fw-bold text-dark">Portal Controls & Realtime Activity</h5>
             </div>
           </div>
@@ -268,47 +256,47 @@
 
         <!-- Administrative Toolbox Row -->
         <div class="mb-4">
-          <div class="section-title ps-1"><i class="fas fa-tools me-1"></i>Administrative Toolbox</div>
+          <div class="section-title ps-1"><i class="fas fa-tools me-1.5 text-primary"></i>Administrative Toolbox</div>
           <div class="toolbox-grid">
-            <div class="card-pro p-3 hud-bracket neon-glow d-flex flex-column align-items-start cursor-pointer" onclick="window.location.href='/staff_list.html'">
+            <div class="card-pro p-3.5 d-flex flex-column align-items-start cursor-pointer" onclick="window.location.href='/staff_list.html'">
               <div class="metric-icon mb-3" style="background: var(--primary-subtle); color: var(--primary);"><i class="fas fa-users"></i></div>
-              <h6 class="fw-semibold text-dark text-sm mb-1">Staff Directory</h6>
+              <h6 class="fw-bold text-dark text-sm mb-1">Staff Directory</h6>
               <p class="text-xs text-muted mt-auto mb-0">Browse and manage active profiles</p>
             </div>
 
-            <div class="card-pro p-3 hud-bracket neon-glow d-flex flex-column align-items-start cursor-pointer" onclick="showDepartmentStats()">
-              <div class="metric-icon mb-3" style="background: rgba(22, 163, 74, 0.08); color: var(--success);"><i class="fas fa-chart-bar"></i></div>
-              <h6 class="fw-semibold text-dark text-sm mb-1">Department Stats</h6>
-              <p class="text-xs text-muted mt-auto mb-0">Review headcounts and statistics</p>
+            <div class="card-pro p-3.5 d-flex flex-column align-items-start cursor-pointer" onclick="showDepartmentStats()">
+              <div class="metric-icon mb-3" style="background: var(--success-bg); color: var(--success);"><i class="fas fa-chart-bar"></i></div>
+              <h6 class="fw-bold text-dark text-sm mb-1">Department Stats</h6>
+              <p class="text-xs text-muted mt-auto mb-0">Review headcounts and distributions</p>
             </div>
 
-            <div class="card-pro p-3 hud-bracket neon-glow d-flex flex-column align-items-start cursor-pointer" onclick="switchPanel('upload')">
-              <div class="metric-icon mb-3" style="background: rgba(8, 145, 178, 0.08); color: var(--info);"><i class="fas fa-upload"></i></div>
-              <h6 class="fw-semibold text-dark text-sm mb-1">Upload Data</h6>
-              <p class="text-xs text-muted mt-auto mb-0">Import large spreadsheets</p>
+            <div class="card-pro p-3.5 d-flex flex-column align-items-start cursor-pointer" onclick="switchPanel('upload')">
+              <div class="metric-icon mb-3" style="background: var(--primary-subtle); color: var(--primary);"><i class="fas fa-upload"></i></div>
+              <h6 class="fw-bold text-dark text-sm mb-1">Upload Data</h6>
+              <p class="text-xs text-muted mt-auto mb-0">Import spreadsheets</p>
             </div>
 
-            <div class="card-pro p-3 hud-bracket neon-glow d-flex flex-column align-items-start cursor-pointer position-relative" onclick="showPendingRegistrations()">
-              <div class="metric-icon mb-3" style="background: rgba(139, 92, 246, 0.08); color: #8B5CF6;"><i class="fas fa-user-clock"></i></div>
-              <h6 class="fw-semibold text-dark text-sm mb-1">Pending Approvals</h6>
+            <div class="card-pro p-3.5 d-flex flex-column align-items-start cursor-pointer position-relative" onclick="showPendingRegistrations()">
+              <div class="metric-icon mb-3" style="background: var(--secondary-subtle); color: var(--secondary);"><i class="fas fa-user-clock"></i></div>
+              <h6 class="fw-bold text-dark text-sm mb-1">Pending Approvals</h6>
               <p class="text-xs text-muted mt-auto mb-0">Review access requests</p>
-              <span class="badge bg-danger position-absolute top-0 end-0 mt-3 me-3 rounded-pill fw-bold text-xs" id="pendingCountBadge" style="display: none;">0</span>
+              <span class="badge bg-danger position-absolute top-0 end-0 mt-3.5 me-3.5 rounded-pill fw-bold text-xs" id="pendingCountBadge" style="display: none;">0</span>
             </div>
 
-            <div class="card-pro p-3 hud-bracket neon-glow d-flex flex-column align-items-start cursor-pointer" onclick="showSystemManagement()">
-              <div class="metric-icon mb-3" style="background: rgba(220, 38, 38, 0.08); color: var(--danger);"><i class="fas fa-cogs"></i></div>
-              <h6 class="fw-semibold text-dark text-sm mb-1">System Tools</h6>
-              <p class="text-xs text-muted mt-auto mb-0">Fix database assets and logs</p>
+            <div class="card-pro p-3.5 d-flex flex-column align-items-start cursor-pointer" onclick="showSystemManagement()">
+              <div class="metric-icon mb-3" style="background: var(--danger-bg); color: var(--danger);"><i class="fas fa-cogs"></i></div>
+              <h6 class="fw-bold text-dark text-sm mb-1">System Tools</h6>
+              <p class="text-xs text-muted mt-auto mb-0">Database actions & backups</p>
             </div>
           </div>
         </div>
 
         <!-- Realtime statistics -->
         <div class="mb-4">
-          <div class="section-title ps-1"><i class="fas fa-chart-line me-1"></i>Realtime Portal Metrics</div>
+          <div class="section-title ps-1"><i class="fas fa-chart-line me-1.5 text-primary"></i>Realtime Portal Metrics</div>
           <div class="row g-3" id="statsContainer">
             <div class="col-lg-3 col-md-6">
-              <div class="metric-card hud-bracket neon-glow">
+              <div class="metric-card">
                 <div class="d-flex align-items-center gap-3">
                   <div class="metric-icon" style="background: var(--primary-subtle); color: var(--primary);"><i class="fas fa-users"></i></div>
                   <div>
@@ -319,9 +307,9 @@
               </div>
             </div>
             <div class="col-lg-3 col-md-6">
-              <div class="metric-card hud-bracket neon-glow">
+              <div class="metric-card">
                 <div class="d-flex align-items-center gap-3">
-                  <div class="metric-icon" style="background: rgba(22, 163, 74, 0.08); color: var(--success);"><i class="fas fa-building"></i></div>
+                  <div class="metric-icon" style="background: var(--success-bg); color: var(--success);"><i class="fas fa-building"></i></div>
                   <div>
                     <div class="metric-value" id="totalDepartments">-</div>
                     <div class="metric-label">Departments</div>
@@ -330,9 +318,9 @@
               </div>
             </div>
             <div class="col-lg-3 col-md-6">
-              <div class="metric-card hud-bracket neon-glow">
+              <div class="metric-card">
                 <div class="d-flex align-items-center gap-3">
-                  <div class="metric-icon" style="background: rgba(8, 145, 178, 0.08); color: var(--info);"><i class="fas fa-chalkboard-teacher"></i></div>
+                  <div class="metric-icon" style="background: var(--primary-subtle); color: var(--primary);"><i class="fas fa-chalkboard-teacher"></i></div>
                   <div>
                     <div class="metric-value" id="teachingStaff">-</div>
                     <div class="metric-label">Teaching</div>
@@ -341,9 +329,9 @@
               </div>
             </div>
             <div class="col-lg-3 col-md-6">
-              <div class="metric-card hud-bracket neon-glow">
+              <div class="metric-card">
                 <div class="d-flex align-items-center gap-3">
-                  <div class="metric-icon" style="background: rgba(139, 92, 246, 0.08); color: #8B5CF6;"><i class="fas fa-user-tie"></i></div>
+                  <div class="metric-icon" style="background: var(--secondary-subtle); color: var(--secondary);"><i class="fas fa-user-tie"></i></div>
                   <div>
                     <div class="metric-value" id="nonTeachingStaff">-</div>
                     <div class="metric-label">Non-Teaching</div>
@@ -364,9 +352,11 @@
                 <i class="fas fa-file-excel text-success me-1.5"></i>Spreadsheet Importer
               </h5>
 
-              <div class="dropzone-pro" id="uploadArea">
-                <i class="fas fa-cloud-upload-alt"></i>
-                <h6 class="fw-bold text-dark mb-1 text-sm">Drag & Drop Spreadsheet File Here</h6>
+              <div class="dropzone-pro animate-fade-in" id="uploadArea">
+                <div class="dropzone-icon-container">
+                  <i class="fas fa-file-csv fa-2x"></i>
+                </div>
+                <h6 class="fw-bold text-dark mb-1 text-sm">Drag & Drop Excel/CSV File Here</h6>
                 <p class="text-xs text-muted mb-4">Accepts Microsoft Excel (.xlsx, .xls) or CSV (.csv)</p>
                 <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" class="d-none">
                 <button class="btn-pro btn-outline btn-sm" onclick="document.getElementById('excelFile').click()">
@@ -375,10 +365,10 @@
               </div>
 
               <div id="fileInfo" class="mt-3" style="display: none;">
-                <div class="alert alert-success d-flex align-items-center">
+                <div class="alert alert-success d-flex align-items-center rounded-3">
                   <i class="fas fa-check-circle me-2.5 fs-5"></i>
                   <div>
-                    <strong class="text-xs">Ready for upload:</strong> <span id="fileName" class="fw-bold text-xs"></span>
+                    <strong class="text-xs">File loaded successfully:</strong> <span id="fileName" class="fw-bold text-xs text-dark"></span>
                     <br><small class="text-muted text-xs">Size: <span id="fileSize"></span></small>
                   </div>
                 </div>
@@ -386,8 +376,8 @@
 
               <div id="uploadProgress" class="mt-3" style="display: none;">
                 <div class="d-flex justify-content-between mb-2">
-                  <span class="text-xs text-muted fw-semibold">Processing upload...</span>
-                  <span id="progressPercent" class="text-xs fw-bold text-primary">Processing</span>
+                  <span class="text-xs text-muted fw-semibold">Processing records...</span>
+                  <span id="progressPercent" class="text-xs fw-bold text-primary">In progress</span>
                 </div>
                 <div class="progress" style="height: 6px; border-radius: 99px;">
                   <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" id="progressBar" style="width: 100%"></div>
@@ -406,14 +396,14 @@
 
             <!-- Excel Guidelines -->
             <div class="col-lg-4">
-              <div class="card-pro p-3" style="background: var(--gray-50); height: 100%;">
-                <h6 class="fw-semibold text-dark text-sm mb-3">
-                  <i class="fas fa-info-circle me-1 text-primary"></i>Import Guidelines
+              <div class="card-pro p-4" style="background: var(--gray-50); height: 100%;">
+                <h6 class="fw-bold text-dark text-sm mb-3">
+                  <i class="fas fa-info-circle me-2 text-primary"></i>Import Guidelines
                 </h6>
-                <ul class="list-unstyled text-xs text-muted mb-4">
-                  <li class="mb-2 d-flex align-items-start"><i class="fas fa-check text-success me-2 mt-0.5"></i>Headers are strictly required.</li>
-                  <li class="mb-2 d-flex align-items-start"><i class="fas fa-check text-success me-2 mt-0.5"></i>Max allowed size: 10MB.</li>
-                  <li class="mb-2 d-flex align-items-start"><i class="fas fa-check text-success me-2 mt-0.5"></i>Columns must map exactly: Sl No, Emp No, Name, Type, Contract Type, Department, Category, Gender, Designation, Mobile No, Blood Group, Permanent Address, Email.</li>
+                <ul class="list-unstyled text-xs text-muted mb-4" style="line-height: 1.6;">
+                  <li class="mb-2.5 d-flex align-items-start"><i class="fas fa-check-circle text-success me-2 mt-0.5"></i>Spreadsheet headers must be present in the first row.</li>
+                  <li class="mb-2.5 d-flex align-items-start"><i class="fas fa-check-circle text-success me-2 mt-0.5"></i>Columns must strictly match: Sl No, Emp No, Name, Type, Contract Type, Department, Category, Gender, Designation, Mobile No, Blood Group, Permanent Address, Email.</li>
+                  <li class="d-flex align-items-start"><i class="fas fa-check-circle text-success me-2 mt-0.5"></i>Maximum file size allowed is 10MB.</li>
                 </ul>
                 <div class="mt-auto">
                   <button class="btn-pro btn-outline btn-sm w-100" onclick="downloadTemplate()">
@@ -425,13 +415,13 @@
           </div>
         </div>
 
-        <!-- Upload Results Log -->
+        <!-- Upload Results Container (Refined UI) -->
         <div id="resultsSection" class="card-pro p-4 mb-4" style="display: none;">
           <h5 class="fw-bold text-dark mb-3">
-            <i class="fas fa-list-check text-success me-1.5"></i>Process Import Logs
+            <i class="fas fa-list-check text-success me-1.5"></i>Process Import Summary
           </h5>
-          <div id="uploadResultsContainer">
-            <pre id="uploadResults" class="p-3 bg-light text-xs" style="white-space: pre-wrap; max-height: 300px; overflow-y: auto; border-radius: var(--radius-md); border: 1px solid var(--border);"></pre>
+          <div id="uploadResults">
+            <!-- Dynamically populated in displayUploadResults -->
           </div>
         </div>
       </div>
@@ -446,22 +436,22 @@
           <div class="row g-3">
             <!-- Left Column - Personal Info -->
             <div class="col-lg-6">
-              <div class="card-pro p-3 h-100" style="border-top: 2px solid var(--info);">
-                <div class="section-title mb-3"><i class="fas fa-user me-1 text-info"></i>Personal Details</div>
+              <div class="card-pro p-4 h-100" style="border-top: 3px solid var(--primary);">
+                <div class="section-title mb-3"><i class="fas fa-user me-1.5 text-primary"></i>Personal Details</div>
 
                 <div class="mb-3">
                   <label class="label-pro">Full Name <span class="text-danger">*</span></label>
-                  <input type="text" class="input-pro" id="manualName" required>
+                  <input type="text" class="input-pro" id="manualName" required placeholder="e.g. John Doe">
                 </div>
 
                 <div class="mb-3">
                   <label class="label-pro">Email Address <span class="text-danger">*</span></label>
-                  <input type="email" class="input-pro" id="manualEmail" required>
+                  <input type="email" class="input-pro" id="manualEmail" required placeholder="you@mace.ac.in">
                 </div>
 
                 <div class="mb-3">
                   <label class="label-pro">Mobile Number <span class="text-danger">*</span></label>
-                  <input type="tel" class="input-pro" id="manualMobileNo" required>
+                  <input type="tel" class="input-pro" id="manualMobileNo" required placeholder="10-digit number">
                 </div>
 
                 <div class="row">
@@ -493,15 +483,15 @@
 
                 <div class="mb-2">
                   <label class="label-pro">Permanent Address <span class="text-danger">*</span></label>
-                  <textarea class="input-pro" id="manualPermanentAddress" rows="3" required></textarea>
+                  <textarea class="input-pro" id="manualPermanentAddress" rows="3" required placeholder="Enter primary home address..."></textarea>
                 </div>
               </div>
             </div>
 
             <!-- Right Column - Employment Details -->
             <div class="col-lg-6 d-flex flex-column gap-3">
-              <div class="card-pro p-3" style="border-top: 2px solid var(--primary);">
-                <div class="section-title mb-3"><i class="fas fa-briefcase me-1 text-primary"></i>Employment Profile</div>
+              <div class="card-pro p-4" style="border-top: 3px solid var(--secondary);">
+                <div class="section-title mb-3"><i class="fas fa-briefcase me-1.5 text-secondary"></i>Employment Profile</div>
 
                 <div class="mb-3">
                   <label class="label-pro">Employee ID Number</label>
@@ -572,8 +562,8 @@
               </div>
 
               <!-- Photo Upload -->
-              <div class="card-pro p-3" style="border-top: 2px solid var(--success);">
-                <div class="section-title mb-3"><i class="fas fa-camera me-1 text-success"></i>Photo Upload (Optional)</div>
+              <div class="card-pro p-4" style="border-top: 3px solid var(--success);">
+                <div class="section-title mb-3"><i class="fas fa-camera me-1.5 text-success"></i>Photo Upload (Optional)</div>
                 <div class="text-center">
                   <div id="photoPreview" class="mb-3" style="display: none;">
                     <img id="photoPreviewImg" src="" alt="Photo Preview" style="max-width: 120px; max-height: 120px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--border);">
@@ -622,7 +612,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title"><i class="fas fa-chart-bar me-2"></i>Department Headcount Analysis</h5>
+          <h5 class="modal-title"><i class="fas fa-chart-bar me-2 text-primary"></i>Department Headcount Analysis</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body p-4" id="departmentStatsContent">
@@ -646,10 +636,10 @@
         <div class="modal-body p-4">
           <div class="d-grid gap-3">
             <button class="btn-pro btn-outline py-2.5" onclick="fixPhoneNumbers()">
-              <i class="fas fa-wrench me-1.5"></i>Fix Phone Number Formats
+              <i class="fas fa-wrench me-1.5 text-primary"></i>Fix Phone Number Formats
             </button>
             <button class="btn-pro btn-outline py-2.5" onclick="refreshCache()">
-              <i class="fas fa-sync me-1.5"></i>Refresh Memory Cache
+              <i class="fas fa-sync me-1.5 text-primary"></i>Refresh Memory Cache
             </button>
             <button class="btn-pro btn-primary py-2.5" onclick="exportData()">
               <i class="fas fa-download me-1.5"></i>Export Whole Directory (JSON)
@@ -665,7 +655,7 @@
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title"><i class="fas fa-user-clock me-2"></i>Pending Access Requests</h5>
+          <h5 class="modal-title"><i class="fas fa-user-clock me-2 text-primary"></i>Pending Access Requests</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body p-4" id="pendingRegistrationsContent">
@@ -954,37 +944,81 @@
     function displayUploadResults(result) {
       const resultsContainer = document.getElementById('uploadResults');
       if (result.success) {
-        let html = `<div class="text-success mb-2">
-          <i class="fas fa-check-circle me-1.5"></i><strong>Upload Successful!</strong>
-        </div>`;
-        if (result.totalRecords !== undefined) {
-          html += `<div class="upload-status">
-            <div>Total Records in File: <span class="fw-bold">${result.totalRecords}</span></div>
-            <div>Successfully Processed: <span class="fw-bold text-success">${result.processedRecords || result.uploadedRecords || 0}</span></div>
-            <div>Uploaded to Database: <span class="fw-bold text-success">${result.uploadedRecords || result.processedRecords || 0}</span></div>`;
-          if (result.errors && result.errors.length > 0) {
-            html += `<div>Errors: <span class="fw-bold text-warning">${result.errors.length}</span></div>`;
-          }
-          html += `</div>`;
-          if (result.message) {
-            html += `<div class="mt-2 text-muted">${result.message}</div>`;
-          }
-          if (result.errors && result.errors.length > 0) {
-            html += `<div class="mt-3">
-              <h6 class="text-warning text-xs font-semibold">Errors encountered:</h6>
-              <div class="bg-light p-2 rounded" style="max-height: 150px; overflow-y: auto;">`;
-            result.errors.forEach(error => {
-              html += `<div class="small text-muted mb-1">Row ${error.row}: ${error.error}</div>`;
-            });
-            html += `</div></div>`;
-          }
+        let html = `
+          <div class="upload-summary-card">
+            <div class="d-flex align-items-center gap-2 text-success fw-bold mb-3">
+              <i class="fas fa-check-circle fs-5"></i>
+              <span>Import Completed Successfully</span>
+            </div>
+            
+            <div class="row g-3 mb-3">
+              <div class="col-md-4">
+                <div class="p-3 bg-light rounded-3 text-center">
+                  <div class="text-muted text-xs fw-semibold">TOTAL RECORDS</div>
+                  <div class="fs-4 fw-extrabold text-dark mt-1">${result.totalRecords || 0}</div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="p-3 bg-light rounded-3 text-center">
+                  <div class="text-muted text-xs fw-semibold">SUCCESSFULLY PROCESSED</div>
+                  <div class="fs-4 fw-extrabold text-success mt-1">${result.processedRecords || result.uploadedRecords || 0}</div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="p-3 bg-light rounded-3 text-center">
+                  <div class="text-muted text-xs fw-semibold">ERRORS ENCOUNTERED</div>
+                  <div class="fs-4 fw-extrabold text-danger mt-1">${result.errors ? result.errors.length : 0}</div>
+                </div>
+              </div>
+            </div>
+        `;
+        
+        if (result.message) {
+          html += `<div class="alert alert-info rounded-3 text-xs py-2 mb-3"><i class="fas fa-info-circle me-2"></i>${result.message}</div>`;
         }
+        
+        if (result.errors && result.errors.length > 0) {
+          html += `
+            <div class="mt-3">
+              <h6 class="text-danger fw-bold text-xs mb-2">Detailed Error Logs:</h6>
+              <div class="table-responsive rounded-3 border">
+                <table class="table table-sm table-striped table-hover mb-0 text-xs">
+                  <thead class="table-light">
+                    <tr>
+                      <th class="ps-3 py-2">Row No</th>
+                      <th class="py-2">Description / Error Details</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+          `;
+          result.errors.forEach(error => {
+            html += `
+              <tr>
+                <td class="ps-3 py-2 fw-bold text-muted">Row ${error.row}</td>
+                <td class="py-2 text-danger">${error.error}</td>
+              </tr>
+            `;
+          });
+          html += `
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          `;
+        }
+        
+        html += `</div>`;
         resultsContainer.innerHTML = html;
       } else {
-        resultsContainer.innerHTML = `<div class="text-danger">
-          <i class="fas fa-exclamation-triangle me-1.5"></i><strong>Upload Failed</strong>
-          <div class="mt-1">${result.error || 'Unknown error occurred'}</div>
-        </div>`;
+        resultsContainer.innerHTML = `
+          <div class="alert alert-danger d-flex align-items-center gap-3 p-4 rounded-3 shadow-sm">
+            <i class="fas fa-exclamation-triangle fs-3 text-danger"></i>
+            <div>
+              <h6 class="alert-heading fw-bold mb-1">Spreadsheet Import Failed</h6>
+              <p class="mb-0 text-sm">${result.error || 'An unexpected server error occurred during excel processing.'}</p>
+            </div>
+          </div>
+        `;
       }
     }
 
@@ -1057,10 +1091,10 @@
       Object.entries(departmentCounts).forEach(([dept, count], index) => {
         const types = departmentTypeCount[dept] || {};
         html += `
-          <div class="card-pro p-3 mb-3 hud-bracket neon-glow" style="border-left: 3px solid var(--primary); background: var(--gray-50);">
+          <div class="card-pro p-3.5 mb-3" style="border-left: 4px solid var(--primary); background: var(--gray-50);">
             <div class="d-flex align-items-center justify-content-between mb-2">
               <div class="d-flex align-items-center">
-                <i class="fas fa-building me-1.5 text-primary text-sm"></i>
+                <i class="fas fa-building me-2 text-primary text-sm"></i>
                 <h6 class="mb-0 fw-semibold text-dark text-sm">${dept}</h6>
               </div>
               <span class="badge-pro badge-primary">${count} Staff</span>
@@ -1069,12 +1103,12 @@
         `;
         Object.entries(types).forEach(([type, typeCount]) => {
           const icon = type.toLowerCase().includes('teach') ? 'fa-chalkboard-teacher' : 'fa-user-tie';
-          const iconColor = type.toLowerCase().includes('teach') ? 'var(--info)' : 'var(--gray-500)';
+          const iconColor = type.toLowerCase().includes('teach') ? 'var(--primary)' : 'var(--gray-500)';
           html += `
             <div class="col-6">
               <div class="d-flex align-items-center text-xs">
                 <i class="fas ${icon} me-1.5" style="color: ${iconColor};"></i>
-                <span class="text-muted fw-medium">${type}:</span>
+                <span class="text-muted fw-semibold">${type}:</span>
                 <span class="fw-bold text-dark ms-1">${typeCount}</span>
               </div>
             </div>
@@ -1210,7 +1244,7 @@
         border: 1px solid var(--border);
         border-radius: var(--radius-md);
         font-size: 0.8125rem;
-        font-weight: 500;
+        font-weight: 600;
         animation: slideInRight 0.3s ease;
       `;
       alertDiv.innerHTML = `
@@ -1288,40 +1322,40 @@
       registrations.forEach((reg, index) => {
         html += `
           <div class="col-md-6">
-            <div class="card-pro p-3 hud-bracket neon-glow">
+            <div class="card-pro p-3.5">
               <div class="d-flex justify-content-between align-items-start mb-3">
                 <div>
-                  <h6 class="fw-semibold mb-0.5 text-dark text-sm">${reg.Name || 'No name'}</h6>
-                  <span class="badge-pro badge-primary">${reg.Department || 'No department'}</span>
+                  <h6 class="fw-bold mb-0.5 text-dark text-sm">${reg.Name || 'No name'}</h6>
+                  <span class="badge-pro badge-primary" style="font-size: 0.65rem;">${reg.Department || 'No department'}</span>
                 </div>
-                <span class="badge-pro badge-neutral">Pending</span>
+                <span class="badge-pro badge-neutral" style="font-size: 0.65rem;">Pending</span>
               </div>
               
-              <div class="mb-4 text-xs text-muted">
+              <div class="mb-3 text-xs text-muted" style="line-height: 1.6;">
                 <div class="d-flex align-items-center mb-1">
-                  <i class="fas fa-id-card me-2" style="width: 14px;"></i>
+                  <i class="fas fa-id-card me-2 text-primary" style="width: 14px;"></i>
                   <span>${reg['Employee ID'] || 'No ID'}</span>
                 </div>
                 <div class="d-flex align-items-center mb-1">
-                  <i class="fas fa-envelope me-2" style="width: 14px;"></i>
+                  <i class="fas fa-envelope me-2 text-primary" style="width: 14px;"></i>
                   <span>${reg.Email || 'No email'}</span>
                 </div>
                 <div class="d-flex align-items-center mb-1">
-                  <i class="fas fa-phone me-2" style="width: 14px;"></i>
+                  <i class="fas fa-phone me-2 text-primary" style="width: 14px;"></i>
                   <span>${reg['Mobile No'] || 'No phone'}</span>
                 </div>
                 <div class="d-flex align-items-center">
-                  <i class="fas fa-briefcase me-2" style="width: 14px;"></i>
+                  <i class="fas fa-briefcase me-2 text-primary" style="width: 14px;"></i>
                   <span>${reg.Designation || 'No designation'}</span>
                 </div>
               </div>
               
-              <div class="d-flex justify-content-end gap-2">
+              <div class="d-flex justify-content-end gap-2 pt-2 border-top">
                 <button class="btn-pro btn-outline btn-sm" onclick="approveRegistration('${reg.Email}')">
-                  <i class="fas fa-check me-1"></i> Approve
+                  <i class="fas fa-check text-success"></i> Approve
                 </button>
                 <button class="btn-pro btn-danger btn-sm" onclick="rejectRegistration('${reg.Email}')">
-                  <i class="fas fa-times me-1"></i> Reject
+                  <i class="fas fa-times"></i> Reject
                 </button>
               </div>
             </div>

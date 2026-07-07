@@ -20,6 +20,7 @@
       align-items: center;
       justify-content: center;
       overflow-x: hidden;
+      position: relative;
     }
 
     .split-layout {
@@ -28,14 +29,14 @@
       min-height: 100vh;
     }
 
-    /* Left Side - Holographic Tech Panel */
-    .hud-panel {
+    /* Left Side - Welcoming Hero & Bespoke Animation Illustration */
+    .hero-panel {
       flex: 1.2;
-      background: rgba(255, 255, 255, 0.4);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.45);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       border-right: 1px solid var(--border);
-      padding: 3rem;
+      padding: 4rem;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -43,7 +44,30 @@
       overflow: hidden;
     }
 
-    /* Right Side - Clean Auth Form */
+    .hero-content {
+      position: relative;
+      z-index: 5;
+    }
+
+    .hero-headline {
+      font-size: 2.75rem;
+      font-weight: 800;
+      line-height: 1.15;
+      background: linear-gradient(135deg, var(--gray-900), var(--primary-hover));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-top: 1rem;
+    }
+
+    .hero-sub {
+      color: var(--gray-600);
+      font-size: 1rem;
+      max-width: 480px;
+      margin-top: 1rem;
+      line-height: 1.6;
+    }
+
+    /* Right Side - Premium Auth form container */
     .auth-panel {
       flex: 0.8;
       display: flex;
@@ -57,258 +81,240 @@
     .auth-card {
       width: 100%;
       max-width: 440px;
-      background: rgba(255, 255, 255, 0.8);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      border: 1px solid rgba(217, 119, 6, 0.15);
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.6);
       border-radius: var(--radius-xl);
-      box-shadow: 0 20px 50px rgba(217, 119, 6, 0.08);
-      padding: 2.5rem 2rem;
+      box-shadow: var(--shadow-xl);
+      padding: 2.5rem 2.25rem;
       position: relative;
-      transition: max-width 0.3s ease;
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .auth-card.expanded {
       max-width: 640px;
     }
 
-    /* Futuristic HUD Widgets */
-    .hud-header {
-      position: relative;
-      z-index: 2;
-    }
-
-    .hud-title {
-      font-size: 1.75rem;
-      font-weight: 900;
-      color: var(--gray-900);
-      letter-spacing: -0.04em;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .hud-title .glow-dot {
-      width: 10px;
-      height: 10px;
-      background: var(--primary);
-      border-radius: 50%;
-      box-shadow: 0 0 10px var(--primary);
-      animation: pulse-glow 2s infinite;
-    }
-
-    @keyframes pulse-glow {
-      0% { transform: scale(0.9); opacity: 0.6; }
-      50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 14px var(--primary); }
-      100% { transform: scale(0.9); opacity: 0.6; }
-    }
-
-    /* Scrolling System Log Terminal */
-    .terminal-container {
-      background: rgba(23, 23, 23, 0.95);
-      border: 1px solid var(--gray-800);
-      border-radius: var(--radius-md);
-      padding: 1rem;
-      font-family: 'Courier New', Courier, monospace;
-      color: #10B981;
-      font-size: 0.75rem;
-      height: 140px;
-      overflow-y: auto;
-      box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
-      margin-top: auto;
-      margin-bottom: 2rem;
-      z-index: 2;
-      position: relative;
-    }
-
-    .terminal-line {
-      margin-bottom: 0.25rem;
-      line-height: 1.4;
-      white-space: pre-wrap;
-    }
-
-    .terminal-line.info { color: #A3A3A3; }
-    .terminal-line.success { color: var(--primary); }
-
-    /* Interactive Hologram Network diagram */
-    .network-viewport {
-      flex-grow: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      min-height: 280px;
-      z-index: 2;
-    }
-
-    .radar-circle {
-      position: absolute;
-      border: 1px solid rgba(217, 119, 6, 0.1);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      top: 50%;
-      left: 50%;
-      pointer-events: none;
-    }
-
-    .radar-circle-1 { width: 100px; height: 100px; }
-    .radar-circle-2 { width: 220px; height: 220px; }
-    .radar-circle-3 { width: 340px; height: 340px; }
-
-    .interactive-node {
-      position: absolute;
-      background: white;
-      border: 1px solid var(--border);
-      padding: 0.5rem 0.75rem;
-      border-radius: var(--radius-md);
-      font-size: 0.75rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: var(--shadow-sm);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      z-index: 5;
-    }
-
-    .interactive-node:hover {
-      border-color: var(--primary);
-      box-shadow: 0 0 15px rgba(217, 119, 6, 0.15);
-      transform: scale(1.05);
-    }
-
-    .interactive-node i {
-      color: var(--primary);
-    }
-
-    /* Password field toggle */
-    .input-group-container {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    .password-toggle {
-      position: absolute;
-      right: 12px;
-      cursor: pointer;
-      color: var(--gray-400);
-      z-index: 10;
-      font-size: 0.875rem;
-      transition: color 0.15s ease;
-    }
-
-    .password-toggle:hover {
-      color: var(--primary);
-    }
-
-    /* Tabs */
+    /* Navigation / Tabs */
     .tab-bar {
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
+      border-bottom: 2px solid var(--gray-100);
+      display: flex;
+      gap: 0.25rem;
+    }
+
+    .tab-bar-item {
+      font-family: var(--font-header);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--gray-500);
+      padding: 0.75rem 1rem;
+      border: none;
+      background: none;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+      margin-bottom: -2px;
+      transition: all 0.2s ease;
+    }
+
+    .tab-bar-item:hover {
+      color: var(--gray-900);
+    }
+
+    .tab-bar-item.active {
+      color: var(--primary);
+      border-bottom-color: var(--primary);
+      font-weight: 700;
     }
 
     .info-box {
       background: var(--warning-bg);
-      border: 1px solid rgba(217, 119, 6, 0.15);
+      border: 1px solid var(--primary-border);
       border-radius: var(--radius-md);
-      padding: 0.875rem 1rem;
+      padding: 0.875rem 1.25rem;
       font-size: 0.8125rem;
       color: var(--gray-700);
-      margin: 1.25rem 0;
+      margin: 1.5rem 0;
+      display: flex;
+      align-items: start;
+      gap: 0.75rem;
+    }
+
+    .info-box i {
+      color: var(--primary);
+      margin-top: 0.15rem;
     }
 
     .auth-brand-mobile {
       display: none;
     }
 
+    /* Interactive Illustration SVG styles */
+    .illus-container {
+      position: relative;
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 320px;
+      z-index: 2;
+    }
+
+    .illus-node-circle {
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .illus-node-circle:hover {
+      transform: scale(1.1);
+      fill: var(--primary);
+    }
+
+    /* Password Input Toggle */
+    .input-group-container {
+      position: relative;
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
+
+    .password-toggle {
+      position: absolute;
+      right: 14px;
+      cursor: pointer;
+      color: var(--gray-400);
+      z-index: 10;
+      font-size: 0.875rem;
+      transition: color 0.2s ease;
+    }
+
+    .password-toggle:hover {
+      color: var(--primary);
+    }
+
+    /* Responsive adjustments */
     @media (max-width: 992px) {
-      .hud-panel { display: none; }
+      .hero-panel { display: none; }
       .auth-panel { flex: 1; background: var(--page-bg); }
       .auth-brand-mobile {
         display: flex;
         align-items: center;
-        gap: 0.5rem;
-        font-size: 1.25rem;
-        font-weight: 900;
-        margin-bottom: 1.5rem;
+        gap: 0.625rem;
+        font-family: var(--font-header);
+        font-size: 1.5rem;
+        font-weight: 800;
+        margin-bottom: 2rem;
         justify-content: center;
+        color: var(--gray-900);
       }
-      .auth-brand-mobile .glow-dot {
-        width: 8px;
-        height: 8px;
+      .auth-brand-mobile .brand-dot {
+        width: 10px;
+        height: 10px;
         background: var(--primary);
         border-radius: 50%;
-        box-shadow: 0 0 8px var(--primary);
+        box-shadow: 0 0 10px var(--primary);
       }
     }
   </style>
 </head>
-<body class="tech-grid">
+<body>
+
+  <!-- Floating abstract background glow colors -->
+  <div class="bg-blob bg-blob-1"></div>
+  <div class="bg-blob bg-blob-2"></div>
 
   <div class="split-layout w-100">
-    <!-- Left Panel - Futuristic HUD Viewport -->
-    <div class="hud-panel">
+    <!-- Left Panel - Welcoming Hero & Bespoke SVG Illustration -->
+    <div class="hero-panel">
       
-      <!-- Top Section -->
-      <div class="hud-header">
-        <div class="hud-title">
-          <span class="glow-dot"></span>
-          MACE Connect Gateway
+      <!-- Logo Header -->
+      <div class="hero-content">
+        <div class="navbar-brand-pro">
+          <span class="brand-dot"></span>
+          <span>MACE Connect</span>
         </div>
-        <p class="text-xs text-muted mt-1 mb-0">Decentralized Staff Information Node System</p>
+        <h1 class="hero-headline">The beautiful directory for college staff.</h1>
+        <p class="hero-sub">Synchronize, browse, and connect instantly with academic faculty and administrative members across all college departments.</p>
       </div>
 
-      <!-- Center Network Visualizer Section -->
-      <div class="network-viewport">
-        <!-- Background Radar Target -->
-        <div class="radar-circle radar-circle-1"></div>
-        <div class="radar-circle radar-circle-2"></div>
-        <div class="radar-circle radar-circle-3"></div>
+      <!-- Bespoke Animated Team SVG Illustration -->
+      <div class="illus-container">
+        <svg width="400" height="340" viewBox="0 0 400 340" fill="none" xmlns="http://www.w3.org/2000/svg" class="animate-float">
+          <!-- Background decorative rings -->
+          <circle cx="200" cy="170" r="130" stroke="var(--primary-border)" stroke-width="1.5" stroke-dasharray="4 8" opacity="0.6" />
+          <circle cx="200" cy="170" r="90" stroke="var(--gray-300)" stroke-width="1" opacity="0.4" />
+          <circle cx="200" cy="170" r="50" stroke="var(--primary-border)" stroke-width="1" opacity="0.3" />
 
-        <!-- Node 1: Teaching Staff -->
-        <div class="interactive-node" style="top: 20%; left: 30%;" onclick="logNodeClick('Teaching Staff Node')">
-          <i class="fas fa-chalkboard-teacher"></i>
-          <span>Teaching Staff</span>
-        </div>
+          <!-- Connection paths with moving dashes -->
+          <line x1="200" y1="170" x2="100" y2="90" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.7" />
+          <line x1="200" y1="170" x2="310" y2="110" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.7" />
+          <line x1="200" y1="170" x2="130" y2="260" stroke="var(--secondary)" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.7" />
+          <line x1="200" y1="170" x2="280" y2="250" stroke="var(--secondary)" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.7" />
 
-        <!-- Node 2: Registry Database -->
-        <div class="interactive-node" style="top: 50%; left: 50%; transform: translate(-50%, -50%); border-color: var(--primary); background: var(--primary-subtle);" onclick="logNodeClick('Main Registry Node')">
-          <i class="fas fa-database"></i>
-          <span class="text-primary">Main Registry</span>
-        </div>
+          <!-- Center Database Node (Animated) -->
+          <g transform="translate(180, 150)" class="animate-spin-slow" style="transform-origin: 20px 20px;">
+            <rect x="0" y="0" width="40" height="40" rx="10" fill="var(--primary)" />
+            <circle cx="20" cy="20" r="8" fill="white" />
+          </g>
 
-        <!-- Node 3: Administration -->
-        <div class="interactive-node" style="bottom: 22%; left: 20%;" onclick="logNodeClick('Administrative Node')">
-          <i class="fas fa-user-shield"></i>
-          <span>Administration</span>
-        </div>
+          <!-- Profile Cards (Representing different staff types) -->
+          <!-- Card 1: HOD CSE -->
+          <g class="animate-float-delayed" style="transform: translate(60px, 50px);">
+            <rect x="0" y="0" width="100" height="54" rx="10" fill="white" filter="url(#shadow-filter)" />
+            <circle cx="24" cy="27" r="14" fill="var(--primary)" />
+            <text x="24" y="31" fill="white" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">CS</text>
+            <text x="46" y="24" fill="var(--gray-900)" font-family="sans-serif" font-size="10" font-weight="bold">Dr. Anand</text>
+            <text x="46" y="36" fill="var(--primary)" font-family="sans-serif" font-size="8" font-weight="bold">CSE HOD</text>
+          </g>
 
-        <!-- Node 4: Office Directory -->
-        <div class="interactive-node" style="bottom: 25%; right: 20%;" onclick="logNodeClick('Office Directory Node')">
-          <i class="fas fa-network-wired"></i>
-          <span>Directory Index</span>
-        </div>
+          <!-- Card 2: Administrative -->
+          <g class="animate-float" style="transform: translate(270px, 80px);">
+            <rect x="0" y="0" width="94" height="54" rx="10" fill="white" filter="url(#shadow-filter)" />
+            <circle cx="24" cy="27" r="14" fill="var(--success)" />
+            <text x="24" y="31" fill="white" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">AD</text>
+            <text x="46" y="24" fill="var(--gray-900)" font-family="sans-serif" font-size="10" font-weight="bold">Office Node</text>
+            <text x="46" y="36" fill="var(--gray-500)" font-family="sans-serif" font-size="8">Registry</text>
+          </g>
+
+          <!-- Card 3: Teaching Faculty (ECE) -->
+          <g class="animate-float-delayed" style="transform: translate(80px, 230px);">
+            <rect x="0" y="0" width="110" height="54" rx="10" fill="white" filter="url(#shadow-filter)" />
+            <circle cx="24" cy="27" r="14" fill="var(--secondary)" />
+            <text x="24" y="31" fill="white" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">EC</text>
+            <text x="46" y="24" fill="var(--gray-900)" font-family="sans-serif" font-size="10" font-weight="bold">Prof. Preethi</text>
+            <text x="46" y="36" fill="var(--secondary)" font-family="sans-serif" font-size="8" font-weight="bold">Associate Prof</text>
+          </g>
+
+          <!-- Card 4: Non Teaching Staff -->
+          <g class="animate-float" style="transform: translate(240px, 220px);">
+            <rect x="0" y="0" width="100" height="54" rx="10" fill="white" filter="url(#shadow-filter)" />
+            <circle cx="24" cy="27" r="14" fill="var(--gray-700)" />
+            <text x="24" y="31" fill="white" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">NT</text>
+            <text x="46" y="24" fill="var(--gray-900)" font-family="sans-serif" font-size="10" font-weight="bold">Sunil Kumar</text>
+            <text x="46" y="36" fill="var(--gray-500)" font-family="sans-serif" font-size="8">Lab Instructor</text>
+          </g>
+
+          <!-- Defs for Shadow -->
+          <defs>
+            <filter id="shadow-filter" x="-6" y="-4" width="116" height="70" filterUnits="userSpaceOnUse">
+              <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="rgba(44, 42, 37, 0.08)" />
+            </filter>
+          </defs>
+        </svg>
       </div>
 
-      <!-- Bottom Log Console -->
-      <div>
-        <div class="section-title ps-1 mb-1" style="font-size: 0.625rem;"><i class="fas fa-terminal me-1"></i>Core Console Logs</div>
-        <div class="terminal-container" id="terminalLog">
-          <div class="terminal-line info">[SYSINIT] MACE Node Controller online.</div>
-          <div class="terminal-line info">[SYSINIT] Database link established (Firebase REST v9).</div>
-          <div class="terminal-line">[SYSTEM] Ready for auth requests on port 443.</div>
-        </div>
+      <!-- Footer Info -->
+      <div class="hero-content">
+        <p class="text-xs text-muted mb-0">&copy; Mar Athanasius College of Engineering. All rights secured.</p>
       </div>
 
     </div>
 
     <!-- Right Panel - Login Card Container -->
     <div class="auth-panel">
-      <div class="auth-card hud-bracket neon-glow" id="authWrapper">
-        <div class="auth-brand-mobile text-dark">
-          <span class="glow-dot"></span>
-          MACE Connect
+      <div class="auth-card" id="authWrapper">
+        <div class="auth-brand-mobile">
+          <span class="brand-dot"></span>
+          <span>MACE Connect</span>
         </div>
 
         <div class="tab-bar">
@@ -339,7 +345,7 @@
                 <input type="email" id="email" class="input-pro" placeholder="you@mace.ac.in" required>
               </div>
               
-              <div class="mb-3">
+              <div class="mb-4">
                 <label for="password" class="label-pro">Password</label>
                 <div class="input-group-container">
                   <input type="password" id="password" class="input-pro" placeholder="••••••••" required style="padding-right: 2.5rem;">
@@ -349,12 +355,12 @@
                 </div>
               </div>
               
-              <div id="errorMsg" class="alert alert-danger d-none mb-3"></div>
-              <div id="successMsg" class="alert alert-success d-none mb-3"></div>
+              <div id="errorMsg" class="alert alert-danger d-none mb-3 text-xs fw-medium rounded-3"></div>
+              <div id="successMsg" class="alert alert-success d-none mb-3 text-xs fw-medium rounded-3"></div>
               
               <button class="btn-pro btn-primary w-100 btn-lg" type="submit" id="loginButton">
                 <span id="buttonText">Initialize Session</span>
-                <span id="buttonSpinner" class="spinner-border d-none" style="width: 1rem; height: 1rem; border-width: 0.15em;" role="status"></span>
+                <span id="buttonSpinner" class="spinner-border d-none" style="width: 1.1rem; height: 1.1rem; border-width: 0.15em;" role="status"></span>
               </button>
             </form>
           </div>
@@ -368,8 +374,8 @@
                   <input type="text" class="input-pro" id="name" name="name" required>
                 </div>
                 <div class="col-md-6 mb-3">
-                  <label for="emp_no" class="label-pro">Employee Number <span class="text-danger">*</span></label>
-                  <input type="text" class="input-pro" id="emp_no" name="emp_no">
+                  <label for="emp_no" class="label-pro">Employee ID</label>
+                  <input type="text" class="input-pro" id="emp_no" name="emp_no" placeholder="Optional">
                 </div>
               </div>
 
@@ -402,7 +408,7 @@
                 </div>
                 <div class="col-md-6 mb-3">
                   <label for="designation" class="label-pro">Designation <span class="text-danger">*</span></label>
-                  <input type="text" class="input-pro" id="designation" name="designation" required>
+                  <input type="text" class="input-pro" id="designation" name="designation" placeholder="e.g. Professor, Assistant Professor" required>
                 </div>
               </div>
 
@@ -429,7 +435,7 @@
               <div class="row">
                 <div class="col-md-6 mb-3">
                   <label for="category" class="label-pro">Category</label>
-                  <input type="text" class="input-pro" id="category" name="category">
+                  <input type="text" class="input-pro" id="category" name="category" placeholder="Optional">
                 </div>
                 <div class="col-md-6 mb-3">
                   <label for="gender" class="label-pro">Gender</label>
@@ -461,19 +467,21 @@
 
               <div class="mb-3">
                 <label for="permanent_address" class="label-pro">Permanent Address</label>
-                <textarea class="input-pro" id="permanent_address" name="permanent_address" rows="3"></textarea>
+                <textarea class="input-pro" id="permanent_address" name="permanent_address" rows="3" placeholder="Enter home address..."></textarea>
               </div>
 
               <div class="info-box">
-                <i class="fas fa-info-circle me-1.5" style="color: var(--primary);"></i>
-                <strong>Note:</strong> Your registration will be reviewed by the admin. You will be notified once approved.
+                <i class="fas fa-info-circle"></i>
+                <div>
+                  <strong>Verification Required:</strong> Your signup request will be submitted to the administration office for profile validation.
+                </div>
               </div>
 
-              <div id="regErrorMsg" class="alert alert-danger d-none mb-3"></div>
-              <div id="regSuccessMsg" class="alert alert-success d-none mb-3"></div>
+              <div id="regErrorMsg" class="alert alert-danger d-none mb-3 text-xs fw-medium rounded-3"></div>
+              <div id="regSuccessMsg" class="alert alert-success d-none mb-3 text-xs fw-medium rounded-3"></div>
               
               <button type="submit" class="btn-pro btn-primary w-100 btn-lg" id="submitBtn">
-                <i class="fas fa-paper-plane me-1.5"></i>Submit Registration
+                <i class="fas fa-paper-plane"></i>Submit Registration
               </button>
             </form>
           </div>
@@ -498,14 +506,12 @@
         wrapper.classList.remove('expanded');
         const tabTrigger = new bootstrap.Tab(loginTab);
         tabTrigger.show();
-        writeTerminalLine('Switched control block to SESSION_INIT', 'success');
       } else {
         document.getElementById('registerTabBtn').classList.add('active');
         document.getElementById('loginTabBtn').classList.remove('active');
         wrapper.classList.add('expanded');
         const tabTrigger = new bootstrap.Tab(registerTab);
         tabTrigger.show();
-        writeTerminalLine('Switched control block to REGISTRY_SUBMIT', 'success');
       }
     }
 
@@ -522,42 +528,11 @@
       }
     });
 
-    // Console Logging Simulation
-    const consoleLogs = [
-      'Performing database ping... 12ms',
-      'System temperature: 38C (OPTIMAL)',
-      'Security posture: EXCELLENT',
-      'Encrypted tunnel link active (SSL/TLS)',
-      'Syncing cache index...',
-      'Listening for auth handshake requests...',
-      'Registry correlators active'
-    ];
-
-    function writeTerminalLine(text, type = '') {
-      const consoleLog = document.getElementById('terminalLog');
-      if (!consoleLog) return;
-      const line = document.createElement('div');
-      line.className = 'terminal-line ' + type;
-      line.textContent = `[${new Date().toLocaleTimeString()}] ${text}`;
-      consoleLog.appendChild(line);
-      consoleLog.scrollTop = consoleLog.scrollHeight;
-    }
-
-    function logNodeClick(nodeName) {
-      writeTerminalLine(`Queried node endpoint: ${nodeName}`, 'success');
-    }
-
-    setInterval(() => {
-      const randomLog = consoleLogs[Math.floor(Math.random() * consoleLogs.length)];
-      writeTerminalLine(randomLog, 'info');
-    }, 6000);
-
     // Show loading state
     function showLoading() {
       document.getElementById('buttonText').classList.add('d-none');
       document.getElementById('buttonSpinner').classList.remove('d-none');
       document.getElementById('loginButton').disabled = true;
-      writeTerminalLine('Attempting authentication handshake...', 'info');
     }
 
     // Hide loading state
@@ -574,7 +549,6 @@
       errorMsg.textContent = message;
       errorMsg.classList.remove('d-none');
       successMsg.classList.add('d-none');
-      writeTerminalLine('Session init error: ' + message, 'success');
     }
 
     // Show success message
@@ -584,7 +558,6 @@
       successMsg.textContent = message;
       successMsg.classList.remove('d-none');
       errorMsg.classList.add('d-none');
-      writeTerminalLine('Auth approved. Establishing secure session...', 'success');
     }
 
     // Hide all messages
@@ -600,7 +573,6 @@
       errorMsg.textContent = message;
       errorMsg.classList.remove('d-none');
       successMsg.classList.add('d-none');
-      writeTerminalLine('Registry error: ' + message, 'success');
     }
 
     function showRegSuccess(message) {
@@ -609,7 +581,6 @@
       successMsg.textContent = message;
       successMsg.classList.remove('d-none');
       errorMsg.classList.add('d-none');
-      writeTerminalLine('Registry submitted successfully.', 'success');
     }
 
     // Hide registration messages
@@ -686,9 +657,8 @@
       const originalText = submitBtn.innerHTML;
       
       submitBtn.disabled = true;
-      submitBtn.innerHTML = '<div class="loading-spinner-pro" style="display:inline-block;"></div> Submitting...';
+      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1.5"></span> Submitting...';
       hideRegMessages();
-      writeTerminalLine('Registering node data endpoint...', 'info');
       
       const formData = {
           name: document.getElementById('name').value.trim(),
