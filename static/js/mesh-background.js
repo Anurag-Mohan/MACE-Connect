@@ -1,102 +1,116 @@
-// static/js/mesh-background.js
-document.addEventListener('DOMContentLoaded', () => {
-  // Create background canvas dynamically
+/* mesh-background.js — Subtle professional mesh grid */
+(function () {
   const canvas = document.createElement('canvas');
-  canvas.id = 'meshCanvas';
-  canvas.style.position = 'fixed';
-  canvas.style.top = '0';
-  canvas.style.left = '0';
-  canvas.style.width = '100%';
-  canvas.style.height = '100%';
-  canvas.style.zIndex = '0'; // Behind cards but above body background
-  canvas.style.pointerEvents = 'none';
+  canvas.id = 'mesh-bg';
+  Object.assign(canvas.style, {
+    position: 'fixed',
+    top: '0',
+    left: '0',
+    width: '100%',
+    height: '100%',
+    zIndex: '-1',
+    pointerEvents: 'none',
+    opacity: '1'
+  });
   document.body.prepend(canvas);
 
   const ctx = canvas.getContext('2d');
-  let animationFrameId;
+  let W, H, nodes = [], mouse = { x: -999, y: -999 };
 
-  let width = canvas.width = window.innerWidth;
-  let height = canvas.height = window.innerHeight;
+  const SETTINGS = {
+    nodeCount: 55,
+    maxDist: 160,
+    nodeSpeed: 0.15,
+    nodeRadius: 1.5,
+    lineWidth: 0.5,
+    lineColor: [217, 119, 6],     /* #D97706 */
+    nodeColor: [217, 119, 6],
+    lineOpacity: 0.06,
+    nodeOpacity: 0.12,
+    mouseRadius: 200,
+    mouseInfluence: 0.08
+  };
 
-  const particles = [];
-  // Dynamic particle count based on screen size
-  const particleCount = Math.min(120, Math.floor((width * height) / 12000));
-  const connectionDistance = 140;
-  const speedScale = 0.4;
-
-  class Particle {
-    constructor() {
-      this.x = Math.random() * width;
-      this.y = Math.random() * height;
-      this.vx = (Math.random() - 0.5) * speedScale;
-      this.vy = (Math.random() - 0.5) * speedScale;
-      this.radius = Math.random() * 2 + 1.5;
-    }
-
-    update() {
-      this.x += this.vx;
-      this.y += this.vy;
-
-      // Bounce back from screen borders
-      if (this.x < 0 || this.x > width) this.vx *= -1;
-      if (this.y < 0 || this.y > height) this.vy *= -1;
-    }
-
-    draw() {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-      ctx.fillStyle = 'rgba(217, 119, 6, 0.4)'; // Primary theme orange with alpha
-      ctx.fill();
-    }
-  }
-
-  // Populate particles array
-  for (let i = 0; i < particleCount; i++) {
-    particles.push(new Particle());
-  }
-
-  // Handle window resizing
   function resize() {
-    width = canvas.width = window.innerWidth;
-    height = canvas.height = window.innerHeight;
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
   }
-  window.addEventListener('resize', resize);
 
-  // Draw lines between nearby particles (constellation mesh network)
-  function drawConnections() {
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
+  function createNodes() {
+    nodes = [];
+    for (let i = 0; i < SETTINGS.nodeCount; i++) {
+      nodes.push({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        vx: (Math.random() - 0.5) * SETTINGS.nodeSpeed,
+        vy: (Math.random() - 0.5) * SETTINGS.nodeSpeed
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Update positions
+    for (const n of nodes) {
+      // Mouse interaction
+      const mdx = mouse.x - n.x;
+      const mdy = mouse.y - n.y;
+      const mDist = Math.sqrt(mdx * mdx + mdy * mdy);
+      if (mDist < SETTINGS.mouseRadius) {
+        n.vx -= mdx * SETTINGS.mouseInfluence * 0.001;
+        n.vy -= mdy * SETTINGS.mouseInfluence * 0.001;
+      }
+
+      n.x += n.vx;
+      n.y += n.vy;
+
+      // Dampen
+      n.vx *= 0.999;
+      n.vy *= 0.999;
+
+      // Soft boundary
+      if (n.x < 0 || n.x > W) n.vx *= -1;
+      if (n.y < 0 || n.y > H) n.vy *= -1;
+      n.x = Math.max(0, Math.min(W, n.x));
+      n.y = Math.max(0, Math.min(H, n.y));
+    }
+
+    // Draw connections
+    const [lr, lg, lb] = SETTINGS.lineColor;
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const dx = nodes[i].x - nodes[j].x;
+        const dy = nodes[i].y - nodes[j].y;
         const dist = Math.sqrt(dx * dx + dy * dy);
-
-        if (dist < connectionDistance) {
-          // Fade line out as distance increases
-          const alpha = (1 - dist / connectionDistance) * 0.18;
+        if (dist < SETTINGS.maxDist) {
+          const alpha = SETTINGS.lineOpacity * (1 - dist / SETTINGS.maxDist);
           ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = `rgba(217, 119, 6, ${alpha})`;
-          ctx.lineWidth = 1;
+          ctx.moveTo(nodes[i].x, nodes[i].y);
+          ctx.lineTo(nodes[j].x, nodes[j].y);
+          ctx.strokeStyle = `rgba(${lr},${lg},${lb},${alpha})`;
+          ctx.lineWidth = SETTINGS.lineWidth;
           ctx.stroke();
         }
       }
     }
+
+    // Draw nodes
+    const [nr, ng, nb] = SETTINGS.nodeColor;
+    for (const n of nodes) {
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, SETTINGS.nodeRadius, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${nr},${ng},${nb},${SETTINGS.nodeOpacity})`;
+      ctx.fill();
+    }
+
+    requestAnimationFrame(draw);
   }
 
-  // Animation Loop
-  function animate() {
-    ctx.clearRect(0, 0, width, height);
+  window.addEventListener('resize', () => { resize(); createNodes(); });
+  window.addEventListener('mousemove', (e) => { mouse.x = e.clientX; mouse.y = e.clientY; });
 
-    particles.forEach(p => {
-      p.update();
-      p.draw();
-    });
-
-    drawConnections();
-
-    animationFrameId = requestAnimationFrame(animate);
-  }
-
-  animate();
-});
+  resize();
+  createNodes();
+  draw();
+})();

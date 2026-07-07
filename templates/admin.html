@@ -1,7 +1,8 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>MACE Connect - Admin Panel</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -12,166 +13,155 @@
   <script src="/static/js/mesh-background.js"></script>
   <style>
     body {
-      background: radial-gradient(circle at 100% 100%, #FFFBEB 0%, #FAF9F6 50%, #FEF3C7 100%);
+      background: var(--page-bg);
     }
 
-    /* Floating Neomorphic Navbar */
-    .navbar-neomorphic {
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      border-radius: 20px;
-      margin: 1.5rem auto;
-      max-width: 1400px;
-      width: calc(100% - 2rem);
-      box-shadow: 0 10px 25px rgba(217, 119, 6, 0.08);
-      padding: 0.75rem 1.5rem;
-    }
-
-    .navbar-brand-custom {
-      font-weight: 800;
-      color: var(--primary-color) !important;
-      font-size: 1.4rem;
-      letter-spacing: -0.5px;
-      display: flex;
-      align-items: center;
-    }
-
-    /* Feature Cards grid */
-    .feature-row {
+    /* Professional Admin Grid Layout */
+    .layout-admin {
       display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 1.25rem;
-      margin-bottom: 2rem;
+      grid-template-columns: 260px 1fr;
+      gap: 1.75rem;
+      max-width: 1360px;
+      margin: 0 auto 2rem;
+      padding: 0 1rem;
+      min-height: calc(100vh - 120px);
     }
 
-    .feature-card-3d {
-      background: white;
-      border-radius: 20px;
-      padding: 1.5rem;
-      border: 1px solid rgba(255, 255, 255, 0.7);
-      box-shadow: var(--shadow-3d-card);
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    /* Sidebar Clean SaaS Style */
+    .sidebar-pro {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem 1.25rem;
+      height: fit-content;
+      position: sticky;
+      top: 1.5rem;
+      box-shadow: var(--shadow-xs);
+    }
+
+    .sidebar-profile {
+      text-align: center;
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 1.25rem;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.625rem 0.875rem;
+      border-radius: var(--radius-md);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--gray-600);
       cursor: pointer;
-      position: relative;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      height: 100%;
+      transition: all 0.15s ease;
+      border: none;
+      background: none;
+      width: 100%;
+      text-align: left;
+      text-decoration: none;
+      margin-bottom: 0.25rem;
     }
 
-    .feature-card-3d:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--shadow-3d-card-hover);
+    .sidebar-nav-item:hover {
+      background: var(--gray-50);
+      color: var(--gray-900);
     }
 
-    .feature-card-3d .icon-circle {
-      width: 50px;
-      height: 50px;
-      border-radius: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1rem;
-      font-size: 1.3rem;
-      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.05);
+    .sidebar-nav-item.active {
+      background: var(--primary-subtle);
+      color: var(--primary);
+      font-weight: 600;
     }
 
-    .feature-card-3d.orange .icon-circle { background: #FEF3C7; color: var(--primary-color); }
-    .feature-card-3d.green .icon-circle { background: #D1FAE5; color: var(--accent-green); }
-    .feature-card-3d.teal .icon-circle { background: #CCFBF1; color: var(--accent-teal); }
-    .feature-card-3d.purple .icon-circle { background: #F3E8FF; color: var(--accent-purple); }
-    .feature-card-3d.pink .icon-circle { background: #FCE7F3; color: var(--accent-pink); }
-
-    /* Welcome Admin Banner */
-    .admin-banner {
-      background: white;
-      border-radius: 20px;
-      padding: 1.25rem 2rem;
-      margin-bottom: 2rem;
-      box-shadow: var(--shadow-3d-card);
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .sidebar-nav-item i {
+      width: 16px;
+      text-align: center;
+      font-size: 0.875rem;
     }
 
-    /* Excel Drag Drop Slot */
-    .drag-drop-slot {
-      border: 2px dashed var(--primary-color);
-      background: #FFFDF9;
-      border-radius: 24px;
+    /* Toolbox Grid */
+    .toolbox-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.75rem;
+    }
+
+    /* Custom File Dropzone */
+    .dropzone-pro {
+      border: 1.5px dashed var(--gray-300);
+      background: var(--gray-50);
+      border-radius: var(--radius-lg);
       padding: 3rem 2rem;
       text-align: center;
-      transition: all 0.3s ease;
-      box-shadow: var(--shadow-inset-3d);
+      transition: all 0.2s ease;
+      cursor: pointer;
     }
 
-    .drag-drop-slot:hover, .drag-drop-slot.dragover {
-      background: #FEF3C7;
-      border-color: var(--primary-hover);
+    .dropzone-pro:hover, .dropzone-pro.dragover {
+      border-color: var(--primary);
+      background: var(--primary-subtle);
     }
 
-    .drag-drop-slot .icon-cloud {
-      font-size: 3rem;
-      color: var(--primary-color);
+    .dropzone-pro i {
+      font-size: 2.25rem;
+      color: var(--primary);
       margin-bottom: 1rem;
-      filter: drop-shadow(0 4px 8px rgba(217, 119, 6, 0.15));
     }
 
-    .photo-preview-box {
-      border: 2px dashed #D1D5DB;
-      background: #F9FAFB;
-      border-radius: 18px;
-      padding: 1rem;
-      display: inline-block;
-      box-shadow: var(--shadow-inset-3d);
+    /* Photo Upload Box */
+    .photo-upload-container {
+      border: 1px dashed var(--gray-300);
+      background: var(--gray-50);
+      border-radius: var(--radius-md);
+      padding: 1.25rem;
+      text-align: center;
     }
 
-    .photo-preview-box img {
-      border-radius: 12px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    /* Workspace panels */
+    .workspace-panel {
+      display: none;
     }
 
-    /* Department stats list inside modal */
-    .dept-stats-card-3d {
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      margin-bottom: 1.25rem;
-      box-shadow: var(--shadow-3d-card);
-      overflow: hidden;
+    .workspace-panel.active {
+      display: block;
+      animation: fadeUp 0.2s ease;
     }
 
-    /* Responsive Grid */
-    @media (max-width: 1200px) {
-      .feature-row { grid-template-columns: repeat(3, 1fr); }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    @media (max-width: 768px) {
-      .feature-row { grid-template-columns: repeat(2, 1fr); }
-      .admin-banner { flex-direction: column; text-align: center; gap: 0.75rem; }
-    }
-    @media (max-width: 576px) {
-      .feature-row { grid-template-columns: 1fr; }
+
+    @media (max-width: 992px) {
+      .layout-admin {
+        grid-template-columns: 1fr;
+      }
+      .sidebar-pro {
+        position: static;
+        margin-bottom: 1rem;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Mesh Constellation background is animated dynamically via canvas -->
-
-  <!-- Floating Neomorphic Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-neomorphic">
+  <!-- Floating Professional Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-pro">
     <div class="container-fluid p-0">
-      <a class="navbar-brand navbar-brand-custom" href="#">
-        <i class="fas fa-tools me-2"></i>MACE Connect
+      <a class="navbar-brand-pro" href="#">
+        <span class="brand-dot"></span>MACE Connect &mdash; Administrative Center
       </a>
       <div class="d-flex align-items-center gap-3">
         <div class="dropdown">
-          <button class="btn-3d btn-3d-orange px-3 py-2 text-sm dropdown-toggle" type="button" data-bs-toggle="dropdown" style="padding: 8px 16px; border-radius: 12px; font-size: 0.9rem;">
-            <i class="fas fa-user-circle me-2"></i><span id="userEmail">Admin</span>
+          <button class="btn-pro btn-outline btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+            <i class="fas fa-user-circle me-1.5"></i><span id="userEmail">Admin</span>
           </button>
-          <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="border-radius: 12px; margin-top: 10px;">
-            <li><a class="dropdown-item fw-semibold" href="#" id="signoutBtn"><i class="fas fa-sign-out-alt me-2 text-danger"></i>Sign Out</a></li>
+          <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="border-radius: var(--radius-md); font-size: 0.8125rem;">
+            <li><a class="dropdown-item fw-medium" href="#" id="signoutBtn"><i class="fas fa-sign-out-alt me-2 text-danger"></i>Sign Out</a></li>
           </ul>
         </div>
       </div>
@@ -181,41 +171,45 @@
   <div class="container mt-4" style="position: relative; z-index: 10;">
     <!-- Loading Div -->
     <div id="loadingDiv" class="text-center py-5">
-      <div class="loading-spinner mx-auto mb-3" style="width: 45px; height: 45px; border-top-color: var(--primary-color); border-width: 4px;"></div>
-      <p class="fw-bold text-muted">Securing credentials and booting dashboard...</p>
+      <div class="loading-spinner-pro mx-auto mb-3"></div>
+      <p class="text-sm text-muted fw-medium">Securing credentials and booting dashboard...</p>
     </div>
   </div>
 
   <!-- Persistent Desktop Dashboard Dock Container -->
-  <div class="admin-layout-container" id="mainContent" style="display: none; position: relative; z-index: 10;">
+  <div class="layout-admin" id="mainContent" style="display: none; position: relative; z-index: 10;">
     
     <!-- Left Navigation Dock -->
-    <div class="admin-sidebar-dock">
-      <div class="text-center mb-4 pb-3 border-bottom">
-        <div class="rounded-circle d-flex align-items-center justify-content-center bg-warning bg-opacity-25 mx-auto mb-2" style="width: 52px; height: 52px;">
-          <i class="fas fa-user-shield text-warning" style="font-size: 1.4rem;"></i>
+    <div class="sidebar-pro">
+      <div class="sidebar-profile">
+        <div class="rounded-circle d-flex align-items-center justify-content-center bg-light mx-auto mb-2" style="width: 48px; height: 48px; border: 1px solid var(--border);">
+          <i class="fas fa-user-shield text-muted" style="font-size: 1.25rem;"></i>
         </div>
-        <h6 class="fw-bold text-dark mb-1 text-truncate" id="sidebarEmail" style="max-width: 220px;">Admin Console</h6>
-        <span class="badge-3d badge-3d-green pulse-element"><i class="fas fa-circle me-1 small"></i>Active</span>
+        <h6 class="fw-semibold text-dark mb-1 text-truncate text-sm" id="sidebarEmail" style="max-width: 220px;">Admin Console</h6>
+        <span class="badge-pro badge-success"><span class="status-dot online me-1"></span>Active</span>
       </div>
 
-      <button class="admin-sidebar-btn active" onclick="switchPanel('dashboard')">
-        <i class="fas fa-chart-line text-warning"></i>Dashboard
+      <div class="section-title ps-1 mb-1">Navigation</div>
+      
+      <button class="sidebar-nav-item active" onclick="switchPanel('dashboard')">
+        <i class="fas fa-chart-line"></i>Dashboard
       </button>
       
-      <button class="admin-sidebar-btn" onclick="switchPanel('upload')">
-        <i class="fas fa-file-excel text-success"></i>Excel Importer
+      <button class="sidebar-nav-item" onclick="switchPanel('upload')">
+        <i class="fas fa-file-excel"></i>Excel Importer
       </button>
       
-      <button class="admin-sidebar-btn" onclick="switchPanel('manual')">
-        <i class="fas fa-user-plus text-teal"></i>Manual Registry
+      <button class="sidebar-nav-item" onclick="switchPanel('manual')">
+        <i class="fas fa-user-plus"></i>Manual Registry
       </button>
       
-      <a class="admin-sidebar-btn" href="/staff_list.html">
-        <i class="fas fa-users text-purple"></i>Staff Directory
+      <a class="sidebar-nav-item" href="/staff_list.html">
+        <i class="fas fa-users"></i>Staff Directory
       </a>
       
-      <button class="admin-sidebar-btn text-danger mt-auto" id="sidebarSignoutBtn">
+      <div class="divider"></div>
+      
+      <button class="sidebar-nav-item text-danger" id="sidebarSignoutBtn">
         <i class="fas fa-sign-out-alt"></i>Sign Out
       </button>
     </div>
@@ -224,91 +218,103 @@
     <div class="w-100">
       
       <!-- Panel 1: Dashboard -->
-      <div id="dashboardPanel" class="admin-workspace-panel active">
+      <div id="dashboardPanel" class="workspace-panel active">
         <!-- Welcome Banner -->
-        <div class="admin-banner">
+        <div class="card-pro p-4 mb-4" style="border-left: 3px solid var(--primary);">
           <div class="d-flex align-items-center gap-3">
-            <div class="rounded-circle d-flex align-items-center justify-content-center bg-warning bg-opacity-25" style="width: 52px; height: 52px;">
-              <i class="fas fa-home text-warning" style="font-size: 1.4rem;"></i>
+            <div class="rounded-circle d-flex align-items-center justify-content-center bg-light" style="width: 44px; height: 44px; border: 1px solid var(--border);">
+              <i class="fas fa-shield-alt text-muted" style="font-size: 1.1rem;"></i>
             </div>
-            <div class="text-start">
-              <p class="text-muted small mb-0 fw-bold">Overview console</p>
-              <h5 class="mb-0 fw-bold text-dark">Portal Controls & Activity</h5>
+            <div>
+              <p class="text-xs text-muted mb-0 fw-medium">Administrative console</p>
+              <h5 class="mb-0 fw-bold text-dark">Portal Controls & Realtime Activity</h5>
             </div>
           </div>
         </div>
 
         <!-- Administrative Toolbox Row -->
-        <div class="mb-5">
-          <h6 class="text-muted fw-bold mb-3 ps-2">
-            <i class="fas fa-tools me-2 text-warning"></i>Administrative Toolbox
-          </h6>
-          <div class="feature-row">
-            <div class="feature-card-3d orange" onclick="window.location.href='/staff_list.html'">
-              <div class="icon-circle"><i class="fas fa-users"></i></div>
-              <h6 class="fw-bold text-dark mb-1">Staff Directory</h6>
-              <p class="text-muted small mb-0 mt-auto">Browse staff details</p>
+        <div class="mb-4">
+          <div class="section-title ps-1"><i class="fas fa-tools me-1"></i>Administrative Toolbox</div>
+          <div class="toolbox-grid">
+            <div class="card-pro p-3 d-flex flex-column align-items-start cursor-pointer" onclick="window.location.href='/staff_list.html'">
+              <div class="metric-icon mb-3" style="background: var(--primary-subtle); color: var(--primary);"><i class="fas fa-users"></i></div>
+              <h6 class="fw-semibold text-dark text-sm mb-1">Staff Directory</h6>
+              <p class="text-xs text-muted mt-auto mb-0">Browse and manage active profiles</p>
             </div>
 
-            <div class="feature-card-3d green" onclick="showDepartmentStats()">
-              <div class="icon-circle"><i class="fas fa-chart-bar"></i></div>
-              <h6 class="fw-bold text-dark mb-1">Department Stats</h6>
-              <p class="text-muted small mb-0 mt-auto">Headcounts per dept</p>
+            <div class="card-pro p-3 d-flex flex-column align-items-start cursor-pointer" onclick="showDepartmentStats()">
+              <div class="metric-icon mb-3" style="background: rgba(22, 163, 74, 0.08); color: var(--success);"><i class="fas fa-chart-bar"></i></div>
+              <h6 class="fw-semibold text-dark text-sm mb-1">Department Stats</h6>
+              <p class="text-xs text-muted mt-auto mb-0">Review headcounts and statistics</p>
             </div>
 
-            <div class="feature-card-3d teal" onclick="switchPanel('upload')">
-              <div class="icon-circle"><i class="fas fa-upload"></i></div>
-              <h6 class="fw-bold text-dark mb-1">Upload Data</h6>
-              <p class="text-muted small mb-0 mt-auto">Import spreadsheets</p>
+            <div class="card-pro p-3 d-flex flex-column align-items-start cursor-pointer" onclick="switchPanel('upload')">
+              <div class="metric-icon mb-3" style="background: rgba(8, 145, 178, 0.08); color: var(--info);"><i class="fas fa-upload"></i></div>
+              <h6 class="fw-semibold text-dark text-sm mb-1">Upload Data</h6>
+              <p class="text-xs text-muted mt-auto mb-0">Import large spreadsheets</p>
             </div>
 
-            <div class="feature-card-3d purple" onclick="showPendingRegistrations()">
-              <div class="icon-circle"><i class="fas fa-user-clock"></i></div>
-              <h6 class="fw-bold text-dark mb-1">Pending Approvals</h6>
-              <p class="text-muted small mb-0 mt-auto">Review access requests</p>
-              <span class="badge bg-danger position-absolute top-0 end-0 mt-2 me-2 px-2 py-1 rounded-pill fw-bold" id="pendingCountBadge" style="display: none; font-size: 0.75rem;">0</span>
+            <div class="card-pro p-3 d-flex flex-column align-items-start cursor-pointer position-relative" onclick="showPendingRegistrations()">
+              <div class="metric-icon mb-3" style="background: rgba(139, 92, 246, 0.08); color: #8B5CF6;"><i class="fas fa-user-clock"></i></div>
+              <h6 class="fw-semibold text-dark text-sm mb-1">Pending Approvals</h6>
+              <p class="text-xs text-muted mt-auto mb-0">Review access requests</p>
+              <span class="badge bg-danger position-absolute top-0 end-0 mt-3 me-3 rounded-pill fw-bold text-xs" id="pendingCountBadge" style="display: none;">0</span>
             </div>
 
-            <div class="feature-card-3d pink" onclick="showSystemManagement()">
-              <div class="icon-circle"><i class="fas fa-cogs"></i></div>
-              <h6 class="fw-bold text-dark mb-1">System Tools</h6>
-              <p class="text-muted small mb-0 mt-auto">Fix layouts & cache</p>
+            <div class="card-pro p-3 d-flex flex-column align-items-start cursor-pointer" onclick="showSystemManagement()">
+              <div class="metric-icon mb-3" style="background: rgba(220, 38, 38, 0.08); color: var(--danger);"><i class="fas fa-cogs"></i></div>
+              <h6 class="fw-semibold text-dark text-sm mb-1">System Tools</h6>
+              <p class="text-xs text-muted mt-auto mb-0">Fix database assets and logs</p>
             </div>
           </div>
         </div>
 
         <!-- Realtime statistics -->
-        <div class="mb-5">
-          <h6 class="text-muted fw-bold mb-3 ps-2">
-            <i class="fas fa-chart-line me-2 text-success"></i>Realtime Portal Metrics
-          </h6>
+        <div class="mb-4">
+          <div class="section-title ps-1"><i class="fas fa-chart-line me-1"></i>Realtime Portal Metrics</div>
           <div class="row g-3" id="statsContainer">
             <div class="col-lg-3 col-md-6">
-              <div class="stat-card-3d orange">
-                <div class="stat-icon"><i class="fas fa-users"></i></div>
-                <div class="stat-number" id="totalStaff">-</div>
-                <div class="text-muted fw-bold small uppercase">Total Staff</div>
+              <div class="metric-card">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="metric-icon" style="background: var(--primary-subtle); color: var(--primary);"><i class="fas fa-users"></i></div>
+                  <div>
+                    <div class="metric-value" id="totalStaff">-</div>
+                    <div class="metric-label">Total Staff</div>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="col-lg-3 col-md-6">
-              <div class="stat-card-3d green">
-                <div class="stat-icon"><i class="fas fa-building"></i></div>
-                <div class="stat-number" id="totalDepartments">-</div>
-                <div class="text-muted fw-bold small uppercase">Departments</div>
+              <div class="metric-card">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="metric-icon" style="background: rgba(22, 163, 74, 0.08); color: var(--success);"><i class="fas fa-building"></i></div>
+                  <div>
+                    <div class="metric-value" id="totalDepartments">-</div>
+                    <div class="metric-label">Departments</div>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="col-lg-3 col-md-6">
-              <div class="stat-card-3d teal">
-                <div class="stat-icon"><i class="fas fa-chalkboard-teacher"></i></div>
-                <div class="stat-number" id="teachingStaff">-</div>
-                <div class="text-muted fw-bold small uppercase">Teaching Staff</div>
+              <div class="metric-card">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="metric-icon" style="background: rgba(8, 145, 178, 0.08); color: var(--info);"><i class="fas fa-chalkboard-teacher"></i></div>
+                  <div>
+                    <div class="metric-value" id="teachingStaff">-</div>
+                    <div class="metric-label">Teaching</div>
+                  </div>
+                </div>
               </div>
             </div>
             <div class="col-lg-3 col-md-6">
-              <div class="stat-card-3d purple">
-                <div class="stat-icon"><i class="fas fa-user-tie"></i></div>
-                <div class="stat-number" id="nonTeachingStaff">-</div>
-                <div class="text-muted fw-bold small uppercase">Non-Teaching</div>
+              <div class="metric-card">
+                <div class="d-flex align-items-center gap-3">
+                  <div class="metric-icon" style="background: rgba(139, 92, 246, 0.08); color: #8B5CF6;"><i class="fas fa-user-tie"></i></div>
+                  <div>
+                    <div class="metric-value" id="nonTeachingStaff">-</div>
+                    <div class="metric-label">Non-Teaching</div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -316,68 +322,68 @@
       </div>
 
       <!-- Panel 2: Excel Importer -->
-      <div id="uploadPanel" class="admin-workspace-panel">
-        <div class="card-3d p-4 mb-4" style="background: white;">
+      <div id="uploadPanel" class="workspace-panel">
+        <div class="card-pro p-4 mb-4">
           <div class="row g-4">
             <div class="col-lg-8">
               <h5 class="fw-bold text-dark mb-3">
-                <i class="fas fa-file-excel text-success me-2"></i>Spreadsheet Importer
+                <i class="fas fa-file-excel text-success me-1.5"></i>Spreadsheet Importer
               </h5>
 
-              <div class="drag-drop-slot" id="uploadArea">
-                <i class="fas fa-cloud-upload-alt icon-cloud"></i>
-                <h5 class="fw-bold text-dark mb-1">Drag & Drop Spreadsheet File Here</h5>
-                <p class="text-muted small mb-4">accepts Microsoft Excel (.xlsx, .xls) or CSV (.csv)</p>
+              <div class="dropzone-pro" id="uploadArea">
+                <i class="fas fa-cloud-upload-alt"></i>
+                <h6 class="fw-bold text-dark mb-1 text-sm">Drag & Drop Spreadsheet File Here</h6>
+                <p class="text-xs text-muted mb-4">Accepts Microsoft Excel (.xlsx, .xls) or CSV (.csv)</p>
                 <input type="file" id="excelFile" accept=".xlsx,.xls,.csv" class="d-none">
-                <button class="btn-3d btn-3d-orange" onclick="document.getElementById('excelFile').click()">
-                  <i class="fas fa-folder-open me-2"></i>Choose File
+                <button class="btn-pro btn-outline btn-sm" onclick="document.getElementById('excelFile').click()">
+                  <i class="fas fa-folder-open me-1.5"></i>Choose File
                 </button>
               </div>
 
-              <div id="fileInfo" class="mt-4" style="display: none;">
+              <div id="fileInfo" class="mt-3" style="display: none;">
                 <div class="alert alert-success d-flex align-items-center">
-                  <i class="fas fa-check-circle me-3 fs-4 text-success"></i>
+                  <i class="fas fa-check-circle me-2.5 fs-5"></i>
                   <div>
-                    <strong>Ready for upload:</strong> <span id="fileName" class="fw-bold"></span>
-                    <br><small class="text-muted">Size: <span id="fileSize"></span></small>
+                    <strong class="text-xs">Ready for upload:</strong> <span id="fileName" class="fw-bold text-xs"></span>
+                    <br><small class="text-muted text-xs">Size: <span id="fileSize"></span></small>
                   </div>
                 </div>
               </div>
 
-              <div id="uploadProgress" class="mt-4" style="display: none;">
+              <div id="uploadProgress" class="mt-3" style="display: none;">
                 <div class="d-flex justify-content-between mb-2">
-                  <span class="text-muted fw-bold">Processing upload...</span>
-                  <span id="progressPercent" class="fw-bold text-warning">Processing</span>
+                  <span class="text-xs text-muted fw-semibold">Processing upload...</span>
+                  <span id="progressPercent" class="text-xs fw-bold text-primary">Processing</span>
                 </div>
-                <div class="progress-modern">
-                  <div class="progress-bar progress-bar-striped progress-bar-animated" id="progressBar" style="width: 100%"></div>
+                <div class="progress" style="height: 6px; border-radius: 99px;">
+                  <div class="progress-bar progress-bar-striped progress-bar-animated bg-primary" id="progressBar" style="width: 100%"></div>
                 </div>
               </div>
 
               <div class="mt-4">
-                <button id="uploadBtn" class="btn-3d btn-3d-orange me-2" disabled>
-                  <i class="fas fa-upload me-2"></i>Upload & Process
+                <button id="uploadBtn" class="btn-pro btn-primary me-2" disabled>
+                  <i class="fas fa-upload me-1.5"></i>Upload & Process
                 </button>
-                <button id="clearBtn" class="btn-3d btn-3d-red" onclick="clearUpload()">
-                  <i class="fas fa-times me-2"></i>Clear
+                <button id="clearBtn" class="btn-pro btn-outline" onclick="clearUpload()">
+                  <i class="fas fa-times me-1.5"></i>Clear
                 </button>
               </div>
             </div>
 
             <!-- Excel Guidelines -->
             <div class="col-lg-4">
-              <div class="card-3d p-4" style="background: #FFFDF9; border: 1.5px dashed var(--accent-gold); height: 100%;">
-                <h6 class="fw-bold text-warning mb-3">
-                  <i class="fas fa-info-circle me-2"></i>Import Guidelines
+              <div class="card-pro p-3" style="background: var(--gray-50); height: 100%;">
+                <h6 class="fw-semibold text-dark text-sm mb-3">
+                  <i class="fas fa-info-circle me-1 text-primary"></i>Import Guidelines
                 </h6>
-                <ul class="list-unstyled small text-muted">
-                  <li class="mb-3 d-flex align-items-start"><i class="fas fa-check-circle text-success me-2 mt-1"></i>Headers are strictly required.</li>
-                  <li class="mb-3 d-flex align-items-start"><i class="fas fa-check-circle text-success me-2 mt-1"></i>Max allowed size: 10MB.</li>
-                  <li class="mb-3 d-flex align-items-start"><i class="fas fa-check-circle text-success me-2 mt-1"></i>Required columns: Sl No, Emp No, Name, Type, Contract Type, Department, Category, Gender, Designation, Mobile No, Blood Group, Permanent Address, Email.</li>
+                <ul class="list-unstyled text-xs text-muted mb-4">
+                  <li class="mb-2 d-flex align-items-start"><i class="fas fa-check text-success me-2 mt-0.5"></i>Headers are strictly required.</li>
+                  <li class="mb-2 d-flex align-items-start"><i class="fas fa-check text-success me-2 mt-0.5"></i>Max allowed size: 10MB.</li>
+                  <li class="mb-2 d-flex align-items-start"><i class="fas fa-check text-success me-2 mt-0.5"></i>Columns must map exactly: Sl No, Emp No, Name, Type, Contract Type, Department, Category, Gender, Designation, Mobile No, Blood Group, Permanent Address, Email.</li>
                 </ul>
                 <div class="mt-auto">
-                  <button class="btn-3d btn-3d-teal w-100 py-2 text-sm" onclick="downloadTemplate()" style="border-radius: 12px; font-size: 0.9rem;">
-                    <i class="fas fa-download me-2"></i>Download Sample CSV
+                  <button class="btn-pro btn-outline btn-sm w-100" onclick="downloadTemplate()">
+                    <i class="fas fa-download me-1.5"></i>Download Sample CSV
                   </button>
                 </div>
               </div>
@@ -386,48 +392,48 @@
         </div>
 
         <!-- Upload Results Log -->
-        <div id="resultsSection" class="card-3d p-4 mb-4" style="display: none; background: white;">
+        <div id="resultsSection" class="card-pro p-4 mb-4" style="display: none;">
           <h5 class="fw-bold text-dark mb-3">
-            <i class="fas fa-list-check text-success me-2"></i>Process Import Logs
+            <i class="fas fa-list-check text-success me-1.5"></i>Process Import Logs
           </h5>
           <div id="uploadResultsContainer">
-            <pre id="uploadResults" class="p-3 bg-light" style="white-space: pre-wrap; max-height: 400px; overflow-y: auto; border-radius: 16px; border: 1px solid #E5E7EB;"></pre>
+            <pre id="uploadResults" class="p-3 bg-light text-xs" style="white-space: pre-wrap; max-height: 300px; overflow-y: auto; border-radius: var(--radius-md); border: 1px solid var(--border);"></pre>
           </div>
         </div>
       </div>
 
       <!-- Panel 3: Manual Registry -->
-      <div id="manualPanel" class="admin-workspace-panel">
-        <h5 class="fw-bold text-dark mb-4">
-          <i class="fas fa-user-plus text-warning me-2"></i>Add Staff Member Manually
+      <div id="manualPanel" class="workspace-panel">
+        <h5 class="fw-bold text-dark mb-3">
+          <i class="fas fa-user-plus text-primary me-1.5"></i>Add Staff Member Manually
         </h5>
 
         <form id="manualEntryForm">
-          <div class="row g-4">
+          <div class="row g-3">
             <!-- Left Column - Personal Info -->
             <div class="col-lg-6">
-              <div class="card-3d p-4 h-100" style="background: white; border-top: 5px solid var(--accent-teal);">
-                <h6 class="fw-bold text-teal mb-4"><i class="fas fa-user me-2"></i>Personal Details</h6>
+              <div class="card-pro p-3 h-100" style="border-top: 2px solid var(--info);">
+                <div class="section-title mb-3"><i class="fas fa-user me-1 text-info"></i>Personal Details</div>
 
                 <div class="mb-3">
-                  <label class="label-3d">Full Name <span class="text-danger">*</span></label>
-                  <input type="text" class="input-3d" id="manualName" required>
+                  <label class="label-pro">Full Name <span class="text-danger">*</span></label>
+                  <input type="text" class="input-pro" id="manualName" required>
                 </div>
 
                 <div class="mb-3">
-                  <label class="label-3d">Email Address <span class="text-danger">*</span></label>
-                  <input type="email" class="input-3d" id="manualEmail" required>
+                  <label class="label-pro">Email Address <span class="text-danger">*</span></label>
+                  <input type="email" class="input-pro" id="manualEmail" required>
                 </div>
 
                 <div class="mb-3">
-                  <label class="label-3d">Mobile Number <span class="text-danger">*</span></label>
-                  <input type="tel" class="input-3d" id="manualMobileNo" required>
+                  <label class="label-pro">Mobile Number <span class="text-danger">*</span></label>
+                  <input type="tel" class="input-pro" id="manualMobileNo" required>
                 </div>
 
                 <div class="row">
                   <div class="col-md-6 mb-3">
-                    <label class="label-3d">Gender <span class="text-danger">*</span></label>
-                    <select class="input-3d form-select" id="manualGender" required>
+                    <label class="label-pro">Gender <span class="text-danger">*</span></label>
+                    <select class="input-pro form-select" id="manualGender" required>
                       <option value="">Select Gender</option>
                       <option value="Male">Male</option>
                       <option value="Female">Female</option>
@@ -436,8 +442,8 @@
                   </div>
 
                   <div class="col-md-6 mb-3">
-                    <label class="label-3d">Blood Group <span class="text-danger">*</span></label>
-                    <select class="input-3d form-select" id="manualBloodGroup" required>
+                    <label class="label-pro">Blood Group <span class="text-danger">*</span></label>
+                    <select class="input-pro form-select" id="manualBloodGroup" required>
                       <option value="">Select Blood Group</option>
                       <option value="A+">A+</option>
                       <option value="A-">A-</option>
@@ -451,26 +457,26 @@
                   </div>
                 </div>
 
-                <div class="mb-3">
-                  <label class="label-3d">Permanent Address <span class="text-danger">*</span></label>
-                  <textarea class="input-3d" id="manualPermanentAddress" rows="3" required></textarea>
+                <div class="mb-2">
+                  <label class="label-pro">Permanent Address <span class="text-danger">*</span></label>
+                  <textarea class="input-pro" id="manualPermanentAddress" rows="3" required></textarea>
                 </div>
               </div>
             </div>
 
             <!-- Right Column - Employment Details -->
-            <div class="col-lg-6 d-flex flex-column gap-4">
-              <div class="card-3d p-4" style="background: white; border-top: 5px solid var(--accent-purple);">
-                <h6 class="fw-bold text-purple mb-4"><i class="fas fa-briefcase me-2"></i>Employment Profile</h6>
+            <div class="col-lg-6 d-flex flex-column gap-3">
+              <div class="card-pro p-3" style="border-top: 2px solid var(--primary);">
+                <div class="section-title mb-3"><i class="fas fa-briefcase me-1 text-primary"></i>Employment Profile</div>
 
                 <div class="mb-3">
-                  <label class="label-3d">Employee ID Number</label>
-                  <input type="text" class="input-3d" id="manualEmpNo" placeholder="Leave blank for auto-generation">
+                  <label class="label-pro">Employee ID Number</label>
+                  <input type="text" class="input-pro" id="manualEmpNo" placeholder="Leave blank for auto-generation">
                 </div>
 
                 <div class="mb-3">
-                  <label class="label-3d">Department <span class="text-danger">*</span></label>
-                  <select class="input-3d form-select" id="manualDepartment" required>
+                  <label class="label-pro">Department <span class="text-danger">*</span></label>
+                  <select class="input-pro form-select" id="manualDepartment" required>
                     <option value="">Select Department</option>
                     <option value="Administrative">Administrative (ADM)</option>
                     <option value="Computer Applications">Computer Applications (CA)</option>
@@ -485,8 +491,8 @@
                 </div>
 
                 <div class="mb-3">
-                  <label class="label-3d">Designation <span class="text-danger">*</span></label>
-                  <select class="input-3d form-select" id="manualDesignation" required>
+                  <label class="label-pro">Designation <span class="text-danger">*</span></label>
+                  <select class="input-pro form-select" id="manualDesignation" required>
                     <option value="">Select Designation</option>
                     <option value="Professor">Professor</option>
                     <option value="Associate Professor">Associate Professor</option>
@@ -509,9 +515,9 @@
                 </div>
 
                 <div class="row">
-                  <div class="col-md-6 mb-3">
-                    <label class="label-3d">Staff Type <span class="text-danger">*</span></label>
-                    <select class="input-3d form-select" id="manualType" required>
+                  <div class="col-md-6 mb-2">
+                    <label class="label-pro">Staff Type <span class="text-danger">*</span></label>
+                    <select class="input-pro form-select" id="manualType" required>
                       <option value="">Select Type</option>
                       <option value="Teaching Staff">Teaching Staff</option>
                       <option value="Non Teaching Staff">Non Teaching Staff</option>
@@ -519,9 +525,9 @@
                     </select>
                   </div>
 
-                  <div class="col-md-6 mb-3">
-                    <label class="label-3d">Contract Type <span class="text-danger">*</span></label>
-                    <select class="input-3d form-select" id="manualContractType" required>
+                  <div class="col-md-6 mb-2">
+                    <label class="label-pro">Contract Type <span class="text-danger">*</span></label>
+                    <select class="input-pro form-select" id="manualContractType" required>
                       <option value="">Select Contract Type</option>
                       <option value="Permanent">Permanent</option>
                       <option value="Contract">Contract</option>
@@ -532,25 +538,23 @@
               </div>
 
               <!-- Photo Upload -->
-              <div class="card-3d p-4" style="background: white; border-top: 5px solid var(--accent-pink);">
-                <h6 class="fw-bold text-pink mb-4"><i class="fas fa-camera me-2"></i>Photo Upload (Optional)</h6>
+              <div class="card-pro p-3" style="border-top: 2px solid var(--success);">
+                <div class="section-title mb-3"><i class="fas fa-camera me-1 text-success"></i>Photo Upload (Optional)</div>
                 <div class="text-center">
                   <div id="photoPreview" class="mb-3" style="display: none;">
-                    <div class="photo-preview-box">
-                      <img id="photoPreviewImg" src="" alt="Photo Preview" style="max-width: 160px; max-height: 160px; object-fit: cover;">
-                    </div>
+                    <img id="photoPreviewImg" src="" alt="Photo Preview" style="max-width: 120px; max-height: 120px; object-fit: cover; border-radius: var(--radius-md); border: 1px solid var(--border);">
                   </div>
 
                   <input type="file" id="manualPhoto" accept="image/*" class="d-none" onchange="previewPhoto()">
                   <div class="d-flex justify-content-center gap-2">
-                    <button type="button" class="btn-3d btn-3d-teal" onclick="document.getElementById('manualPhoto').click()">
-                      <i class="fas fa-camera me-2"></i>Select Image
+                    <button type="button" class="btn-pro btn-outline btn-sm" onclick="document.getElementById('manualPhoto').click()">
+                      <i class="fas fa-camera me-1.5"></i>Select Image
                     </button>
-                    <button type="button" class="btn-3d btn-3d-red" id="removePhotoBtn" style="display: none;" onclick="removePhoto()">
-                      <i class="fas fa-times me-2"></i>Remove
+                    <button type="button" class="btn-pro btn-danger btn-sm" id="removePhotoBtn" style="display: none;" onclick="removePhoto()">
+                      <i class="fas fa-times me-1.5"></i>Remove
                     </button>
                   </div>
-                  <p class="text-muted small mt-2 mb-0">Max allowed size: 5MB</p>
+                  <p class="text-xs text-muted mt-2 mb-0">Max allowed size: 5MB</p>
                 </div>
               </div>
             </div>
@@ -558,11 +562,11 @@
 
           <!-- Form Buttons -->
           <div class="text-end mt-4">
-            <button type="button" class="btn-3d btn-3d-red me-2" onclick="resetManualForm()">
-              <i class="fas fa-redo me-2"></i>Reset Form
+            <button type="button" class="btn-pro btn-outline me-2" onclick="resetManualForm()">
+              <i class="fas fa-redo me-1.5"></i>Reset Form
             </button>
-            <button type="submit" class="btn-3d btn-3d-orange" id="manualSubmitBtn">
-              <i class="fas fa-save me-2"></i>Add Staff Member
+            <button type="submit" class="btn-pro btn-primary" id="manualSubmitBtn">
+              <i class="fas fa-save me-1.5"></i>Add Staff Member
             </button>
           </div>
         </form>
@@ -572,7 +576,7 @@
   </div>
 
   <!-- Footer -->
-  <div class="text-center py-4 text-muted small mt-5" style="position: relative; z-index: 10;">
+  <div class="text-center py-4 text-muted mt-5 text-xs" style="position: relative; z-index: 10; border-top: 1px solid var(--border);">
     <p class="mb-1">College Staff Management System v1.0.0</p>
     <p class="mb-0">Mar Athanasius College of Engineering</p>
   </div>
@@ -580,17 +584,17 @@
   <!-- Modals -->
 
   <!-- Department Stats Modal -->
-  <div class="modal fade" id="departmentStatsModal" tabindex="-1">
+  <div class="modal fade modal-pro" id="departmentStatsModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content modal-content-3d">
-        <div class="modal-header modal-header-3d">
+      <div class="modal-content">
+        <div class="modal-header">
           <h5 class="modal-title"><i class="fas fa-chart-bar me-2"></i>Department Headcount Analysis</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body p-4" id="departmentStatsContent">
           <div class="text-center py-4">
-            <div class="loading-spinner mx-auto mb-3"></div>
-            <p class="text-muted">Analyzing department distributions...</p>
+            <div class="loading-spinner-pro mx-auto mb-3"></div>
+            <p class="text-sm text-muted">Analyzing department distributions...</p>
           </div>
         </div>
       </div>
@@ -598,23 +602,23 @@
   </div>
 
   <!-- Advanced Operations (System Tools) Modal -->
-  <div class="modal fade" id="systemManagementModal" tabindex="-1">
+  <div class="modal fade modal-pro" id="systemManagementModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content modal-content-3d">
-        <div class="modal-header modal-header-3d" style="background: linear-gradient(135deg, var(--accent-pink), var(--accent-pink-dark));">
-          <h5 class="modal-title"><i class="fas fa-cogs me-2"></i>System Operations Console</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger"><i class="fas fa-cogs me-2"></i>System Operations Console</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body p-4">
           <div class="d-grid gap-3">
-            <button class="btn-3d btn-3d-red w-100 py-3" onclick="fixPhoneNumbers()">
-              <i class="fas fa-wrench me-2"></i>Fix Phone Number Formats
+            <button class="btn-pro btn-outline py-2.5" onclick="fixPhoneNumbers()">
+              <i class="fas fa-wrench me-1.5"></i>Fix Phone Number Formats
             </button>
-            <button class="btn-3d btn-3d-teal w-100 py-3" onclick="refreshCache()">
-              <i class="fas fa-sync me-2"></i>Refresh Memory Cache
+            <button class="btn-pro btn-outline py-2.5" onclick="refreshCache()">
+              <i class="fas fa-sync me-1.5"></i>Refresh Memory Cache
             </button>
-            <button class="btn-3d btn-3d-orange w-100 py-3" onclick="exportData()">
-              <i class="fas fa-download me-2"></i>Export Whole Directory (JSON)
+            <button class="btn-pro btn-primary py-2.5" onclick="exportData()">
+              <i class="fas fa-download me-1.5"></i>Export Whole Directory (JSON)
             </button>
           </div>
         </div>
@@ -623,21 +627,21 @@
   </div>
 
   <!-- Pending Registrations Modal -->
-  <div class="modal fade" id="pendingRegistrationsModal" tabindex="-1">
+  <div class="modal fade modal-pro" id="pendingRegistrationsModal" tabindex="-1">
     <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-      <div class="modal-content modal-content-3d">
-        <div class="modal-header modal-header-3d" style="background: linear-gradient(135deg, var(--accent-purple), var(--accent-purple-dark));">
+      <div class="modal-content">
+        <div class="modal-header">
           <h5 class="modal-title"><i class="fas fa-user-clock me-2"></i>Pending Access Requests</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body p-4" id="pendingRegistrationsContent">
           <div class="text-center py-4">
-            <div class="loading-spinner mx-auto mb-3"></div>
-            <p class="text-muted">Loading pending signups...</p>
+            <div class="loading-spinner-pro mx-auto mb-3"></div>
+            <p class="text-sm text-muted">Loading pending signups...</p>
           </div>
         </div>
-        <div class="modal-footer border-0 p-3">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 12px; padding: 10px 24px; font-weight: 600;">Close</button>
+        <div class="modal-footer">
+          <button type="button" class="btn-pro btn-outline" data-bs-dismiss="modal">Close</button>
         </div>
       </div>
     </div>
@@ -649,17 +653,17 @@
 
     // Switch Panel dynamic controller
     function switchPanel(panelId) {
-      document.querySelectorAll('.admin-workspace-panel').forEach(panel => {
+      document.querySelectorAll('.workspace-panel').forEach(panel => {
         panel.classList.remove('active');
       });
-      document.querySelectorAll('.admin-sidebar-btn').forEach(btn => {
+      document.querySelectorAll('.sidebar-nav-item').forEach(btn => {
         btn.classList.remove('active');
       });
 
       document.getElementById(panelId + 'Panel').classList.add('active');
       
       // Find matching button to highlight
-      document.querySelectorAll('.admin-sidebar-btn').forEach(btn => {
+      document.querySelectorAll('.sidebar-nav-item').forEach(btn => {
         if (btn.getAttribute('onclick') && btn.getAttribute('onclick').includes(panelId)) {
           btn.classList.add('active');
         }
@@ -848,7 +852,7 @@
       const uploadBtn = document.getElementById('uploadBtn');
       progressDiv.style.display = 'block';
       uploadBtn.disabled = true;
-      uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Processing...';
+      uploadBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1.5"></i>Processing...';
       try {
         const response = await fetchWithRetry('/api/upload_excel', {
           method: 'POST',
@@ -878,7 +882,7 @@
       } finally {
         progressDiv.style.display = 'none';
         uploadBtn.disabled = false;
-        uploadBtn.innerHTML = '<i class="fas fa-upload me-2"></i>Upload & Process';
+        uploadBtn.innerHTML = '<i class="fas fa-upload me-1.5"></i>Upload & Process';
       }
     }
 
@@ -916,37 +920,25 @@
     function displayUploadResults(result) {
       const resultsContainer = document.getElementById('uploadResults');
       if (result.success) {
-        let html = `<div class="text-success mb-3">
-          <i class="fas fa-check-circle me-2"></i><strong>Upload Successful!</strong>
+        let html = `<div class="text-success mb-2">
+          <i class="fas fa-check-circle me-1.5"></i><strong>Upload Successful!</strong>
         </div>`;
         if (result.totalRecords !== undefined) {
           html += `<div class="upload-status">
-            <div class="status-item">
-              <span>Total Records in File:</span>
-              <span class="fw-bold">${result.totalRecords}</span>
-            </div>
-            <div class="status-item">
-              <span>Successfully Processed:</span>
-              <span class="fw-bold text-success">${result.processedRecords || result.uploadedRecords || 0}</span>
-            </div>
-            <div class="status-item">
-              <span>Uploaded to Database:</span>
-              <span class="fw-bold text-success">${result.uploadedRecords || result.processedRecords || 0}</span>
-            </div>`;
+            <div>Total Records in File: <span class="fw-bold">${result.totalRecords}</span></div>
+            <div>Successfully Processed: <span class="fw-bold text-success">${result.processedRecords || result.uploadedRecords || 0}</span></div>
+            <div>Uploaded to Database: <span class="fw-bold text-success">${result.uploadedRecords || result.processedRecords || 0}</span></div>`;
           if (result.errors && result.errors.length > 0) {
-            html += `<div class="status-item">
-              <span>Errors:</span>
-              <span class="fw-bold text-warning">${result.errors.length}</span>
-            </div>`;
+            html += `<div>Errors: <span class="fw-bold text-warning">${result.errors.length}</span></div>`;
           }
           html += `</div>`;
           if (result.message) {
-            html += `<div class="alert alert-success mt-3">${result.message}</div>`;
+            html += `<div class="mt-2 text-muted">${result.message}</div>`;
           }
           if (result.errors && result.errors.length > 0) {
             html += `<div class="mt-3">
-              <h6 class="text-warning">Errors encountered:</h6>
-              <div class="bg-light p-2 rounded" style="max-height: 200px; overflow-y: auto;">`;
+              <h6 class="text-warning text-xs font-semibold">Errors encountered:</h6>
+              <div class="bg-light p-2 rounded" style="max-height: 150px; overflow-y: auto;">`;
             result.errors.forEach(error => {
               html += `<div class="small text-muted mb-1">Row ${error.row}: ${error.error}</div>`;
             });
@@ -956,8 +948,8 @@
         resultsContainer.innerHTML = html;
       } else {
         resultsContainer.innerHTML = `<div class="text-danger">
-          <i class="fas fa-exclamation-triangle me-2"></i><strong>Upload Failed</strong>
-          <div class="mt-2">${result.error || 'Unknown error occurred'}</div>
+          <i class="fas fa-exclamation-triangle me-1.5"></i><strong>Upload Failed</strong>
+          <div class="mt-1">${result.error || 'Unknown error occurred'}</div>
         </div>`;
       }
     }
@@ -1027,52 +1019,34 @@
         departmentTypeCount[dept][type] = (departmentTypeCount[dept][type] || 0) + 1;
       });
 
-      const deptColors = [
-        '#FFFBEB', '#F0FDFA', '#F5F3FF', '#FFF7ED',
-        '#FDF2F8', '#ECFDF5', '#F0F9FF', '#FEF2F2'
-      ];
-      
-      const deptBorderColors = [
-        'var(--accent-gold)', 'var(--accent-teal)', 'var(--accent-purple)', 'var(--primary-color)',
-        'var(--accent-pink)', 'var(--accent-green)', '#0284C7', 'var(--accent-red)'
-      ];
-
       let html = '';
       Object.entries(departmentCounts).forEach(([dept, count], index) => {
-        const color = deptColors[index % deptColors.length];
-        const border = deptBorderColors[index % deptBorderColors.length];
         const types = departmentTypeCount[dept] || {};
         html += `
-          <div class="dept-stats-card-3d card" style="background-color: ${color}; border-left: 5px solid ${border};">
-            <div class="card-body">
-              <div class="row align-items-center mb-3">
-                <div class="col">
-                  <div class="d-flex align-items-center">
-                    <i class="fas fa-building me-2" style="color: ${border};"></i>
-                    <h6 class="mb-0 fw-bold" style="color: ${border};">${dept}</h6>
-                  </div>
-                </div>
-                <div class="col-auto">
-                  <span class="badge-3d badge-3d-orange fw-bold">${count} Staff</span>
-                </div>
+          <div class="card-pro p-3 mb-3" style="border-left: 3px solid var(--primary); background: var(--gray-50);">
+            <div class="d-flex align-items-center justify-content-between mb-2">
+              <div class="d-flex align-items-center">
+                <i class="fas fa-building me-1.5 text-primary text-sm"></i>
+                <h6 class="mb-0 fw-semibold text-dark text-sm">${dept}</h6>
               </div>
-              <div class="row g-2">
+              <span class="badge-pro badge-primary">${count} Staff</span>
+            </div>
+            <div class="row g-2 mt-1">
         `;
         Object.entries(types).forEach(([type, typeCount]) => {
           const icon = type.toLowerCase().includes('teach') ? 'fa-chalkboard-teacher' : 'fa-user-tie';
-          const iconColor = type.toLowerCase().includes('teach') ? 'var(--accent-teal)' : 'var(--accent-purple)';
+          const iconColor = type.toLowerCase().includes('teach') ? 'var(--info)' : 'var(--gray-500)';
           html += `
             <div class="col-6">
-              <div class="d-flex align-items-center">
-                <i class="fas ${icon} me-2" style="color: ${iconColor}; font-size: 0.9rem;"></i>
-                <small class="text-muted me-auto fw-semibold">${type}</small>
-                <small class="fw-bold text-dark fs-6">${typeCount}</small>
+              <div class="d-flex align-items-center text-xs">
+                <i class="fas ${icon} me-1.5" style="color: ${iconColor};"></i>
+                <span class="text-muted fw-medium">${type}:</span>
+                <span class="fw-bold text-dark ms-1">${typeCount}</span>
               </div>
             </div>
           `;
         });
         html += `
-              </div>
             </div>
           </div>
         `;
@@ -1181,25 +1155,35 @@
     function showAlert(message, type) {
       const existingAlerts = document.querySelectorAll('.alert-floating');
       existingAlerts.forEach(alert => alert.remove());
-      const alertClass = type === 'success' ? 'alert-success-modern' :
-        type === 'danger' ? 'alert-danger-modern' :
-          type === 'warning' ? 'alert-warning-modern' : 'alert-info-modern';
+      
+      const alertClass = type === 'success' ? 'alert-success' :
+        type === 'danger' ? 'alert-danger' :
+          type === 'warning' ? 'alert-warning' : 'alert-info';
+          
       const icon = type === 'success' ? 'fa-check-circle' :
         type === 'danger' ? 'fa-exclamation-triangle' :
           type === 'warning' ? 'fa-exclamation-circle' : 'fa-info-circle';
+          
       const alertDiv = document.createElement('div');
-      alertDiv.className = `alert alert-modern ${alertClass} alert-floating position-fixed`;
+      alertDiv.className = `alert ${alertClass} alert-floating position-fixed`;
       alertDiv.style.cssText = `
         top: 20px; 
         right: 20px; 
         z-index: 9999; 
         min-width: 300px;
         max-width: 500px;
+        box-shadow: var(--shadow-lg);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-md);
+        font-size: 0.8125rem;
+        font-weight: 500;
         animation: slideInRight 0.3s ease;
       `;
       alertDiv.innerHTML = `
-        <i class="fas ${icon} me-2"></i>${message}
-        <button type="button" class="btn-close float-end" onclick="this.parentElement.remove()"></button>
+        <div class="d-flex align-items-center justify-content-between">
+          <span><i class="fas ${icon} me-2"></i>${message}</span>
+          <button type="button" class="btn-close ms-3" onclick="this.parentElement.parentElement.remove()"></button>
+        </div>
       `;
       document.body.appendChild(alertDiv);
       setTimeout(() => {
@@ -1223,8 +1207,8 @@
         modal.show();
         document.getElementById('pendingRegistrationsContent').innerHTML = `
           <div class="text-center py-4">
-            <div class="loading-spinner mx-auto mb-3"></div>
-            <p class="text-muted">Loading pending registrations...</p>
+            <div class="loading-spinner-pro mx-auto mb-3"></div>
+            <p class="text-xs text-muted">Loading pending registrations...</p>
           </div>
         `;
         const token = await getIdTokenIfSignedIn();
@@ -1247,8 +1231,8 @@
         } else {
           document.getElementById('pendingRegistrationsContent').innerHTML = `
             <div class="text-center py-4">
-              <i class="fas fa-check-circle fa-2x text-success mb-3"></i>
-              <p class="text-muted fw-bold">No pending registrations found</p>
+              <i class="fas fa-check-circle fa-2x text-success mb-2"></i>
+              <p class="text-xs text-muted fw-bold">No pending registrations found</p>
             </div>
           `;
           updatePendingCount(0);
@@ -1256,7 +1240,7 @@
       } catch (error) {
         console.error('Error loading pending registrations:', error);
         document.getElementById('pendingRegistrationsContent').innerHTML = `
-          <div class="alert alert-danger-modern">
+          <div class="alert alert-danger">
             <i class="fas fa-exclamation-triangle me-2"></i>
             Failed to load pending registrations. Please try again.
           </div>
@@ -1270,39 +1254,39 @@
       registrations.forEach((reg, index) => {
         html += `
           <div class="col-md-6">
-            <div class="card-3d p-3" style="background: white;">
+            <div class="card-pro p-3">
               <div class="d-flex justify-content-between align-items-start mb-3">
                 <div>
-                  <h6 class="fw-bold mb-1 text-dark">${reg.Name || 'No name'}</h6>
-                  <span class="badge-3d badge-3d-teal">${reg.Department || 'No department'}</span>
+                  <h6 class="fw-semibold mb-0.5 text-dark text-sm">${reg.Name || 'No name'}</h6>
+                  <span class="badge-pro badge-primary">${reg.Department || 'No department'}</span>
                 </div>
-                <span class="badge-3d badge-3d-orange">Pending</span>
+                <span class="badge-pro badge-neutral">Pending</span>
               </div>
               
-              <div class="mb-4">
-                <div class="d-flex align-items-center mb-1 text-muted">
-                  <i class="fas fa-id-card me-2" style="width: 20px;"></i>
-                  <small class="fw-semibold">${reg['Employee ID'] || 'No ID'}</small>
+              <div class="mb-4 text-xs text-muted">
+                <div class="d-flex align-items-center mb-1">
+                  <i class="fas fa-id-card me-2" style="width: 14px;"></i>
+                  <span>${reg['Employee ID'] || 'No ID'}</span>
                 </div>
-                <div class="d-flex align-items-center mb-1 text-muted">
-                  <i class="fas fa-envelope me-2" style="width: 20px;"></i>
-                  <small class="fw-semibold">${reg.Email || 'No email'}</small>
+                <div class="d-flex align-items-center mb-1">
+                  <i class="fas fa-envelope me-2" style="width: 14px;"></i>
+                  <span>${reg.Email || 'No email'}</span>
                 </div>
-                <div class="d-flex align-items-center mb-1 text-muted">
-                  <i class="fas fa-phone me-2" style="width: 20px;"></i>
-                  <small class="fw-semibold">${reg['Mobile No'] || 'No phone'}</small>
+                <div class="d-flex align-items-center mb-1">
+                  <i class="fas fa-phone me-2" style="width: 14px;"></i>
+                  <span>${reg['Mobile No'] || 'No phone'}</span>
                 </div>
-                <div class="d-flex align-items-center text-muted">
-                  <i class="fas fa-briefcase me-2" style="width: 20px;"></i>
-                  <small class="fw-semibold">${reg.Designation || 'No designation'}</small>
+                <div class="d-flex align-items-center">
+                  <i class="fas fa-briefcase me-2" style="width: 14px;"></i>
+                  <span>${reg.Designation || 'No designation'}</span>
                 </div>
               </div>
               
               <div class="d-flex justify-content-end gap-2">
-                <button class="btn-3d btn-3d-green px-3 py-2 text-sm" onclick="approveRegistration('${reg.Email}')" style="border-radius: 10px; font-size: 0.85rem;">
+                <button class="btn-pro btn-outline btn-sm" onclick="approveRegistration('${reg.Email}')">
                   <i class="fas fa-check me-1"></i> Approve
                 </button>
-                <button class="btn-3d btn-3d-red px-3 py-2 text-sm" onclick="rejectRegistration('${reg.Email}')" style="border-radius: 10px; font-size: 0.85rem;">
+                <button class="btn-pro btn-danger btn-sm" onclick="rejectRegistration('${reg.Email}')">
                   <i class="fas fa-times me-1"></i> Reject
                 </button>
               </div>
@@ -1453,7 +1437,7 @@
           });
         }
         submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-2"></i>Adding Staff...';
+        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin me-1.5"></i>Adding Staff...';
         const token = await getIdTokenIfSignedIn();
         if (!token) {
           submitBtn.disabled = false;
@@ -1474,7 +1458,7 @@
           resetManualForm();
           await loadStaffData();
           setTimeout(() => {
-            switchPanel('upload');
+            switchPanel('dashboard');
           }, 2000);
         } else {
           showAlert(result.error || 'Failed to add staff member', 'danger');

@@ -1,7 +1,8 @@
 <!doctype html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Staff Directory</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -12,279 +13,205 @@
   <script src="/static/js/mesh-background.js"></script>
   <style>
     body {
-      background: radial-gradient(circle at 100% 100%, #FFFBEB 0%, #FAF9F6 50%, #FEF3C7 100%);
+      background: var(--page-bg);
     }
 
-    /* Floating Neomorphic Navbar */
-    .navbar-neomorphic {
-      background: rgba(255, 255, 255, 0.9);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      border-radius: 20px;
-      margin: 1.5rem auto;
-      max-width: 1400px;
-      width: calc(100% - 2rem);
-      box-shadow: 0 10px 25px rgba(217, 119, 6, 0.08);
-      padding: 0.75rem 1.5rem;
+    /* Professional layout overrides */
+    .layout-with-sidebar {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+      gap: 1.75rem;
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0 1rem;
     }
 
-    .navbar-brand-custom {
-      font-weight: 800;
-      color: var(--primary-color) !important;
-      font-size: 1.4rem;
-      letter-spacing: -0.5px;
-      display: flex;
-      align-items: center;
-    }
-
-    /* Department Cards Grid */
-    .dept-card-3d {
-      background: white;
-      border-radius: 20px;
-      padding: 1.5rem 1.25rem;
-      border: 1px solid rgba(255, 255, 255, 0.8);
-      box-shadow: var(--shadow-3d-card);
-      transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      height: 100%;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .dept-card-3d:hover {
-      transform: translateY(-5px);
-      box-shadow: var(--shadow-3d-card-hover);
-    }
-
-    .dept-card-3d .dept-icon {
-      font-size: 2rem;
-      margin-bottom: 1rem;
-      transition: transform 0.3s ease;
-    }
-
-    .dept-card-3d:hover .dept-icon {
-      transform: scale(1.1) rotate(5deg);
-    }
-
-    .dept-card-3d.all-depts {
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-gold) 100%);
-      color: white;
-      border: none;
-    }
-    .dept-card-3d.all-depts h6 { color: white !important; }
-    .dept-card-3d.all-depts .dept-icon { color: white !important; }
-
-    /* Neomorphic Search Filters Chips */
-    .filter-chip-3d {
+    /* Filter Chips (Professional Style) */
+    .filter-chip-pro {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 10px 20px;
-      background: #FAF9F6;
-      border: 2px solid transparent;
-      border-radius: 14px;
-      font-weight: 700;
-      color: var(--text-muted);
+      gap: 0.375rem;
+      padding: 0.4rem 0.875rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--gray-600);
       cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: var(--shadow-inset-3d);
+      transition: all 0.15s ease;
     }
 
-    .filter-chip-3d:hover {
-      border-color: var(--primary-color);
-      color: var(--primary-color);
+    .filter-chip-pro:hover {
+      border-color: var(--gray-400);
+      color: var(--gray-900);
     }
 
-    .filter-chip-3d.active {
-      background: var(--primary-color);
+    .filter-chip-pro.active {
+      background: var(--gray-900);
       color: white;
-      border-color: var(--primary-color);
-      box-shadow: 0 6px 12px var(--primary-glow);
+      border-color: var(--gray-900);
     }
 
-    .filter-chip-3d i {
-      font-size: 0.95rem;
+    /* Staff Card - Clean Horizontal SaaS Style */
+    .staff-row-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1rem 1.25rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
-    /* Contact Action Buttons */
-    .contact-btn-3d {
-      width: 40px;
-      height: 40px;
-      border-radius: 14px;
+    .staff-row-card:hover {
+      border-color: var(--gray-300);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .staff-row-card.selected {
+      border-color: var(--primary);
+      background: var(--primary-subtle);
+    }
+
+    .avatar-pro {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.1rem;
-      border: none;
-      cursor: pointer;
-      position: relative;
-      top: 0;
-      transition: all 0.1s ease;
-    }
-
-    .contact-btn-3d-teal {
-      background: var(--accent-teal);
-      color: white;
-      box-shadow: 0 3px 0 var(--accent-teal-dark);
-    }
-    .contact-btn-3d-teal:hover { background: var(--accent-teal-dark); top: -1px; box-shadow: 0 4px 0 var(--accent-teal-dark); }
-    .contact-btn-3d-teal:active { top: 3px; box-shadow: 0 0px 0 var(--accent-teal-dark); }
-
-    .contact-btn-3d-green {
-      background: var(--accent-green);
-      color: white;
-      box-shadow: 0 3px 0 var(--accent-green-dark);
-    }
-    .contact-btn-3d-green:hover { background: var(--accent-green-dark); top: -1px; box-shadow: 0 4px 0 var(--accent-green-dark); }
-    .contact-btn-3d-green:active { top: 3px; box-shadow: 0 0px 0 var(--accent-green-dark); }
-
-    .contact-btn-3d-orange {
-      background: var(--primary-color);
-      color: white;
-      box-shadow: 0 3px 0 var(--primary-active);
-    }
-    .contact-btn-3d-orange:hover { background: var(--primary-hover); top: -1px; box-shadow: 0 4px 0 var(--primary-active); }
-    .contact-btn-3d-orange:active { top: 3px; box-shadow: 0 0px 0 var(--primary-active); }
-
-    .contact-btn-3d-purple {
-      background: var(--accent-purple);
-      color: white;
-      box-shadow: 0 3px 0 var(--accent-purple-dark);
-    }
-    .contact-btn-3d-purple:hover { background: var(--accent-purple-dark); top: -1px; box-shadow: 0 4px 0 var(--accent-purple-dark); }
-    .contact-btn-3d-purple:active { top: 3px; box-shadow: 0 0px 0 var(--accent-purple-dark); }
-
-    .welcome-banner-3d {
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-gold) 100%);
-      color: white;
-      border-radius: 28px;
-      padding: 2.5rem 2rem;
-      position: relative;
-      overflow: hidden;
-      box-shadow: var(--shadow-3d-card);
-    }
-
-    .welcome-banner-3d::after {
-      content: '';
-      position: absolute;
-      top: -30%;
-      right: -10%;
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 60%);
-      border-radius: 50%;
-    }
-
-    .quick-search-3d {
-      background: white;
-      border-radius: 18px;
-      padding: 8px 12px;
-      margin-top: 1.25rem;
-      border: none;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
-      max-width: 600px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .section-header-3d {
-      background: white;
-      border-radius: 16px;
-      padding: 14px 20px;
-      margin: 1rem 0;
-      border-left: 5px solid var(--primary-color);
-      box-shadow: var(--shadow-3d-card);
       font-weight: 700;
-      color: var(--text-main);
-    }
-
-    .admin-controls-strip {
-      background: var(--accent-red);
+      font-size: 0.9375rem;
       color: white;
-      border-radius: 16px;
-      padding: 14px 20px;
-      margin-bottom: 1.5rem;
-      box-shadow: 0 10px 20px rgba(239, 68, 68, 0.15);
+      flex-shrink: 0;
     }
 
-    .bulk-actions-strip {
-      background: #FEF2F2;
-      border: 1px solid #FEE2E2;
-      border-radius: 16px;
-      padding: 12px 20px;
-      margin-bottom: 1.5rem;
-      box-shadow: var(--shadow-inset-3d);
+    .dept-badge-indicator {
+      border-left: 3px solid transparent;
+      padding-left: 0.75rem;
+    }
+
+    .quick-search-box {
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: white;
+      padding: 0.5rem 0.75rem;
+      max-width: 500px;
+      margin: 1rem auto 0;
+      display: flex;
+      align-items: center;
+    }
+
+    .quick-search-box input {
+      border: none;
+      outline: none;
+      width: 100%;
+      font-size: 0.8125rem;
+      margin-left: 0.5rem;
+      color: var(--gray-800);
+    }
+
+    /* Department Card */
+    .dept-card-pro {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      height: 100%;
+    }
+
+    .dept-card-pro:hover {
+      border-color: var(--gray-400);
+      box-shadow: var(--shadow-sm);
+    }
+
+    @media (max-width: 992px) {
+      .layout-with-sidebar {
+        grid-template-columns: 1fr;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- Mesh Constellation background is animated dynamically via canvas -->
-
-  <!-- Floating Neomorphic Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-neomorphic">
+  <!-- Floating Professional Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-pro">
     <div class="container-fluid p-0">
-      <a class="navbar-brand navbar-brand-custom" href="#" id="navTitle" onclick="showDepartments()">
-        <i class="fas fa-users me-2"></i>Staff Directory
+      <a class="navbar-brand-pro" href="#" id="navTitle" onclick="showDepartments()">
+        <span class="brand-dot"></span>Staff Directory
       </a>
       <div class="d-flex align-items-center gap-3">
-        <span id="userSpan" class="text-muted fw-bold d-none d-sm-inline"></span>
-        <span id="adminBadge" class="badge-3d badge-3d-orange" style="display: none;">Admin</span>
-        <button id="signoutBtn" class="btn-3d btn-3d-red px-3 py-2 text-sm" style="padding: 8px 16px; border-radius: 12px; font-size: 0.9rem;">
-          <i class="fas fa-sign-out-alt me-1"></i>Sign Out
+        <span id="userSpan" class="text-muted text-sm fw-medium d-none d-sm-inline"></span>
+        <span id="adminBadge" class="badge-pro badge-primary" style="display: none;">Admin</span>
+        <button id="signoutBtn" class="btn-pro btn-outline btn-sm">
+          <i class="fas fa-sign-out-alt"></i>Sign Out
         </button>
       </div>
     </div>
   </nav>
 
-  <div class="container mt-4" style="position: relative; z-index: 10;">
+  <div class="container mt-4" style="position: relative; z-index: 10; max-width: 1360px;">
     <!-- Back Button -->
     <div id="backButton" class="mb-4" style="display: none;">
-      <button class="btn-3d btn-3d-orange" onclick="showDepartments()" style="padding: 10px 20px; border-radius: 14px;">
-        <i class="fas fa-arrow-left me-2"></i>Back to Departments
+      <button class="btn-pro btn-outline" onclick="showDepartments()">
+        <i class="fas fa-arrow-left me-1"></i>Back to Departments
       </button>
     </div>
 
     <!-- Loading Spinner -->
     <div id="loadingDiv" class="text-center py-5">
-      <div class="loading-spinner mx-auto mb-3" style="width: 45px; height: 45px; border-top-color: var(--primary-color); border-width: 4px;"></div>
-      <p class="fw-bold text-muted">Retrieving staff members...</p>
+      <div class="loading-spinner-pro mx-auto mb-3"></div>
+      <p class="text-sm text-muted fw-medium">Retrieving staff members...</p>
     </div>
 
     <!-- Asymmetric App Layout Grid (Sidebar Dock + Workspace Content) -->
-    <div class="app-layout-sidebar" id="appLayoutWrapper" style="display: none;">
+    <div class="layout-with-sidebar" id="appLayoutWrapper" style="display: none;">
       
       <!-- Left Statistics Sidebar Dock -->
-      <div class="d-flex flex-column gap-3" id="statsSidebar" style="height: fit-content;">
-        <h6 class="text-muted fw-bold mb-2 ps-2">
-          <i class="fas fa-chart-line me-2 text-success"></i>Stats Dock
-        </h6>
-        
-        <div class="stat-card-3d orange">
-          <div class="stat-icon"><i class="fas fa-users"></i></div>
-          <div class="stat-number" id="totalStaff">0</div>
-          <div class="text-muted fw-bold small uppercase">Total Staff</div>
+      <div class="d-flex flex-column gap-3" id="statsSidebar">
+        <div class="section-title ps-1 mb-1">
+          <i class="fas fa-chart-bar me-1"></i>Portal Metrics
         </div>
         
-        <div class="stat-card-3d green">
-          <div class="stat-icon"><i class="fas fa-building"></i></div>
-          <div class="stat-number" id="totalDepartments">0</div>
-          <div class="text-muted fw-bold small uppercase">Departments</div>
+        <div class="metric-card">
+          <div class="d-flex align-items-center gap-3">
+            <div class="metric-icon" style="background: var(--primary-subtle); color: var(--primary);"><i class="fas fa-users"></i></div>
+            <div>
+              <div class="metric-value" id="totalStaff">0</div>
+              <div class="metric-label">Total Staff</div>
+            </div>
+          </div>
         </div>
         
-        <div class="stat-card-3d teal">
-          <div class="stat-icon"><i class="fas fa-chalkboard-teacher"></i></div>
-          <div class="stat-number" id="teachingStaff">0</div>
-          <div class="text-muted fw-bold small uppercase">Teaching Staff</div>
+        <div class="metric-card">
+          <div class="d-flex align-items-center gap-3">
+            <div class="metric-icon" style="background: rgba(22, 163, 74, 0.08); color: var(--success);"><i class="fas fa-building"></i></div>
+            <div>
+              <div class="metric-value" id="totalDepartments">0</div>
+              <div class="metric-label">Departments</div>
+            </div>
+          </div>
         </div>
         
-        <div class="stat-card-3d purple">
-          <div class="stat-icon"><i class="fas fa-user-tie"></i></div>
-          <div class="stat-number" id="nonTeachingStaff">0</div>
-          <div class="text-muted fw-bold small uppercase">Non-Teaching</div>
+        <div class="metric-card">
+          <div class="d-flex align-items-center gap-3">
+            <div class="metric-icon" style="background: rgba(8, 145, 178, 0.08); color: var(--info);"><i class="fas fa-chalkboard-teacher"></i></div>
+            <div>
+              <div class="metric-value" id="teachingStaff">0</div>
+              <div class="metric-label">Teaching</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="d-flex align-items-center gap-3">
+            <div class="metric-icon" style="background: rgba(139, 92, 246, 0.08); color: #8B5CF6;"><i class="fas fa-user-tie"></i></div>
+            <div>
+              <div class="metric-value" id="nonTeachingStaff">0</div>
+              <div class="metric-label">Non-Teaching</div>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -293,24 +220,19 @@
         <!-- Departments View Panel -->
         <div id="departmentsView" style="display: none;">
           <!-- Welcome Banner -->
-          <div class="welcome-banner-3d mb-4">
-            <div class="text-center">
-              <h2 class="mb-2 fw-bold text-shadow" style="font-size: 2.3rem;"><i class="fas fa-building me-2"></i>MACE Connect</h2>
-              <p class="mb-4 opacity-90 fs-6">Find and connect with team members across all departments</p>
-              <div class="quick-search-3d">
-                <div class="input-group">
-                  <span class="input-group-text bg-transparent border-0">
-                    <i class="fas fa-search text-muted"></i>
-                  </span>
-                  <input type="text" class="form-control border-0" 
-                         placeholder="Quick search by name or department..." id="quickSearch" style="outline: none; box-shadow: none;">
-                </div>
+          <div class="card-pro p-4 mb-4" style="border-left: 3px solid var(--primary);">
+            <div class="text-center py-2">
+              <h4 class="mb-1 fw-bold text-dark">MACE Connect</h4>
+              <p class="text-muted text-sm mb-0">Search and contact staff members across departments and offices</p>
+              <div class="quick-search-box">
+                <i class="fas fa-search text-muted"></i>
+                <input type="text" placeholder="Quick search by name or department..." id="quickSearch">
               </div>
             </div>
           </div>
 
-          <div class="text-start mb-3 ps-2">
-            <h5 class="fw-bold text-muted"><i class="fas fa-th me-2 text-warning"></i>Browse by Department</h5>
+          <div class="section-title mb-3 ps-1">
+            <i class="fas fa-th-large me-1"></i>Departments
           </div>
           <div id="departmentsGrid" class="row g-3"></div>
         </div>
@@ -318,34 +240,27 @@
         <!-- Staff List View Panel -->
         <div id="staffView" style="display: none;">
           <!-- Search and Filters Section -->
-          <div class="card-3d p-4 mb-4" style="background: white;">
+          <div class="card-pro p-3 mb-4">
             <div class="row align-items-center g-3">
               <div class="col-lg-5">
-                <div class="input-group">
-                  <span class="input-group-text bg-white border-end-0" style="border: 2px solid #E5E7EB; border-radius: 16px 0 0 16px;">
-                    <i class="fas fa-search text-muted"></i>
-                  </span>
-                  <input type="text" class="form-control border-start-0" 
-                         placeholder="Search by name, email, or ID..." id="searchInput" 
-                         style="border: 2px solid #E5E7EB; border-radius: 0 16px 16px 0; padding: 12px; outline: none; box-shadow: none;">
-                </div>
+                <input type="text" class="input-pro" placeholder="Search by name, email, or ID..." id="searchInput">
               </div>
               <div class="col-lg-7">
                 <div class="d-flex flex-wrap gap-2 align-items-center justify-content-lg-end">
-                  <span class="filter-chip-3d active" data-type="All Staff">
-                    <i class="fas fa-users"></i>All Staff
+                  <span class="filter-chip-pro active" data-type="All Staff">
+                    <i class="fas fa-users me-1"></i>All
                   </span>
-                  <span class="filter-chip-3d" data-type="Teaching Staff">
-                    <i class="fas fa-chalkboard-teacher"></i>Teaching
+                  <span class="filter-chip-pro" data-type="Teaching Staff">
+                    <i class="fas fa-chalkboard-teacher me-1"></i>Teaching
                   </span>
-                  <span class="filter-chip-3d" data-type="Non Teaching Staff">
-                    <i class="fas fa-user-tie"></i>Non-Teaching
+                  <span class="filter-chip-pro" data-type="Non Teaching Staff">
+                    <i class="fas fa-user-tie me-1"></i>Non-Teaching
                   </span>
-                  <span class="filter-chip-3d" data-type="Retired">
-                    <i class="fas fa-user-clock"></i>Retired
+                  <span class="filter-chip-pro" data-type="Retired">
+                    <i class="fas fa-user-clock me-1"></i>Retired
                   </span>
-                  <button id="adminControlsToggle" class="btn-3d btn-3d-red ms-auto ms-lg-2 px-3 py-2 text-sm" style="display: none; padding: 8px 16px; border-radius: 12px; font-size: 0.85rem;" onclick="toggleAdminControls()">
-                    <i class="fas fa-cog me-1"></i>Admin Action
+                  <button id="adminControlsToggle" class="btn-pro btn-outline btn-sm ms-lg-2" style="display: none;" onclick="toggleAdminControls()">
+                    <i class="fas fa-cog"></i>Admin Actions
                   </button>
                 </div>
               </div>
@@ -353,35 +268,35 @@
           </div>
 
           <!-- Admin Controls strip -->
-          <div id="adminControls" class="admin-controls-strip" style="display: none;">
+          <div id="adminControls" class="card-pro p-3 mb-3" style="display: none; border-left: 3px solid var(--danger);">
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
               <div class="d-flex align-items-center gap-2">
-                <i class="fas fa-user-shield"></i>
-                <span class="fw-bold">Administrative Actions:</span>
+                <i class="fas fa-user-shield text-danger text-sm"></i>
+                <span class="text-sm fw-semibold text-dark">Administrative Actions:</span>
               </div>
               <div class="d-flex gap-2">
-                <button class="btn-3d btn-3d-orange py-2 px-3 text-sm" onclick="toggleBulkSelect()" style="border-radius: 10px; font-size: 0.85rem;">
+                <button class="btn-pro btn-outline btn-sm" onclick="toggleBulkSelect()">
                   <i class="fas fa-list-check me-1"></i>Bulk Select Mode
                 </button>
-                <button class="btn-3d btn-3d-teal py-2 px-3 text-sm" onclick="window.location.href='/admin.html'" style="border-radius: 10px; font-size: 0.85rem;">
-                  <i class="fas fa-dashboard me-1"></i>Admin Console
+                <button class="btn-pro btn-primary btn-sm" onclick="window.location.href='/admin.html'">
+                  <i class="fas fa-cog me-1"></i>Admin Console
                 </button>
               </div>
             </div>
           </div>
 
           <!-- Bulk Actions strip -->
-          <div id="bulkActions" class="bulk-actions-strip" style="display: none;">
+          <div id="bulkActions" class="card-pro p-3 mb-3" style="display: none; background: var(--danger-bg); border-color: rgba(220, 38, 38, 0.15);">
             <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
               <div class="d-flex align-items-center gap-2">
-                <i class="fas fa-tasks text-danger"></i>
-                <span class="fw-bold text-dark"><span id="selectedCount">0</span> selected</span>
+                <i class="fas fa-tasks text-danger text-sm"></i>
+                <span class="text-sm fw-semibold text-dark"><span id="selectedCount" class="fw-bold">0</span> selected</span>
               </div>
               <div class="d-flex gap-2">
-                <button class="btn-3d btn-3d-red py-2 px-3 text-sm" id="bulkDeleteBtn" onclick="bulkDeleteStaff()" style="border-radius: 10px; font-size: 0.85rem;" disabled>
+                <button class="btn-pro btn-danger btn-sm" id="bulkDeleteBtn" onclick="bulkDeleteStaff()" disabled>
                   <i class="fas fa-trash me-1"></i>Delete Selected
                 </button>
-                <button class="btn btn-secondary py-2 px-3 text-sm" onclick="clearSelection()" style="border-radius: 10px; font-size: 0.85rem; font-weight: 600;">
+                <button class="btn-pro btn-outline btn-sm" onclick="clearSelection()">
                   <i class="fas fa-times me-1"></i>Clear
                 </button>
               </div>
@@ -389,7 +304,7 @@
           </div>
 
           <!-- Staff Results Container -->
-          <div id="staffContainer"></div>
+          <div id="staffContainer" class="d-flex flex-column gap-3"></div>
         </div>
         
         <!-- Error/Fallback Container -->
@@ -400,45 +315,45 @@
   </div>
 
   <!-- Delete Confirmation Modal -->
-  <div class="modal fade" id="deleteModal" tabindex="-1">
+  <div class="modal fade modal-pro" id="deleteModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content modal-content-3d">
-        <div class="modal-header modal-header-3d" style="background: linear-gradient(135deg, var(--accent-red), var(--accent-red-dark));">
-          <h5 class="modal-title"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body p-4 text-center">
-          <p class="fs-5">Are you sure you want to delete <strong id="deleteStaffName" class="text-danger"></strong>?</p>
-          <p class="text-muted small">This action cannot be undone. The staff member's authentication account will also be removed from the portal.</p>
+          <p class="text-base">Are you sure you want to delete <strong id="deleteStaffName" class="text-danger"></strong>?</p>
+          <p class="text-xs text-muted">This action cannot be undone. The staff member's credentials and records will be deleted permanently.</p>
         </div>
-        <div class="modal-footer border-0 p-4 justify-content-center">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 12px; padding: 10px 24px; font-weight: 600;">Cancel</button>
-          <button type="button" class="btn-3d btn-3d-red" id="confirmDeleteBtn" style="padding: 10px 24px;">Delete Permanently</button>
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="btn-pro btn-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn-pro btn-danger" id="confirmDeleteBtn">Delete Permanently</button>
         </div>
       </div>
     </div>
   </div>
 
   <!-- Change Type Modal -->
-  <div class="modal fade" id="changeTypeModal" tabindex="-1">
+  <div class="modal fade modal-pro" id="changeTypeModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content modal-content-3d">
-        <div class="modal-header modal-header-3d">
+      <div class="modal-content">
+        <div class="modal-header">
           <h5 class="modal-title"><i class="fas fa-user-edit me-2"></i>Change Staff Type</h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body p-4">
-          <p class="mb-3 fs-5">Change staff type for <strong id="changeTypeStaffName" class="text-warning"></strong>:</p>
-          <label class="label-3d">Select Staff Designation Type</label>
-          <select class="input-3d form-select" id="staffTypeSelect">
+          <p class="mb-3 text-base">Update status for <strong id="changeTypeStaffName" class="text-primary"></strong>:</p>
+          <label class="label-pro">Staff Designation Type</label>
+          <select class="input-pro form-select" id="staffTypeSelect">
             <option value="Teaching Staff">Teaching Staff</option>
             <option value="Non Teaching Staff">Non Teaching Staff</option>
             <option value="Retired">Retired</option>
           </select>
         </div>
-        <div class="modal-footer border-0 p-4 justify-content-center">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="border-radius: 12px; padding: 10px 24px; font-weight: 600;">Cancel</button>
-          <button type="button" class="btn-3d btn-3d-orange" id="confirmChangeTypeBtn" style="padding: 10px 24px;">Update Status</button>
+        <div class="modal-footer">
+          <button type="button" class="btn-pro btn-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn-pro btn-primary" id="confirmChangeTypeBtn">Update Status</button>
         </div>
       </div>
     </div>
@@ -456,22 +371,22 @@
   let selectedStaffIds = new Set();
   let currentStaffForTypeChange = null;
 
-  // Modern department styling map for MACE-Connect
+  // Modern department styling map
   const deptStyleMap = {
-    'CSE': { color: '#FAF5FF', border: 'var(--accent-purple)', icon: 'fa-laptop', text: '#6B21A8' },
-    'ECE': { color: '#FFF7ED', border: 'var(--primary-color)', icon: 'fa-comments', text: '#9A3412' },
-    'CE': { color: '#F0FDFA', border: 'var(--accent-teal)', icon: 'fa-building', text: '#0F766E' },
-    'ME': { color: '#FEF2F2', border: 'var(--accent-red)', icon: 'fa-cogs', text: '#991B1B' },
-    'AD': { color: '#FDF2F8', border: 'var(--accent-pink)', icon: 'fa-user-shield', text: '#9D174D' },
-    'EEE': { color: '#ECFDF5', border: 'var(--accent-green)', icon: 'fa-bolt', text: '#065F46' },
-    'MAT': { color: '#FFFBEB', border: 'var(--accent-gold)', icon: 'fa-calculator', text: '#92400E' },
-    'SH': { color: '#F0F9FF', border: '#0284C7', icon: 'fa-flask', text: '#075985' },
-    'CA': { color: '#F5F3FF', border: '#7C3AED', icon: 'fa-code', text: '#5B21B6' }
+    'CSE': { color: '#F9FAFB', border: '#D97706', icon: 'fa-laptop', text: '#171717' },
+    'ECE': { color: '#F9FAFB', border: '#D97706', icon: 'fa-microchip', text: '#171717' },
+    'CE': { color: '#F9FAFB', border: '#D97706', icon: 'fa-drafting-compass', text: '#171717' },
+    'ME': { color: '#F9FAFB', border: '#D97706', icon: 'fa-cogs', text: '#171717' },
+    'AD': { color: '#F9FAFB', border: '#D97706', icon: 'fa-user-shield', text: '#171717' },
+    'EEE': { color: '#F9FAFB', border: '#D97706', icon: 'fa-bolt', text: '#171717' },
+    'MAT': { color: '#F9FAFB', border: '#D97706', icon: 'fa-calculator', text: '#171717' },
+    'SH': { color: '#F9FAFB', border: '#D97706', icon: 'fa-atom', text: '#171717' },
+    'CA': { color: '#F9FAFB', border: '#D97706', icon: 'fa-code', text: '#171717' }
   };
 
   const avatarColors = [
-    '#D97706', '#10B981', '#14B8A6', '#8B5CF6', '#EC4899',
-    '#EF4444', '#F59E0B', '#0D9488', '#9333ea', '#db2777'
+    '#D97706', '#059669', '#0D9488', '#7C3AED', '#DB2777',
+    '#DC2626', '#EA580C', '#0284C7', '#4F46E5', '#0891B2'
   ];
 
   function getAvatarColor(name) {
@@ -505,10 +420,6 @@
     return fullName.length > 3 ? fullName.substring(0, 3).toUpperCase() : fullName.toUpperCase();
   }
 
-  function getDepartmentIcon(abbr) {
-    return deptStyleMap[abbr]?.icon || 'fa-briefcase';
-  }
-
   async function checkAdminStatus() {
     try {
       const user = firebase.auth().currentUser;
@@ -534,7 +445,6 @@
     }
   }
 
-  // Count animation helper for stats
   function animateValue(id, start, end, duration) {
     const obj = document.getElementById(id);
     if (!obj) return;
@@ -621,8 +531,8 @@
     document.getElementById('quickSearch').value = '';
     document.getElementById('searchInput').value = '';
     
-    document.querySelectorAll('.filter-chip-3d').forEach(chip => chip.classList.remove('active'));
-    document.querySelector('.filter-chip-3d[data-type="All Staff"]').classList.add('active');
+    document.querySelectorAll('.filter-chip-pro').forEach(chip => chip.classList.remove('active'));
+    document.querySelector('.filter-chip-pro[data-type="All Staff"]').classList.add('active');
     
     document.getElementById('adminControls').style.display = 'none';
     document.getElementById('bulkActions').style.display = 'none';
@@ -674,7 +584,7 @@
 
   function clearSelection() {
     selectedStaffIds.clear();
-    document.querySelectorAll('.badge-card-3d').forEach(card => {
+    document.querySelectorAll('.staff-row-card').forEach(card => {
       card.classList.remove('selected');
     });
     updateSelectedCount();
@@ -687,33 +597,36 @@
     document.getElementById('departmentsView').style.display = 'block';
     document.getElementById('staffView').style.display = 'none';
     document.getElementById('backButton').style.display = 'none';
-    document.getElementById('navTitle').innerHTML = '<i class="fas fa-users me-2"></i>Staff Directory';
+    document.getElementById('navTitle').innerHTML = '<span class="brand-dot"></span>Staff Directory';
     
     const deptKeys = Object.keys(departments).sort();
     const grid = document.getElementById('departmentsGrid');
     
     let html = `
-      <div class="col-md-6 col-lg-4 col-xl-3">
-        <div class="dept-card-3d all-depts" onclick="showStaffList('All Departments')">
-          <i class="fas fa-users dept-icon"></i>
-          <h6 class="fw-bold mb-1">All Departments</h6>
-          <small class="opacity-90">View All (${allStaffData.length})</small>
+      <div class="col-md-6 col-lg-4">
+        <div class="dept-card-pro d-flex align-items-center gap-3" onclick="showStaffList('All Departments')" style="border-left: 3px solid var(--primary); background: var(--primary-subtle);">
+          <div class="avatar-pro" style="background: var(--primary);"><i class="fas fa-users"></i></div>
+          <div>
+            <h6 class="fw-bold mb-0 text-dark">All Departments</h6>
+            <small class="text-muted text-xs">View All (${allStaffData.length})</small>
+          </div>
         </div>
       </div>
     `;
     
     deptKeys.forEach((abbr, index) => {
       const fullName = departments[abbr];
-      const style = deptStyleMap[abbr] || { color: '#F9FAFB', border: '#D1D5DB', icon: 'fa-briefcase', text: '#374151' };
-      const icon = style.icon;
+      const style = deptStyleMap[abbr] || { color: '#F9FAFB', border: 'var(--primary)', icon: 'fa-briefcase', text: 'var(--gray-900)' };
       const count = allStaffData.filter(s => s.department === fullName).length;
       
       html += `
-        <div class="col-md-6 col-lg-4 col-xl-3">
-          <div class="dept-card-3d" style="background-color: ${style.color}; border-top: 4px solid ${style.border};" onclick="showStaffList('${abbr}')">
-            <i class="fas ${icon} dept-icon" style="color: ${style.border};"></i>
-            <h6 class="fw-bold mb-1" style="color: ${style.text};">${abbr}</h6>
-            <small class="text-muted text-truncate w-100" title="${fullName}">${count} staff members</small>
+        <div class="col-md-6 col-lg-4">
+          <div class="dept-card-pro d-flex align-items-center gap-3" style="border-left: 3px solid ${style.border};" onclick="showStaffList('${abbr}')">
+            <div class="avatar-pro" style="background: ${style.border};"><i class="fas ${style.icon}"></i></div>
+            <div>
+              <h6 class="fw-bold mb-0 text-dark">${abbr}</h6>
+              <small class="text-muted text-xs text-truncate d-block" style="max-width: 180px;" title="${fullName}">${fullName} (${count})</small>
+            </div>
           </div>
         </div>
       `;
@@ -733,7 +646,7 @@
     document.getElementById('backButton').style.display = 'block';
     
     const title = department === 'All Departments' ? 'All Departments' : (departments[department] || department);
-    document.getElementById('navTitle').innerHTML = `<i class="fas fa-users me-2"></i>${title}`;
+    document.getElementById('navTitle').innerHTML = `<span class="brand-dot"></span>${title}`;
     
     window.scrollTo({ top: 0, behavior: 'smooth' });
     filterAndDisplayStaff();
@@ -770,9 +683,9 @@
     if (staffList.length === 0) {
       container.innerHTML = `
         <div class="text-center py-5">
-          <i class="fas fa-search fa-3x text-muted mb-3"></i>
+          <i class="fas fa-search fa-2x text-muted mb-3"></i>
           <h5 class="text-muted fw-bold">No results matching your search</h5>
-          <p class="text-muted">Try adjusting your filters or search terms</p>
+          <p class="text-muted text-sm">Try adjusting your filters or search query</p>
         </div>
       `;
       return;
@@ -795,21 +708,17 @@
       const staffCount = staffByType[type].length;
       
       html += `
-        <div class="section-header-3d d-flex align-items-center justify-content-between mb-4">
-          <div>
-            <i class="fas ${typeIcon} me-2 text-warning"></i>
-            <span>${type}</span>
+        <div class="d-flex align-items-center justify-content-between mt-3 mb-2 ps-1">
+          <div class="section-title mb-0">
+            <i class="fas ${typeIcon} me-1"></i>${type}
           </div>
-          <span class="badge-3d badge-3d-orange">${staffCount}</span>
+          <span class="badge-pro badge-neutral">${staffCount}</span>
         </div>
-        <div class="row">
       `;
       
       staffByType[type].forEach(staff => {
         html += createStaffCard(staff);
       });
-      
-      html += `</div>`; // Close row
     });
     
     container.innerHTML = html;
@@ -830,100 +739,77 @@
     const initials = getInitials(name);
     
     const staffTypeBadge = staffType === 'Teaching Staff' ? 
-      '<span class="badge-3d badge-3d-green">Teaching</span>' :
+      '<span class="badge-pro badge-neutral">Teaching</span>' :
       staffType === 'Non Teaching Staff' ? 
-      '<span class="badge-3d badge-3d-purple">Non-Teaching</span>' :
+      '<span class="badge-pro badge-neutral">Non-Teaching</span>' :
       staffType === 'Retired' ?
-      '<span class="badge-3d badge-3d-red">Retired</span>' : '';
+      '<span class="badge-pro badge-neutral">Retired</span>' : '';
     
     const deptAbbr = createAbbreviation(department);
-    
-    let deptColorClass = '';
-    if (deptAbbr === 'CSE') deptColorClass = 'purple';
-    else if (deptAbbr === 'ECE') deptColorClass = 'orange';
-    else if (deptAbbr === 'CE') deptColorClass = 'teal';
-    else if (deptAbbr === 'ME') deptColorClass = 'red';
-    else if (deptAbbr === 'AD') deptColorClass = 'pink';
-    else if (deptAbbr === 'EEE') deptColorClass = 'green';
-    else if (deptAbbr === 'MAT') deptColorClass = 'orange';
+    const style = deptStyleMap[deptAbbr] || { border: 'var(--primary)' };
     
     const bulkSelectClass = bulkSelectMode ? 'cursor-pointer' : '';
     const bulkSelectHandler = bulkSelectMode ? `onclick="toggleStaffSelection('${staffId}', this)"` : '';
     const isSelected = selectedStaffIds.has(staffId) ? 'selected' : '';
     
     return `
-      <div class="col-md-6 col-lg-6 col-xxl-6 mb-4">
-        <div class="badge-card-3d ${deptColorClass} ${bulkSelectClass} ${isSelected}" ${bulkSelectHandler} data-staff-id="${staffId}">
+      <div class="staff-row-card ${isSelected} ${bulkSelectClass}" ${bulkSelectHandler} data-staff-id="${staffId}">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
           
-          <!-- Overlapping Avatar -->
-          ${photoUrl ? 
-            `<img src="${photoUrl}" class="badge-avatar-overlap" style="background-color: ${avatarColor}; object-fit: cover;" 
-                 onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-             <div class="badge-avatar-overlap" style="background-color: ${avatarColor}; display: none;">${initials}</div>` :
-            `<div class="badge-avatar-overlap" style="background-color: ${avatarColor};">${initials}</div>`
-          }
-          
-          <!-- Header Area beside Avatar -->
-          <div class="badge-header-section">
-            <h5 class="mb-0 fw-bold text-dark text-truncate" title="${name}">${name}</h5>
-            <small class="text-muted fw-semibold text-truncate d-block" title="${designation}">${designation || 'Staff Member'}</small>
-          </div>
-          
-          <!-- Body Content Area -->
-          <div class="badge-body-section">
-            <div class="d-flex flex-wrap gap-2 mb-3">
-              <span class="badge-3d badge-3d-teal">${department}</span>
-              ${empNo ? `<span class="badge-3d badge-3d-orange">ID: ${empNo}</span>` : ''}
-              ${staffTypeBadge}
-            </div>
-            
-            ${email ? `
-              <div class="d-flex align-items-center mb-1 text-muted text-truncate">
-                <i class="fas fa-envelope me-2 text-teal" style="width: 16px;"></i>
-                <small class="text-truncate" title="${email}">${email}</small>
-              </div>
-            ` : ''}
-            
-            ${phone ? `
-              <div class="d-flex align-items-center text-muted">
-                <i class="fas fa-phone me-2 text-success" style="width: 16px;"></i>
-                <small>${phone}</small>
-              </div>
-            ` : ''}
-          </div>
-          
-          <!-- Footer Toolbar -->
-          <div class="badge-footer-toolbar">
+          <div class="d-flex align-items-center gap-3 dept-badge-indicator" style="border-left-color: ${style.border};">
+            <!-- Checkbox in bulk select mode -->
             ${bulkSelectMode ? `
-              <div class="form-check m-0">
-                <input class="form-check-input" type="checkbox" ${selectedStaffIds.has(staffId) ? 'checked' : ''} onclick="event.stopPropagation();">
-                <label class="form-check-label small text-muted ms-1">Select</label>
-              </div>
-            ` : `<small class="text-muted small">MACE Connection Verified</small>`}
+              <input class="form-check-input m-0" type="checkbox" ${selectedStaffIds.has(staffId) ? 'checked' : ''} onclick="event.stopPropagation();">
+            ` : ''}
+
+            <!-- Avatar -->
+            ${photoUrl ? 
+              `<img src="${photoUrl}" class="avatar-pro" style="background-color: ${avatarColor}; object-fit: cover;" 
+                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+               <div class="avatar-pro" style="background-color: ${avatarColor}; display: none;">${initials}</div>` :
+              `<div class="avatar-pro" style="background-color: ${avatarColor};">${initials}</div>`
+            }
             
-            <div class="d-flex gap-2">
+            <div>
+              <h6 class="mb-0 fw-semibold text-dark text-sm">${name}</h6>
+              <div class="d-flex align-items-center gap-2 mt-1">
+                <span class="text-xs text-muted fw-medium">${designation || 'Staff Member'}</span>
+                <span class="badge-pro badge-neutral">${department}</span>
+                ${empNo ? `<span class="badge-pro badge-neutral">ID: ${empNo}</span>` : ''}
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact & Action buttons -->
+          <div class="d-flex align-items-center gap-3">
+            <div class="d-none d-md-flex flex-column text-end">
+              ${email ? `<small class="text-xs text-muted text-truncate" style="max-width: 200px;"><i class="fas fa-envelope me-1 text-xs"></i>${email}</small>` : ''}
+              ${phone ? `<small class="text-xs text-muted mt-0.5"><i class="fas fa-phone me-1 text-xs"></i>${phone}</small>` : ''}
+            </div>
+
+            <div class="d-flex gap-1.5">
               ${email ? `
-                <button class="contact-btn-3d contact-btn-3d-teal" style="width: 34px; height: 34px; font-size: 0.85rem;" onclick="event.stopPropagation(); sendEmail('${email}')" title="Send Email">
-                  <i class="fas fa-envelope"></i>
+                <button class="btn-icon" onclick="event.stopPropagation(); sendEmail('${email}')" title="Send Email">
+                  <i class="fas fa-envelope text-xs"></i>
                 </button>
               ` : ''}
               ${phone ? `
-                <button class="contact-btn-3d contact-btn-3d-green" style="width: 34px; height: 34px; font-size: 0.85rem;" onclick="event.stopPropagation(); makeCall('${phone}')" title="Call">
-                  <i class="fas fa-phone"></i>
+                <button class="btn-icon" onclick="event.stopPropagation(); makeCall('${phone}')" title="Call">
+                  <i class="fas fa-phone text-xs"></i>
                 </button>
               ` : ''}
-              <button class="contact-btn-3d contact-btn-3d-orange" style="width: 34px; height: 34px; font-size: 0.85rem;" onclick="event.stopPropagation(); showQrCode('${name}', '${email}', '${phone}', '${designation}', '${department}')" title="Share Contact">
-                <i class="fas fa-qrcode"></i>
+              <button class="btn-icon" onclick="event.stopPropagation(); showQrCode('${name}', '${email}', '${phone}', '${designation}', '${department}')" title="Share Contact">
+                <i class="fas fa-qrcode text-xs"></i>
               </button>
               ${isAdmin && !bulkSelectMode ? `
                 <div class="dropdown">
-                  <button class="contact-btn-3d contact-btn-3d-purple dropdown-toggle" style="width: 34px; height: 34px; font-size: 0.85rem;" type="button" data-bs-toggle="dropdown" onclick="event.stopPropagation();" title="Admin Actions">
-                    <i class="fas fa-cog"></i>
+                  <button class="btn-icon dropdown-toggle" type="button" data-bs-toggle="dropdown" onclick="event.stopPropagation();" title="Admin Actions">
+                    <i class="fas fa-cog text-xs"></i>
                   </button>
-                  <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="border-radius: 12px; margin-top: 5px;">
-                    <li><a class="dropdown-item fw-semibold" href="#" onclick="changeStaffType('${staffId}', '${name}', '${staffType}')"><i class="fas fa-user-edit me-2 text-warning"></i>Change Type</a></li>
+                  <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="border-radius: var(--radius-md); font-size: 0.8125rem;">
+                    <li><a class="dropdown-item fw-medium" href="#" onclick="changeStaffType('${staffId}', '${name}', '${staffType}')"><i class="fas fa-user-edit me-2 text-muted"></i>Change Type</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item text-danger fw-semibold" href="#" onclick="deleteStaff('${staffId}', '${name}')"><i class="fas fa-trash me-2"></i>Delete Staff</a></li>
+                    <li><a class="dropdown-item text-danger fw-medium" href="#" onclick="deleteStaff('${staffId}', '${name}')"><i class="fas fa-trash me-2"></i>Delete Staff</a></li>
                   </ul>
                 </div>
               ` : ''}
@@ -949,7 +835,7 @@
 
   async function updateStaffType() {
     if (!currentStaffForTypeChange) return;
-    const { staffId, staffName } = currentStaffForTypeChange;
+    const { staffId } = currentStaffForTypeChange;
     const newType = document.getElementById('staffTypeSelect').value;
     try {
       const user = firebase.auth().currentUser;
@@ -963,11 +849,6 @@
         },
         body: JSON.stringify({ type: newType })
       });
-      const contentType = response.headers.get('content-type');
-      if (!contentType || !contentType.includes('application/json')) {
-        const text = await response.text();
-        throw new Error(`Server returned non-JSON response: ${text.substring(0, 100)}`);
-      }
       const result = await response.json();
       if (response.ok) {
         const staffIndex = allStaffData.findIndex(s => (s.id || s['Sl No'] || s.empNo || s.email) === staffId);
@@ -1081,9 +962,9 @@
     const textClass = type === 'warning' ? 'text-dark' : 'text-white';
     
     const toastHtml = `
-      <div class="toast ${bgClass} ${textClass}" id="${toastId}" role="alert" style="border-radius: 12px; border: none; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+      <div class="toast ${bgClass} ${textClass}" id="${toastId}" role="alert" style="border-radius: var(--radius-md); border: none; box-shadow: var(--shadow-md);">
         <div class="d-flex">
-          <div class="toast-body fw-semibold">
+          <div class="toast-body fw-medium text-xs">
             ${message}
           </div>
           <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-toast="toast"></button>
@@ -1121,18 +1002,18 @@ END:VCARD`;
 
   function createQrModal() {
     const modalHtml = `
-      <div class="modal fade" id="qrModal" tabindex="-1">
+      <div class="modal fade modal-pro" id="qrModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
-          <div class="modal-content modal-content-3d">
-            <div class="modal-header modal-header-3d">
+          <div class="modal-content">
+            <div class="modal-header">
               <h5 class="modal-title"><i class="fas fa-qrcode me-2"></i>Contact QR Code</h5>
-              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body text-center p-4">
-              <img id="qrCodeImage" class="img-fluid mb-3 shadow-sm p-2 bg-white" style="max-width: 200px; border-radius: 12px;">
-              <h5 id="qrModalName" class="mb-1 fw-bold text-dark"></h5>
-              <p id="qrModalDesignation" class="text-muted fw-semibold small mb-2"></p>
-              <p class="text-muted small m-0"><i class="fas fa-camera me-1"></i>Scan with your phone camera to import</p>
+              <img id="qrCodeImage" class="img-fluid mb-3 p-2 bg-white" style="max-width: 200px; border-radius: var(--radius-md); border: 1px solid var(--border);">
+              <h6 id="qrModalName" class="mb-0 fw-bold text-dark text-sm"></h6>
+              <p id="qrModalDesignation" class="text-muted text-xs fw-medium mb-2"></p>
+              <p class="text-muted text-xs m-0"><i class="fas fa-camera me-1"></i>Scan to save contact directly</p>
             </div>
           </div>
         </div>
@@ -1144,7 +1025,7 @@ END:VCARD`;
 
   function showError(message) {
     document.getElementById('errorContainer').innerHTML = `
-      <div class="alert alert-warning text-center">
+      <div class="alert alert-danger text-center">
         <i class="fas fa-exclamation-triangle me-2"></i>${message}
       </div>
     `;
@@ -1178,10 +1059,11 @@ END:VCARD`;
   });
 
   document.addEventListener('click', (e) => {
-    if (e.target.classList.contains('filter-chip-3d')) {
-      document.querySelectorAll('.filter-chip-3d').forEach(chip => chip.classList.remove('active'));
-      e.target.classList.add('active');
-      selectedStaffType = e.target.dataset.type;
+    if (e.target.classList.contains('filter-chip-pro') || e.target.closest('.filter-chip-pro')) {
+      const target = e.target.classList.contains('filter-chip-pro') ? e.target : e.target.closest('.filter-chip-pro');
+      document.querySelectorAll('.filter-chip-pro').forEach(chip => chip.classList.remove('active'));
+      target.classList.add('active');
+      selectedStaffType = target.dataset.type;
       filterAndDisplayStaff();
     }
   });
