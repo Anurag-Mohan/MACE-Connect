@@ -232,8 +232,17 @@
         <!-- Departments View Panel -->
         <div id="departmentsView" style="display: none;">
           <!-- Welcome Banner -->
-          <div class="card-pro p-4 mb-4 hud-bracket neon-glow" style="border-left: 3px solid var(--primary);">
-            <div class="text-center py-2">
+          <div class="card-pro p-4 mb-4 hud-bracket neon-glow" style="border-left: 3px solid var(--primary); overflow: hidden; position: relative;">
+            <!-- Beautiful background SVG tech doodle for fresh feeling -->
+            <svg class="position-absolute end-0 top-0 h-100 text-primary opacity-10" style="width: 260px; pointer-events: none;" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <path d="M0,60 Q30,40 60,60 T100,60 L100,100 L0,100 Z" fill="currentColor" opacity="0.15"></path>
+              <circle cx="65" cy="35" r="14" fill="none" stroke="currentColor" stroke-width="0.5"></circle>
+              <circle cx="65" cy="35" r="8" fill="none" stroke="currentColor" stroke-dasharray="1 1.5" stroke-width="0.5"></circle>
+              <line x1="65" y1="20" x2="65" y2="50" stroke="currentColor" stroke-width="0.25"></line>
+              <line x1="50" y1="35" x2="80" y2="35" stroke="currentColor" stroke-width="0.25"></line>
+            </svg>
+            
+            <div class="text-center py-2" style="position: relative; z-index: 1;">
               <h4 class="mb-1 fw-bold text-dark">MACE Connect</h4>
               <p class="text-muted text-sm mb-0">Search and contact staff members across departments and offices</p>
               <div class="quick-search-box">
@@ -243,8 +252,13 @@
             </div>
           </div>
 
-          <div class="section-title mb-3 ps-1">
-            <i class="fas fa-th-large me-1"></i>Departments
+          <div class="d-flex align-items-center justify-content-between mb-3 ps-1">
+            <div class="section-title mb-0">
+              <i class="fas fa-th-large me-1"></i>Departments
+            </div>
+            <button class="btn-pro btn-outline btn-sm hud-bracket" onclick="showStaffList('All Departments')">
+              <i class="fas fa-users me-1.5 text-primary"></i>All Departments
+            </button>
           </div>
           <div id="departmentsGrid" class="row g-3"></div>
         </div>
@@ -614,17 +628,7 @@
     const deptKeys = Object.keys(departments).sort();
     const grid = document.getElementById('departmentsGrid');
     
-    let html = `
-      <div class="col-md-6 col-lg-4">
-        <div class="dept-card-pro hud-bracket neon-glow d-flex align-items-center gap-3" onclick="showStaffList('All Departments')" style="border-left: 3px solid var(--primary); background: var(--primary-subtle);">
-          <div class="avatar-pro" style="background: var(--primary);"><i class="fas fa-users"></i></div>
-          <div>
-            <h6 class="fw-bold mb-0 text-dark">All Departments</h6>
-            <small class="text-muted text-xs">View All (${allStaffData.length})</small>
-          </div>
-        </div>
-      </div>
-    `;
+    let html = '';
     
     deptKeys.forEach((abbr, index) => {
       const fullName = departments[abbr];
