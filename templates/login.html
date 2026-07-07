@@ -1,716 +1,166 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MACE Staff Portal - Login & Registration</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <title>Login - MACE-Connect</title>
+  
   <link href="/static/css/design-system.css" rel="stylesheet">
+  
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="/static/js/firebase-client.js"></script>
-  <script src="/static/js/mesh-background.js"></script>
+  
   <style>
-    body {
-      background: var(--page-bg);
-      min-height: 100vh;
+    .login-wrapper {
       display: flex;
+      min-height: 100vh;
       align-items: center;
       justify-content: center;
-      overflow-x: hidden;
-      position: relative;
-    }
-
-    .split-layout {
-      display: flex;
-      width: 100%;
-      min-height: 100vh;
-    }
-
-    /* Left Side - Welcoming Hero & Bespoke Animation Illustration */
-    .hero-panel {
-      flex: 1.2;
-      background: rgba(255, 255, 255, 0.45);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-right: 1px solid var(--border);
-      padding: 4rem;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      background: var(--bg-page);
+      padding: var(--space-4);
       position: relative;
       overflow: hidden;
     }
-
-    .hero-content {
-      position: relative;
-      z-index: 5;
+    
+    .ambient-glow {
+      position: absolute;
+      width: 60vw;
+      height: 60vw;
+      max-width: 800px;
+      max-height: 800px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent-gold-light) 0%, transparent 70%);
+      top: -20%;
+      right: -20%;
+      z-index: 0;
+      pointer-events: none;
     }
-
-    .hero-headline {
-      font-size: 2.75rem;
-      font-weight: 800;
-      line-height: 1.15;
-      background: linear-gradient(135deg, var(--gray-900), var(--primary-hover));
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      margin-top: 1rem;
+    
+    .ambient-glow-2 {
+      position: absolute;
+      width: 50vw;
+      height: 50vw;
+      max-width: 600px;
+      max-height: 600px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent-terracotta-light) 0%, transparent 70%);
+      bottom: -10%;
+      left: -10%;
+      z-index: 0;
+      pointer-events: none;
     }
-
-    .hero-sub {
-      color: var(--gray-600);
-      font-size: 1rem;
-      max-width: 480px;
-      margin-top: 1rem;
-      line-height: 1.6;
-    }
-
-    /* Right Side - Premium Auth form container */
-    .auth-panel {
-      flex: 0.8;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 3rem 2rem;
-      position: relative;
-      z-index: 10;
-    }
-
-    .auth-card {
+    
+    .login-card {
       width: 100%;
       max-width: 440px;
+      z-index: 10;
       background: rgba(255, 255, 255, 0.85);
       backdrop-filter: blur(24px);
       -webkit-backdrop-filter: blur(24px);
-      border: 1px solid rgba(255, 255, 255, 0.6);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow-xl);
-      padding: 2.5rem 2.25rem;
-      position: relative;
-      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
     }
-
-    .auth-card.expanded {
-      max-width: 640px;
+    
+    .brand-header {
+      text-align: center;
+      margin-bottom: var(--space-8);
     }
-
-    /* Navigation / Tabs */
-    .tab-bar {
-      margin-bottom: 2rem;
-      border-bottom: 2px solid var(--gray-100);
-      display: flex;
-      gap: 0.25rem;
+    
+    .brand-dot {
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      background: var(--accent-gold);
+      border-radius: 50%;
+      margin-bottom: var(--space-4);
     }
-
-    .tab-bar-item {
-      font-family: var(--font-header);
-      font-size: 0.875rem;
-      font-weight: 600;
-      color: var(--gray-500);
-      padding: 0.75rem 1rem;
-      border: none;
-      background: none;
-      cursor: pointer;
-      border-bottom: 3px solid transparent;
-      margin-bottom: -2px;
-      transition: all 0.2s ease;
-    }
-
-    .tab-bar-item:hover {
-      color: var(--gray-900);
-    }
-
-    .tab-bar-item.active {
-      color: var(--primary);
-      border-bottom-color: var(--primary);
-      font-weight: 700;
-    }
-
-    .info-box {
-      background: var(--warning-bg);
-      border: 1px solid var(--primary-border);
-      border-radius: var(--radius-md);
-      padding: 0.875rem 1.25rem;
-      font-size: 0.8125rem;
-      color: var(--gray-700);
-      margin: 1.5rem 0;
-      display: flex;
-      align-items: start;
-      gap: 0.75rem;
-    }
-
-    .info-box i {
-      color: var(--primary);
-      margin-top: 0.15rem;
-    }
-
-    .auth-brand-mobile {
+    
+    .auth-error {
       display: none;
-    }
-
-    /* Interactive Illustration SVG styles */
-    .illus-container {
-      position: relative;
-      flex-grow: 1;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      min-height: 320px;
-      z-index: 2;
-    }
-
-    .illus-node-circle {
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-    }
-    .illus-node-circle:hover {
-      transform: scale(1.1);
-      fill: var(--primary);
-    }
-
-    /* Password Input Toggle */
-    .input-group-container {
-      position: relative;
-      display: flex;
-      align-items: center;
-      width: 100%;
-    }
-
-    .password-toggle {
-      position: absolute;
-      right: 14px;
-      cursor: pointer;
-      color: var(--gray-400);
-      z-index: 10;
+      background: var(--accent-terracotta-light);
+      color: var(--accent-terracotta);
+      padding: var(--space-3) var(--space-4);
+      border-radius: var(--radius-sm);
       font-size: 0.875rem;
-      transition: color 0.2s ease;
-    }
-
-    .password-toggle:hover {
-      color: var(--primary);
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 992px) {
-      .hero-panel { display: none; }
-      .auth-panel { flex: 1; background: var(--page-bg); }
-      .auth-brand-mobile {
-        display: flex;
-        align-items: center;
-        gap: 0.625rem;
-        font-family: var(--font-header);
-        font-size: 1.5rem;
-        font-weight: 800;
-        margin-bottom: 2rem;
-        justify-content: center;
-        color: var(--gray-900);
-      }
-      .auth-brand-mobile .brand-dot {
-        width: 10px;
-        height: 10px;
-        background: var(--primary);
-        border-radius: 50%;
-        box-shadow: 0 0 10px var(--primary);
-      }
+      font-weight: 500;
+      margin-bottom: var(--space-4);
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
-  <!-- Floating abstract background glow colors -->
-  <div class="bg-blob bg-blob-1"></div>
-  <div class="bg-blob bg-blob-2"></div>
-
-  <div class="split-layout w-100">
-    <!-- Left Panel - Welcoming Hero & Bespoke SVG Illustration -->
-    <div class="hero-panel">
+  <div class="login-wrapper">
+    <div class="ambient-glow"></div>
+    <div class="ambient-glow-2"></div>
+    
+    <div class="glass-card login-card animate-slide-up">
+      <div class="brand-header">
+        <span class="brand-dot"></span>
+        <h1 class="text-h2">Welcome back</h1>
+        <p class="text-body mt-2">Sign in to your MACE-Connect account.</p>
+      </div>
       
-      <!-- Logo Header -->
-      <div class="hero-content">
-        <div class="navbar-brand-pro">
-          <span class="brand-dot"></span>
-          <span>MACE Connect</span>
+      <div id="authError" class="auth-error"></div>
+      
+      <form id="authForm" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label class="label" for="emailInput">Email Address</label>
+          <input type="email" id="emailInput" class="input-field" placeholder="name@mace.edu.in" required>
         </div>
-        <h1 class="hero-headline">The beautiful directory for college staff.</h1>
-        <p class="hero-sub">Synchronize, browse, and connect instantly with academic faculty and administrative members across all college departments.</p>
-      </div>
-
-      <!-- Bespoke Animated Team SVG Illustration -->
-      <div class="illus-container">
-        <svg width="400" height="340" viewBox="0 0 400 340" fill="none" xmlns="http://www.w3.org/2000/svg" class="animate-float">
-          <!-- Background decorative rings -->
-          <circle cx="200" cy="170" r="130" stroke="var(--primary-border)" stroke-width="1.5" stroke-dasharray="4 8" opacity="0.6" />
-          <circle cx="200" cy="170" r="90" stroke="var(--gray-300)" stroke-width="1" opacity="0.4" />
-          <circle cx="200" cy="170" r="50" stroke="var(--primary-border)" stroke-width="1" opacity="0.3" />
-
-          <!-- Connection paths with moving dashes -->
-          <line x1="200" y1="170" x2="100" y2="90" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.7" />
-          <line x1="200" y1="170" x2="310" y2="110" stroke="var(--primary)" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.7" />
-          <line x1="200" y1="170" x2="130" y2="260" stroke="var(--secondary)" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.7" />
-          <line x1="200" y1="170" x2="280" y2="250" stroke="var(--secondary)" stroke-width="1.5" stroke-dasharray="5 5" opacity="0.7" />
-
-          <!-- Center Database Node (Animated) -->
-          <g transform="translate(180, 150)" class="animate-spin-slow" style="transform-origin: 20px 20px;">
-            <rect x="0" y="0" width="40" height="40" rx="10" fill="var(--primary)" />
-            <circle cx="20" cy="20" r="8" fill="white" />
-          </g>
-
-          <!-- Profile Cards (Representing different staff types) -->
-          <!-- Card 1: HOD CSE -->
-          <g class="animate-float-delayed" style="transform: translate(60px, 50px);">
-            <rect x="0" y="0" width="100" height="54" rx="10" fill="white" filter="url(#shadow-filter)" />
-            <circle cx="24" cy="27" r="14" fill="var(--primary)" />
-            <text x="24" y="31" fill="white" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">CS</text>
-            <text x="46" y="24" fill="var(--gray-900)" font-family="sans-serif" font-size="10" font-weight="bold">Dr. Anand</text>
-            <text x="46" y="36" fill="var(--primary)" font-family="sans-serif" font-size="8" font-weight="bold">CSE HOD</text>
-          </g>
-
-          <!-- Card 2: Administrative -->
-          <g class="animate-float" style="transform: translate(270px, 80px);">
-            <rect x="0" y="0" width="94" height="54" rx="10" fill="white" filter="url(#shadow-filter)" />
-            <circle cx="24" cy="27" r="14" fill="var(--success)" />
-            <text x="24" y="31" fill="white" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">AD</text>
-            <text x="46" y="24" fill="var(--gray-900)" font-family="sans-serif" font-size="10" font-weight="bold">Office Node</text>
-            <text x="46" y="36" fill="var(--gray-500)" font-family="sans-serif" font-size="8">Registry</text>
-          </g>
-
-          <!-- Card 3: Teaching Faculty (ECE) -->
-          <g class="animate-float-delayed" style="transform: translate(80px, 230px);">
-            <rect x="0" y="0" width="110" height="54" rx="10" fill="white" filter="url(#shadow-filter)" />
-            <circle cx="24" cy="27" r="14" fill="var(--secondary)" />
-            <text x="24" y="31" fill="white" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">EC</text>
-            <text x="46" y="24" fill="var(--gray-900)" font-family="sans-serif" font-size="10" font-weight="bold">Prof. Preethi</text>
-            <text x="46" y="36" fill="var(--secondary)" font-family="sans-serif" font-size="8" font-weight="bold">Associate Prof</text>
-          </g>
-
-          <!-- Card 4: Non Teaching Staff -->
-          <g class="animate-float" style="transform: translate(240px, 220px);">
-            <rect x="0" y="0" width="100" height="54" rx="10" fill="white" filter="url(#shadow-filter)" />
-            <circle cx="24" cy="27" r="14" fill="var(--gray-700)" />
-            <text x="24" y="31" fill="white" font-family="sans-serif" font-size="10" font-weight="bold" text-anchor="middle">NT</text>
-            <text x="46" y="24" fill="var(--gray-900)" font-family="sans-serif" font-size="10" font-weight="bold">Sunil Kumar</text>
-            <text x="46" y="36" fill="var(--gray-500)" font-family="sans-serif" font-size="8">Lab Instructor</text>
-          </g>
-
-          <!-- Defs for Shadow -->
-          <defs>
-            <filter id="shadow-filter" x="-6" y="-4" width="116" height="70" filterUnits="userSpaceOnUse">
-              <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="rgba(44, 42, 37, 0.08)" />
-            </filter>
-          </defs>
-        </svg>
-      </div>
-
-      <!-- Footer Info -->
-      <div class="hero-content">
-        <p class="text-xs text-muted mb-0">&copy; Mar Athanasius College of Engineering. All rights secured.</p>
-      </div>
-
-    </div>
-
-    <!-- Right Panel - Login Card Container -->
-    <div class="auth-panel">
-      <div class="auth-card" id="authWrapper">
-        <div class="auth-brand-mobile">
-          <span class="brand-dot"></span>
-          <span>MACE Connect</span>
+        
+        <div class="form-group">
+          <label class="label" for="passwordInput">Password</label>
+          <input type="password" id="passwordInput" class="input-field" placeholder="••••••••" required>
         </div>
-
-        <div class="tab-bar">
-          <button type="button" class="tab-bar-item active" id="loginTabBtn" onclick="switchAuthTab('login')">
+        
+        <div class="form-group mt-8">
+          <button type="submit" id="loginBtn" class="btn btn-primary w-100">
             Sign In
           </button>
-          <button type="button" class="tab-bar-item" id="registerTabBtn" onclick="switchAuthTab('register')">
-            Register Account
-          </button>
         </div>
-
-        <!-- Hidden Native Bootstrap tabs for trigger mechanism safety -->
-        <ul class="nav nav-tabs" id="authTabs" role="tablist" style="display: none;">
-          <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab" aria-controls="login" aria-selected="true"></button>
-          </li>
-          <li class="nav-item" role="presentation">
-            <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab" aria-controls="register" aria-selected="false"></button>
-          </li>
-        </ul>
-
-        <div class="tab-content" id="authTabsContent">
-          <!-- Login Tab -->
-          <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
-            <form id="loginForm">
-              <div class="mb-3">
-                <label for="email" class="label-pro">Email Address</label>
-                <input type="email" id="email" class="input-pro" placeholder="you@mace.ac.in" required>
-              </div>
-              
-              <div class="mb-4">
-                <label for="password" class="label-pro">Password</label>
-                <div class="input-group-container">
-                  <input type="password" id="password" class="input-pro" placeholder="••••••••" required style="padding-right: 2.5rem;">
-                  <span class="password-toggle" id="togglePassword">
-                    <i class="fas fa-eye"></i>
-                  </span>
-                </div>
-              </div>
-              
-              <div id="errorMsg" class="alert alert-danger d-none mb-3 text-xs fw-medium rounded-3"></div>
-              <div id="successMsg" class="alert alert-success d-none mb-3 text-xs fw-medium rounded-3"></div>
-              
-              <button class="btn-pro btn-primary w-100 btn-lg" type="submit" id="loginButton">
-                <span id="buttonText">Initialize Session</span>
-                <span id="buttonSpinner" class="spinner-border d-none" style="width: 1.1rem; height: 1.1rem; border-width: 0.15em;" role="status"></span>
-              </button>
-            </form>
-          </div>
-          
-          <!-- Registration Tab -->
-          <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
-            <form id="registrationForm" class="registration-form">
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="name" class="label-pro">Full Name <span class="text-danger">*</span></label>
-                  <input type="text" class="input-pro" id="name" name="name" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="emp_no" class="label-pro">Employee ID</label>
-                  <input type="text" class="input-pro" id="emp_no" name="emp_no" placeholder="Optional">
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="reg_email" class="label-pro">Email Address <span class="text-danger">*</span></label>
-                  <input type="email" class="input-pro" id="reg_email" name="email" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="mobile_no" class="label-pro">Mobile Number <span class="text-danger">*</span></label>
-                  <input type="tel" class="input-pro" id="mobile_no" name="mobile_no" required>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="department" class="label-pro">Department <span class="text-danger">*</span></label>
-                  <select class="input-pro form-select" id="department" name="department" required>
-                    <option value="">Select Department</option>
-                    <option value="Electronics and Communication Engineering">Electronics & Communication</option>
-                    <option value="Civil Engineering">Civil Engineering</option>
-                    <option value="Mechanical Engineering">Mechanical Engineering</option>
-                    <option value="Computer Science and Engineering">Computer Science & Engineering</option>
-                    <option value="Administrative">Administrative</option>
-                    <option value="Electrical and Electronics Engineering">Electrical & Electronics</option>
-                    <option value="Mathematics">Mathematics</option>
-                    <option value="Science and Humanities">Science & Humanities</option>
-                    <option value="Computer Applications">Computer Applications</option>
-                  </select>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="designation" class="label-pro">Designation <span class="text-danger">*</span></label>
-                  <input type="text" class="input-pro" id="designation" name="designation" placeholder="e.g. Professor, Assistant Professor" required>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="type" class="label-pro">Staff Type</label>
-                  <select class="input-pro form-select" id="type" name="type">
-                    <option value="">Select Type</option>
-                    <option value="Teaching Staff">Teaching Staff</option>
-                    <option value="Non Teaching Staff">Non Teaching Staff</option>
-                  </select>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="contract_type" class="label-pro">Contract Type</label>
-                  <select class="input-pro form-select" id="contract_type" name="contract_type">
-                    <option value="">Select Contract Type</option>
-                    <option value="Permanent">Permanent</option>
-                    <option value="Contract">Contract</option>
-                    <option value="Temporary">Temporary</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="category" class="label-pro">Category</label>
-                  <input type="text" class="input-pro" id="category" name="category" placeholder="Optional">
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="gender" class="label-pro">Gender</label>
-                  <select class="input-pro form-select" id="gender" name="gender">
-                    <option value="">Select Gender</option>
-                    <option value="Male">Male</option>
-                    <option value="Female">Female</option>
-                    <option value="Other">Other</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="blood_group" class="label-pro">Blood Group</label>
-                  <select class="input-pro form-select" id="blood_group" name="blood_group">
-                    <option value="">Select Blood Group</option>
-                    <option value="A+">A+</option>
-                    <option value="A-">A-</option>
-                    <option value="B+">B+</option>
-                    <option value="B-">B-</option>
-                    <option value="AB+">AB+</option>
-                    <option value="AB-">AB-</option>
-                    <option value="O+">O+</option>
-                    <option value="O-">O-</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="mb-3">
-                <label for="permanent_address" class="label-pro">Permanent Address</label>
-                <textarea class="input-pro" id="permanent_address" name="permanent_address" rows="3" placeholder="Enter home address..."></textarea>
-              </div>
-
-              <div class="info-box">
-                <i class="fas fa-info-circle"></i>
-                <div>
-                  <strong>Verification Required:</strong> Your signup request will be submitted to the administration office for profile validation.
-                </div>
-              </div>
-
-              <div id="regErrorMsg" class="alert alert-danger d-none mb-3 text-xs fw-medium rounded-3"></div>
-              <div id="regSuccessMsg" class="alert alert-success d-none mb-3 text-xs fw-medium rounded-3"></div>
-              
-              <button type="submit" class="btn-pro btn-primary w-100 btn-lg" id="submitBtn">
-                <i class="fas fa-paper-plane"></i>Submit Registration
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
+      </form>
     </div>
   </div>
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
   <script>
-    // Tab switching logic
-    function switchAuthTab(tabName) {
-      const loginTab = document.getElementById('login-tab');
-      const registerTab = document.getElementById('register-tab');
-      const wrapper = document.getElementById('authWrapper');
-      
-      if (tabName === 'login') {
-        document.getElementById('loginTabBtn').classList.add('active');
-        document.getElementById('registerTabBtn').classList.remove('active');
-        wrapper.classList.remove('expanded');
-        const tabTrigger = new bootstrap.Tab(loginTab);
-        tabTrigger.show();
-      } else {
-        document.getElementById('registerTabBtn').classList.add('active');
-        document.getElementById('loginTabBtn').classList.remove('active');
-        wrapper.classList.add('expanded');
-        const tabTrigger = new bootstrap.Tab(registerTab);
-        tabTrigger.show();
-      }
-    }
-
-    // Toggle password visibility
-    document.getElementById('togglePassword').addEventListener('click', function() {
-      const passwordInput = document.getElementById('password');
-      const icon = this.querySelector('i');
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        icon.classList.replace('fa-eye', 'fa-eye-slash');
-      } else {
-        passwordInput.type = 'password';
-        icon.classList.replace('fa-eye-slash', 'fa-eye');
-      }
-    });
-
-    // Show loading state
-    function showLoading() {
-      document.getElementById('buttonText').classList.add('d-none');
-      document.getElementById('buttonSpinner').classList.remove('d-none');
-      document.getElementById('loginButton').disabled = true;
-    }
-
-    // Hide loading state
-    function hideLoading() {
-      document.getElementById('buttonText').classList.remove('d-none');
-      document.getElementById('buttonSpinner').classList.add('d-none');
-      document.getElementById('loginButton').disabled = false;
-    }
-
-    // Show error message
-    function showError(message) {
-      const errorMsg = document.getElementById('errorMsg');
-      const successMsg = document.getElementById('successMsg');
-      errorMsg.textContent = message;
-      errorMsg.classList.remove('d-none');
-      successMsg.classList.add('d-none');
-    }
-
-    // Show success message
-    function showSuccess(message) {
-      const errorMsg = document.getElementById('errorMsg');
-      const successMsg = document.getElementById('successMsg');
-      successMsg.textContent = message;
-      successMsg.classList.remove('d-none');
-      errorMsg.classList.add('d-none');
-    }
-
-    // Hide all messages
-    function hideMessages() {
-      document.getElementById('errorMsg').classList.add('d-none');
-      document.getElementById('successMsg').classList.add('d-none');
-    }
-
-    // Registration message functions
-    function showRegError(message) {
-      const errorMsg = document.getElementById('regErrorMsg');
-      const successMsg = document.getElementById('regSuccessMsg');
-      errorMsg.textContent = message;
-      errorMsg.classList.remove('d-none');
-      successMsg.classList.add('d-none');
-    }
-
-    function showRegSuccess(message) {
-      const errorMsg = document.getElementById('regErrorMsg');
-      const successMsg = document.getElementById('regSuccessMsg');
-      successMsg.textContent = message;
-      successMsg.classList.remove('d-none');
-      errorMsg.classList.add('d-none');
-    }
-
-    // Hide registration messages
-    function hideRegMessages() {
-      document.getElementById('regErrorMsg').classList.add('d-none');
-      document.getElementById('regSuccessMsg').classList.add('d-none');
-    }
-
-    // Handle login form submission
-    document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    async function handleLogin(e) {
       e.preventDefault();
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
-      
-      if (!email || !password) {
-        showError('Please enter both email and password');
-        return;
-      }
-
-      if (!email.includes('@')) {
-        showError('Please enter a valid email');
-        return;
-      }
-
-      showLoading();
-      hideMessages();
+      const email = document.getElementById('emailInput').value;
+      const password = document.getElementById('passwordInput').value;
+      const btn = document.getElementById('loginBtn');
+      const errDiv = document.getElementById('authError');
       
       try {
-        await signInWithEmailAndPassword(email, password);
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        btn.disabled = true;
+        btn.innerHTML = '<div class="spinner"></div>';
+        errDiv.style.display = 'none';
         
-        const currentUser = firebase.auth().currentUser;
-        if (currentUser) {
-          const isAdmin = await checkAdminStatus(currentUser);
-          showSuccess('Login successful! Redirecting...');
-          setTimeout(() => {
-            if (isAdmin) {
-              window.location.href = '/admin.html';
-            } else {
-              window.location.href = '/staff_list.html';
-            }
-          }, 1000);
+        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+        const token = await userCredential.user.getIdToken(true);
+        
+        const res = await fetch('/api/auth/session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          }
+        });
+        
+        if (res.ok) {
+          window.location.href = '/staff_list.html';
         } else {
-          showError('Login failed. Please try again.');
+          errDiv.textContent = 'Server verification failed.';
+          errDiv.style.display = 'block';
         }
       } catch (error) {
-        console.log('Login error:', error);
-        showError('Invalid credentials');
+        console.error(error);
+        errDiv.textContent = 'Invalid credentials or network error.';
+        errDiv.style.display = 'block';
       } finally {
-        hideLoading();
+        btn.disabled = false;
+        btn.textContent = 'Sign In';
       }
-    });
-
-    // Check if user is already logged in
-    firebase.auth().onAuthStateChanged((user) => {
-      if (user) {
-        checkAdminStatus(user).then(isAdmin => {
-          if (isAdmin) {
-            window.location.href = '/admin.html';
-          } else {
-            window.location.href = '/staff_list.html';
-          }
-        }).catch(err => {
-          console.log('Error checking user role:', err);
-        });
-      }
-    });
-
-    // Handle registration form submission
-    document.getElementById('registrationForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      
-      const submitBtn = document.getElementById('submitBtn');
-      const originalText = submitBtn.innerHTML;
-      
-      submitBtn.disabled = true;
-      submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-1.5"></span> Submitting...';
-      hideRegMessages();
-      
-      const formData = {
-          name: document.getElementById('name').value.trim(),
-          emp_no: document.getElementById('emp_no').value.trim(),
-          email: document.getElementById('reg_email').value.trim(),
-          mobile_no: document.getElementById('mobile_no').value.trim(),
-          department: document.getElementById('department').value,
-          designation: document.getElementById('designation').value.trim(),
-          type: document.getElementById('type').value,
-          contract_type: document.getElementById('contract_type').value,
-          category: document.getElementById('category').value.trim(),
-          gender: document.getElementById('gender').value,
-          blood_group: document.getElementById('blood_group').value,
-          permanent_address: document.getElementById('permanent_address').value.trim()
-      };
-      
-      if (!formData.name || !formData.email || !formData.mobile_no || 
-          !formData.department || !formData.designation) {
-          showRegError('Please fill in all required fields');
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = originalText;
-          return;
-      }
-      
-      try {
-          const response = await fetch('/api/submit_registration', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(formData)
-          });
-          
-          const result = await response.json();
-          
-          if (result.success) {
-              showRegSuccess(result.message);
-              this.reset();
-              setTimeout(() => {
-                  switchAuthTab('login');
-              }, 3000);
-          } else {
-              showRegError(result.error || 'Registration failed. Please try again.');
-          }
-      } catch (error) {
-          console.log('Registration error:', error);
-          showRegError('Network error. Please try again.');
-      } finally {
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = originalText;
-      }
-    });
+    }
   </script>
 </body>
 </html>
