@@ -17,71 +17,172 @@
       background: var(--page-bg);
       min-height: 100vh;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
+      overflow-x: hidden;
     }
 
-    .auth-wrapper {
+    .split-layout {
+      display: flex;
       width: 100%;
-      max-width: 460px;
-      margin: 2rem auto;
-      padding: 0 1rem;
+      min-height: 100vh;
+    }
+
+    /* Left Side - Holographic Tech Panel */
+    .hud-panel {
+      flex: 1.2;
+      background: rgba(255, 255, 255, 0.4);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-right: 1px solid var(--border);
+      padding: 3rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
       position: relative;
-      z-index: 10;
-      transition: max-width 0.35s ease;
-    }
-
-    .auth-wrapper.expanded {
-      max-width: 680px;
-    }
-
-    .auth-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-xl);
-      box-shadow: var(--shadow-lg);
       overflow: hidden;
     }
 
-    .auth-header {
-      padding: 2rem 2rem 0;
-      text-align: center;
+    /* Right Side - Clean Auth Form */
+    .auth-panel {
+      flex: 0.8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 2rem;
+      position: relative;
+      z-index: 10;
     }
 
-    .auth-brand {
+    .auth-card {
+      width: 100%;
+      max-width: 440px;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(217, 119, 6, 0.15);
+      border-radius: var(--radius-xl);
+      box-shadow: 0 20px 50px rgba(217, 119, 6, 0.08);
+      padding: 2.5rem 2rem;
+      position: relative;
+      transition: max-width 0.3s ease;
+    }
+
+    .auth-card.expanded {
+      max-width: 640px;
+    }
+
+    /* Futuristic HUD Widgets */
+    .hud-header {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hud-title {
+      font-size: 1.75rem;
+      font-weight: 900;
+      color: var(--gray-900);
+      letter-spacing: -0.04em;
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: var(--gray-900);
-      letter-spacing: -0.03em;
-      margin-bottom: 0.25rem;
     }
 
-    .auth-brand .dot {
-      width: 8px;
-      height: 8px;
+    .hud-title .glow-dot {
+      width: 10px;
+      height: 10px;
       background: var(--primary);
       border-radius: 50%;
+      box-shadow: 0 0 10px var(--primary);
+      animation: pulse-glow 2s infinite;
     }
 
-    .auth-subtitle {
-      font-size: 0.8125rem;
-      color: var(--gray-500);
-      font-weight: 500;
-      margin-bottom: 1.5rem;
+    @keyframes pulse-glow {
+      0% { transform: scale(0.9); opacity: 0.6; }
+      50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 14px var(--primary); }
+      100% { transform: scale(0.9); opacity: 0.6; }
     }
 
-    .auth-body {
-      padding: 0 2rem 2rem;
+    /* Scrolling System Log Terminal */
+    .terminal-container {
+      background: rgba(23, 23, 23, 0.95);
+      border: 1px solid var(--gray-800);
+      border-radius: var(--radius-md);
+      padding: 1rem;
+      font-family: 'Courier New', Courier, monospace;
+      color: #10B981;
+      font-size: 0.75rem;
+      height: 140px;
+      overflow-y: auto;
+      box-shadow: inset 0 0 10px rgba(0,0,0,0.8);
+      margin-top: auto;
+      margin-bottom: 2rem;
+      z-index: 2;
+      position: relative;
     }
 
-    .tab-bar {
-      margin-bottom: 1.5rem;
+    .terminal-line {
+      margin-bottom: 0.25rem;
+      line-height: 1.4;
+      white-space: pre-wrap;
     }
 
+    .terminal-line.info { color: #A3A3A3; }
+    .terminal-line.success { color: var(--primary); }
+
+    /* Interactive Hologram Network diagram */
+    .network-viewport {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      min-height: 280px;
+      z-index: 2;
+    }
+
+    .radar-circle {
+      position: absolute;
+      border: 1px solid rgba(217, 119, 6, 0.1);
+      border-radius: 50%;
+      transform: translate(-50%, -50%);
+      top: 50%;
+      left: 50%;
+      pointer-events: none;
+    }
+
+    .radar-circle-1 { width: 100px; height: 100px; }
+    .radar-circle-2 { width: 220px; height: 220px; }
+    .radar-circle-3 { width: 340px; height: 340px; }
+
+    .interactive-node {
+      position: absolute;
+      background: white;
+      border: 1px solid var(--border);
+      padding: 0.5rem 0.75rem;
+      border-radius: var(--radius-md);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      z-index: 5;
+    }
+
+    .interactive-node:hover {
+      border-color: var(--primary);
+      box-shadow: 0 0 15px rgba(217, 119, 6, 0.15);
+      transform: scale(1.05);
+    }
+
+    .interactive-node i {
+      color: var(--primary);
+    }
+
+    /* Password field toggle */
     .input-group-container {
       position: relative;
       display: flex;
@@ -102,22 +203,9 @@
       color: var(--primary);
     }
 
-    .alert {
-      border: none;
-      border-radius: var(--radius-md);
-      padding: 0.75rem 1rem;
-      font-weight: 500;
-      font-size: 0.8125rem;
-    }
-
-    .alert-danger {
-      background: var(--danger-bg);
-      color: var(--danger);
-    }
-
-    .alert-success {
-      background: var(--success-bg);
-      color: var(--success);
+    /* Tabs */
+    .tab-bar {
+      margin-bottom: 1.5rem;
     }
 
     .info-box {
@@ -130,66 +218,108 @@
       margin: 1.25rem 0;
     }
 
-    .auth-footer {
-      text-align: center;
-      padding: 1.5rem 0 0;
-      color: var(--gray-400);
-      font-size: 0.75rem;
+    .auth-brand-mobile {
+      display: none;
     }
 
-    @media (max-width: 768px) {
-      .auth-wrapper,
-      .auth-wrapper.expanded {
-        max-width: 100%;
+    @media (max-width: 992px) {
+      .hud-panel { display: none; }
+      .auth-panel { flex: 1; background: var(--page-bg); }
+      .auth-brand-mobile {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.25rem;
+        font-weight: 900;
+        margin-bottom: 1.5rem;
+        justify-content: center;
       }
-      .auth-body { padding: 0 1.25rem 1.5rem; }
-      .auth-header { padding: 1.5rem 1.25rem 0; }
+      .auth-brand-mobile .glow-dot {
+        width: 8px;
+        height: 8px;
+        background: var(--primary);
+        border-radius: 50%;
+        box-shadow: 0 0 8px var(--primary);
+      }
     }
   </style>
 </head>
 <body class="tech-grid">
 
-  <!-- Futuristic Blueprint Tech Doodles -->
-  <svg class="futur-doodle" style="top: 10%; left: 5%; width: 220px; height: 220px;" viewBox="0 0 100 100">
-    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="0.5" stroke-dasharray="2 2" />
-    <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" stroke-width="0.5" />
-    <line x1="50" y1="0" x2="50" y2="100" stroke="currentColor" stroke-width="0.25" />
-    <line x1="0" y1="50" x2="100" y2="50" stroke="currentColor" stroke-width="0.25" />
-    <path d="M 20 20 L 25 20 L 25 25" fill="none" stroke="currentColor" stroke-width="0.5" />
-    <path d="M 80 20 L 75 20 L 75 25" fill="none" stroke="currentColor" stroke-width="0.5" />
-    <path d="M 20 80 L 25 80 L 25 75" fill="none" stroke="currentColor" stroke-width="0.5" />
-    <path d="M 80 80 L 75 80 L 75 75" fill="none" stroke="currentColor" stroke-width="0.5" />
-  </svg>
-  <svg class="futur-doodle d-none d-lg-block" style="bottom: 10%; right: 5%; width: 280px; height: 280px;" viewBox="0 0 100 100">
-    <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="0.5" />
-    <circle cx="50" cy="50" r="40" fill="none" stroke="currentColor" stroke-width="1" stroke-dasharray="1 8" />
-    <circle cx="50" cy="50" r="25" fill="none" stroke="currentColor" stroke-width="0.25" />
-    <rect x="25" y="25" width="50" height="50" fill="none" stroke="currentColor" stroke-width="0.25" stroke-dasharray="4 4" transform="rotate(45 50 50)" />
-    <line x1="10" y1="10" x2="90" y2="90" stroke="currentColor" stroke-width="0.25" />
-  </svg>
+  <div class="split-layout w-100">
+    <!-- Left Panel - Futuristic HUD Viewport -->
+    <div class="hud-panel">
+      
+      <!-- Top Section -->
+      <div class="hud-header">
+        <div class="hud-title">
+          <span class="glow-dot"></span>
+          MACE Connect Gateway
+        </div>
+        <p class="text-xs text-muted mt-1 mb-0">Decentralized Staff Information Node System</p>
+      </div>
 
-  <div class="auth-wrapper" id="authWrapper">
-    <div class="auth-card hud-bracket neon-glow">
-      <!-- Header -->
-      <div class="auth-header">
-        <div class="auth-brand">
-          <span class="dot"></span>
+      <!-- Center Network Visualizer Section -->
+      <div class="network-viewport">
+        <!-- Background Radar Target -->
+        <div class="radar-circle radar-circle-1"></div>
+        <div class="radar-circle radar-circle-2"></div>
+        <div class="radar-circle radar-circle-3"></div>
+
+        <!-- Node 1: Teaching Staff -->
+        <div class="interactive-node" style="top: 20%; left: 30%;" onclick="logNodeClick('Teaching Staff Node')">
+          <i class="fas fa-chalkboard-teacher"></i>
+          <span>Teaching Staff</span>
+        </div>
+
+        <!-- Node 2: Registry Database -->
+        <div class="interactive-node" style="top: 50%; left: 50%; transform: translate(-50%, -50%); border-color: var(--primary); background: var(--primary-subtle);" onclick="logNodeClick('Main Registry Node')">
+          <i class="fas fa-database"></i>
+          <span class="text-primary">Main Registry</span>
+        </div>
+
+        <!-- Node 3: Administration -->
+        <div class="interactive-node" style="bottom: 22%; left: 20%;" onclick="logNodeClick('Administrative Node')">
+          <i class="fas fa-user-shield"></i>
+          <span>Administration</span>
+        </div>
+
+        <!-- Node 4: Office Directory -->
+        <div class="interactive-node" style="bottom: 25%; right: 20%;" onclick="logNodeClick('Office Directory Node')">
+          <i class="fas fa-network-wired"></i>
+          <span>Directory Index</span>
+        </div>
+      </div>
+
+      <!-- Bottom Log Console -->
+      <div>
+        <div class="section-title ps-1 mb-1" style="font-size: 0.625rem;"><i class="fas fa-terminal me-1"></i>Core Console Logs</div>
+        <div class="terminal-container" id="terminalLog">
+          <div class="terminal-line info">[SYSINIT] MACE Node Controller online.</div>
+          <div class="terminal-line info">[SYSINIT] Database link established (Firebase REST v9).</div>
+          <div class="terminal-line">[SYSTEM] Ready for auth requests on port 443.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Right Panel - Login Card Container -->
+    <div class="auth-panel">
+      <div class="auth-card hud-bracket neon-glow" id="authWrapper">
+        <div class="auth-brand-mobile text-dark">
+          <span class="glow-dot"></span>
           MACE Connect
         </div>
-        <div class="auth-subtitle">Staff Portal &mdash; Sign in to your account</div>
 
-        <!-- Tab Bar -->
         <div class="tab-bar">
           <button type="button" class="tab-bar-item active" id="loginTabBtn" onclick="switchAuthTab('login')">
             Sign In
           </button>
           <button type="button" class="tab-bar-item" id="registerTabBtn" onclick="switchAuthTab('register')">
-            Register
+            Register Account
           </button>
         </div>
-      </div>
 
-      <div class="auth-body">
         <!-- Hidden Native Bootstrap tabs for trigger mechanism safety -->
         <ul class="nav nav-tabs" id="authTabs" role="tablist" style="display: none;">
           <li class="nav-item" role="presentation">
@@ -199,7 +329,7 @@
             <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab" aria-controls="register" aria-selected="false"></button>
           </li>
         </ul>
-        
+
         <div class="tab-content" id="authTabsContent">
           <!-- Login Tab -->
           <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
@@ -212,7 +342,7 @@
               <div class="mb-3">
                 <label for="password" class="label-pro">Password</label>
                 <div class="input-group-container">
-                  <input type="password" id="password" class="input-pro" placeholder="Enter your password" required style="padding-right: 2.5rem;">
+                  <input type="password" id="password" class="input-pro" placeholder="••••••••" required style="padding-right: 2.5rem;">
                   <span class="password-toggle" id="togglePassword">
                     <i class="fas fa-eye"></i>
                   </span>
@@ -223,7 +353,7 @@
               <div id="successMsg" class="alert alert-success d-none mb-3"></div>
               
               <button class="btn-pro btn-primary w-100 btn-lg" type="submit" id="loginButton">
-                <span id="buttonText">Sign In</span>
+                <span id="buttonText">Initialize Session</span>
                 <span id="buttonSpinner" class="spinner-border d-none" style="width: 1rem; height: 1rem; border-width: 0.15em;" role="status"></span>
               </button>
             </form>
@@ -335,7 +465,7 @@
               </div>
 
               <div class="info-box">
-                <i class="fas fa-info-circle me-2" style="color: var(--primary);"></i>
+                <i class="fas fa-info-circle me-1.5" style="color: var(--primary);"></i>
                 <strong>Note:</strong> Your registration will be reviewed by the admin. You will be notified once approved.
               </div>
 
@@ -343,16 +473,12 @@
               <div id="regSuccessMsg" class="alert alert-success d-none mb-3"></div>
               
               <button type="submit" class="btn-pro btn-primary w-100 btn-lg" id="submitBtn">
-                <i class="fas fa-paper-plane me-2"></i>Submit Registration
+                <i class="fas fa-paper-plane me-1.5"></i>Submit Registration
               </button>
             </form>
           </div>
         </div>
       </div>
-    </div>
-
-    <div class="auth-footer">
-      Mar Athanasius College of Engineering &middot; Staff Portal v1.0
     </div>
   </div>
 
@@ -372,12 +498,14 @@
         wrapper.classList.remove('expanded');
         const tabTrigger = new bootstrap.Tab(loginTab);
         tabTrigger.show();
+        writeTerminalLine('Switched control block to SESSION_INIT', 'success');
       } else {
         document.getElementById('registerTabBtn').classList.add('active');
         document.getElementById('loginTabBtn').classList.remove('active');
         wrapper.classList.add('expanded');
         const tabTrigger = new bootstrap.Tab(registerTab);
         tabTrigger.show();
+        writeTerminalLine('Switched control block to REGISTRY_SUBMIT', 'success');
       }
     }
 
@@ -394,11 +522,42 @@
       }
     });
 
+    // Console Logging Simulation
+    const consoleLogs = [
+      'Performing database ping... 12ms',
+      'System temperature: 38C (OPTIMAL)',
+      'Security posture: EXCELLENT',
+      'Encrypted tunnel link active (SSL/TLS)',
+      'Syncing cache index...',
+      'Listening for auth handshake requests...',
+      'Registry correlators active'
+    ];
+
+    function writeTerminalLine(text, type = '') {
+      const consoleLog = document.getElementById('terminalLog');
+      if (!consoleLog) return;
+      const line = document.createElement('div');
+      line.className = 'terminal-line ' + type;
+      line.textContent = `[${new Date().toLocaleTimeString()}] ${text}`;
+      consoleLog.appendChild(line);
+      consoleLog.scrollTop = consoleLog.scrollHeight;
+    }
+
+    function logNodeClick(nodeName) {
+      writeTerminalLine(`Queried node endpoint: ${nodeName}`, 'success');
+    }
+
+    setInterval(() => {
+      const randomLog = consoleLogs[Math.floor(Math.random() * consoleLogs.length)];
+      writeTerminalLine(randomLog, 'info');
+    }, 6000);
+
     // Show loading state
     function showLoading() {
       document.getElementById('buttonText').classList.add('d-none');
       document.getElementById('buttonSpinner').classList.remove('d-none');
       document.getElementById('loginButton').disabled = true;
+      writeTerminalLine('Attempting authentication handshake...', 'info');
     }
 
     // Hide loading state
@@ -415,6 +574,7 @@
       errorMsg.textContent = message;
       errorMsg.classList.remove('d-none');
       successMsg.classList.add('d-none');
+      writeTerminalLine('Session init error: ' + message, 'success');
     }
 
     // Show success message
@@ -424,6 +584,7 @@
       successMsg.textContent = message;
       successMsg.classList.remove('d-none');
       errorMsg.classList.add('d-none');
+      writeTerminalLine('Auth approved. Establishing secure session...', 'success');
     }
 
     // Hide all messages
@@ -439,6 +600,7 @@
       errorMsg.textContent = message;
       errorMsg.classList.remove('d-none');
       successMsg.classList.add('d-none');
+      writeTerminalLine('Registry error: ' + message, 'success');
     }
 
     function showRegSuccess(message) {
@@ -447,6 +609,7 @@
       successMsg.textContent = message;
       successMsg.classList.remove('d-none');
       errorMsg.classList.add('d-none');
+      writeTerminalLine('Registry submitted successfully.', 'success');
     }
 
     // Hide registration messages
@@ -525,6 +688,7 @@
       submitBtn.disabled = true;
       submitBtn.innerHTML = '<div class="loading-spinner-pro" style="display:inline-block;"></div> Submitting...';
       hideRegMessages();
+      writeTerminalLine('Registering node data endpoint...', 'info');
       
       const formData = {
           name: document.getElementById('name').value.trim(),
