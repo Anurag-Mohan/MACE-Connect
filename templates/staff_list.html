@@ -410,6 +410,13 @@
       }
     }
     
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        loadStaffs();
+      } else {
+        window.location.href = '/login.html';
+      }
+    });
   </script>
 </body>
 </html>
