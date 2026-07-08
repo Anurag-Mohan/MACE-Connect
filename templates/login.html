@@ -135,13 +135,28 @@
         btn.innerHTML = '<div class="spinner"></div>';
         errDiv.style.display = 'none';
         
-        await signInWithEmailAndPassword(email, password);
-        window.location.href = '/staff_list.html';
+        const userCredential = await firebase.auth().signInWithEmailAndPassword(email, password);
+        const token = await userCredential.user.getIdToken(true);
         
+        const res = await fetch('/api/auth/session', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer ' + token
+          }
+        });
+        
+        if (res.ok) {
+          window.location.href = '/staff_list.html';
+        } else {
+          errDiv.textContent = 'Server verification failed.';
+          errDiv.style.display = 'block';
+        }
       } catch (error) {
         console.error(error);
         errDiv.textContent = 'Invalid credentials or network error.';
         errDiv.style.display = 'block';
+      } finally {
         btn.disabled = false;
         btn.textContent = 'Sign In';
       }
