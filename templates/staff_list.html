@@ -14,47 +14,43 @@
   <style>
     body {
       background: var(--page-bg);
-      position: relative;
     }
 
-    /* Layout overrides */
+    /* Professional layout overrides */
     .layout-with-sidebar {
       display: grid;
-      grid-template-columns: 280px 1fr;
-      gap: 2rem;
+      grid-template-columns: 260px 1fr;
+      gap: 1.75rem;
       max-width: 1360px;
       margin: 0 auto;
       padding: 0 1rem;
     }
 
-    /* Filter Chips (Professional & Colorful) */
+    /* Filter Chips (Professional Style) */
     .filter-chip-pro {
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.5rem 1.15rem;
+      gap: 0.375rem;
+      padding: 0.4rem 0.875rem;
       border-radius: 9999px;
       font-size: 0.75rem;
-      font-weight: 700;
-      border: 1px solid var(--gray-200);
+      font-weight: 600;
+      border: 1px solid var(--border);
       background: white;
       color: var(--gray-600);
       cursor: pointer;
-      box-shadow: var(--shadow-xs);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.15s ease;
     }
 
     .filter-chip-pro:hover {
-      border-color: var(--primary-border);
-      color: var(--primary);
-      transform: translateY(-1px);
+      border-color: var(--gray-400);
+      color: var(--gray-900);
     }
 
     .filter-chip-pro.active {
-      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      background: var(--gray-900);
       color: white;
-      border-color: transparent;
-      box-shadow: var(--shadow-primary);
+      border-color: var(--gray-900);
     }
 
     /* Staff Card - Clean Horizontal SaaS Style */
@@ -62,15 +58,13 @@
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 1.25rem 1.5rem;
-      box-shadow: var(--shadow-sm);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 1rem 1.25rem;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .staff-row-card:hover {
-      border-color: var(--primary-border);
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-md);
+      border-color: var(--gray-300);
+      box-shadow: var(--shadow-sm);
     }
 
     .staff-row-card.selected {
@@ -79,8 +73,8 @@
     }
 
     .avatar-pro {
-      width: 46px;
-      height: 46px;
+      width: 44px;
+      height: 44px;
       border-radius: var(--radius-md);
       display: flex;
       align-items: center;
@@ -89,30 +83,22 @@
       font-size: 0.9375rem;
       color: white;
       flex-shrink: 0;
-      box-shadow: var(--shadow-xs);
     }
 
     .dept-badge-indicator {
       border-left: 3px solid transparent;
-      padding-left: 1rem;
+      padding-left: 0.75rem;
     }
 
     .quick-search-box {
-      border: 1px solid var(--gray-200);
+      border: 1px solid var(--border);
       border-radius: var(--radius-md);
       background: white;
-      padding: 0.625rem 1rem;
+      padding: 0.5rem 0.75rem;
       max-width: 500px;
-      margin: 1.25rem auto 0;
+      margin: 1rem auto 0;
       display: flex;
       align-items: center;
-      box-shadow: var(--shadow-xs);
-      transition: all 0.2s ease;
-    }
-
-    .quick-search-box:focus-within {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px var(--primary-subtle);
     }
 
     .quick-search-box input {
@@ -120,9 +106,8 @@
       outline: none;
       width: 100%;
       font-size: 0.8125rem;
-      margin-left: 0.625rem;
+      margin-left: 0.5rem;
       color: var(--gray-800);
-      background: transparent;
     }
 
     /* Department Card */
@@ -130,73 +115,46 @@
       background: white;
       border: 1px solid var(--border);
       border-radius: var(--radius-lg);
-      padding: 1.5rem 1.25rem;
+      padding: 1.25rem;
       cursor: pointer;
-      box-shadow: var(--shadow-sm);
-      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: all 0.2s ease;
       height: 100%;
-      position: relative;
-      overflow: hidden;
     }
 
     .dept-card-pro:hover {
-      border-color: var(--primary-border);
-      box-shadow: var(--shadow-md);
-      transform: translateY(-4px);
-    }
-
-    .dept-card-pro::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 4px;
-      height: 100%;
-      background: var(--primary);
-      opacity: 0.8;
+      border-color: var(--gray-400);
+      box-shadow: var(--shadow-sm);
     }
 
     @media (max-width: 992px) {
       .layout-with-sidebar {
         grid-template-columns: 1fr;
-        gap: 1.5rem;
-      }
-      .sidebar-pro {
-        position: static;
       }
     }
   </style>
 </head>
-<body>
+<body class="tech-grid">
 
-  <!-- Floating abstract background glow colors -->
-  <div class="bg-blob bg-blob-1"></div>
-  <div class="bg-blob bg-blob-2"></div>
-
-  <!-- Decorative Background Doodles -->
-  <svg class="futur-doodle animate-float-delayed" style="top: 15%; right: 2%; width: 180px; height: 180px; opacity: 0.08;" viewBox="0 0 100 100">
-    <circle cx="50" cy="50" r="45" fill="none" stroke="var(--primary)" stroke-width="0.75" stroke-dasharray="2 3" />
-    <circle cx="50" cy="50" r="30" fill="none" stroke="var(--primary)" stroke-width="0.5" />
-    <circle cx="50" cy="50" r="10" fill="none" stroke="var(--secondary)" stroke-width="0.5" />
-    <line x1="50" y1="0" x2="50" y2="100" stroke="var(--primary)" stroke-width="0.25" />
-    <line x1="0" y1="50" x2="100" y2="50" stroke="var(--primary)" stroke-width="0.25" />
-  </svg>
-
-  <svg class="futur-doodle animate-float" style="bottom: 10%; left: 1%; width: 140px; height: 140px; opacity: 0.08;" viewBox="0 0 100 100">
-    <rect x="15" y="15" width="70" height="70" rx="10" fill="none" stroke="var(--secondary)" stroke-width="0.75" stroke-dasharray="4 4" />
-    <circle cx="50" cy="50" r="20" fill="none" stroke="var(--primary)" stroke-width="0.75" />
-    <path d="M 10 10 L 25 10 M 10 10 L 10 25" stroke="var(--primary)" stroke-width="0.75" fill="none" />
-    <path d="M 90 90 L 75 90 M 90 90 L 90 75" stroke="var(--primary)" stroke-width="0.75" fill="none" />
+  <!-- Futuristic Blueprint Tech Doodles -->
+  <svg class="futur-doodle" style="top: 15%; right: 2%; width: 180px; height: 180px;" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="0.5" stroke-dasharray="2 2" />
+    <circle cx="50" cy="50" r="30" fill="none" stroke="currentColor" stroke-width="0.5" />
+    <line x1="50" y1="0" x2="50" y2="100" stroke="currentColor" stroke-width="0.25" />
+    <line x1="0" y1="50" x2="100" y2="50" stroke="currentColor" stroke-width="0.25" />
+    <path d="M 20 20 L 25 20 L 25 25" fill="none" stroke="currentColor" stroke-width="0.5" />
+    <path d="M 80 20 L 75 20 L 75 25" fill="none" stroke="currentColor" stroke-width="0.5" />
+    <path d="M 20 80 L 25 80 L 25 75" fill="none" stroke="currentColor" stroke-width="0.5" />
+    <path d="M 80 80 L 75 80 L 75 75" fill="none" stroke="currentColor" stroke-width="0.5" />
   </svg>
 
   <!-- Floating Professional Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-pro animate-fade-in">
+  <nav class="navbar navbar-expand-lg navbar-pro">
     <div class="container-fluid p-0">
       <a class="navbar-brand-pro" href="#" id="navTitle" onclick="showDepartments()">
         <span class="brand-dot"></span>Staff Directory
       </a>
       <div class="d-flex align-items-center gap-3">
-        <span id="userSpan" class="text-muted text-sm fw-semibold d-none d-sm-inline"></span>
+        <span id="userSpan" class="text-muted text-sm fw-medium d-none d-sm-inline"></span>
         <span id="adminBadge" class="badge-pro badge-primary" style="display: none;">Admin</span>
         <button id="signoutBtn" class="btn-pro btn-outline btn-sm">
           <i class="fas fa-sign-out-alt"></i>Sign Out
@@ -205,30 +163,30 @@
     </div>
   </nav>
 
-  <div class="container mt-4 animate-fade-up" style="position: relative; z-index: 10; max-width: 1360px;">
+  <div class="container mt-4" style="position: relative; z-index: 10; max-width: 1360px;">
     <!-- Back Button -->
     <div id="backButton" class="mb-4" style="display: none;">
       <button class="btn-pro btn-outline" onclick="showDepartments()">
-        <i class="fas fa-arrow-left me-1.5"></i>Back to Departments
+        <i class="fas fa-arrow-left me-1"></i>Back to Departments
       </button>
     </div>
 
     <!-- Loading Spinner -->
     <div id="loadingDiv" class="text-center py-5">
       <div class="loading-spinner-pro mx-auto mb-3"></div>
-      <p class="text-sm text-muted fw-semibold">Retrieving directory index...</p>
+      <p class="text-sm text-muted fw-medium">Retrieving staff members...</p>
     </div>
 
-    <!-- Layout Wrapper -->
+    <!-- Asymmetric App Layout Grid (Sidebar Dock + Workspace Content) -->
     <div class="layout-with-sidebar" id="appLayoutWrapper" style="display: none;">
       
       <!-- Left Statistics Sidebar Dock -->
       <div class="d-flex flex-column gap-3" id="statsSidebar">
         <div class="section-title ps-1 mb-1">
-          <i class="fas fa-chart-pie me-1.5"></i>Portal Metrics
+          <i class="fas fa-chart-bar me-1"></i>Portal Metrics
         </div>
         
-        <div class="metric-card">
+        <div class="metric-card hud-bracket neon-glow">
           <div class="d-flex align-items-center gap-3">
             <div class="metric-icon" style="background: var(--primary-subtle); color: var(--primary);"><i class="fas fa-users"></i></div>
             <div>
@@ -238,9 +196,9 @@
           </div>
         </div>
         
-        <div class="metric-card">
+        <div class="metric-card hud-bracket neon-glow">
           <div class="d-flex align-items-center gap-3">
-            <div class="metric-icon" style="background: var(--success-bg); color: var(--success);"><i class="fas fa-university"></i></div>
+            <div class="metric-icon" style="background: rgba(22, 163, 74, 0.08); color: var(--success);"><i class="fas fa-building"></i></div>
             <div>
               <div class="metric-value" id="totalDepartments">0</div>
               <div class="metric-label">Departments</div>
@@ -248,9 +206,9 @@
           </div>
         </div>
         
-        <div class="metric-card">
+        <div class="metric-card hud-bracket neon-glow">
           <div class="d-flex align-items-center gap-3">
-            <div class="metric-icon" style="background: var(--primary-subtle); color: var(--primary);"><i class="fas fa-chalkboard-teacher"></i></div>
+            <div class="metric-icon" style="background: rgba(8, 145, 178, 0.08); color: var(--info);"><i class="fas fa-chalkboard-teacher"></i></div>
             <div>
               <div class="metric-value" id="teachingStaff">0</div>
               <div class="metric-label">Teaching</div>
@@ -258,9 +216,9 @@
           </div>
         </div>
         
-        <div class="metric-card">
+        <div class="metric-card hud-bracket neon-glow">
           <div class="d-flex align-items-center gap-3">
-            <div class="metric-icon" style="background: var(--secondary-subtle); color: var(--secondary);"><i class="fas fa-user-tie"></i></div>
+            <div class="metric-icon" style="background: rgba(139, 92, 246, 0.08); color: #8B5CF6;"><i class="fas fa-user-tie"></i></div>
             <div>
               <div class="metric-value" id="nonTeachingStaff">0</div>
               <div class="metric-label">Non-Teaching</div>
@@ -268,14 +226,17 @@
           </div>
         </div>
 
-        <!-- Quick Help widget (replaces futuristic logs widget) -->
-        <div class="card-pro p-4" style="background: rgba(255,255,255,0.7); backdrop-filter: blur(10px);">
-          <h6 class="fw-bold text-dark text-sm mb-2"><i class="fas fa-info-circle text-primary me-2"></i>Quick Search Tips</h6>
-          <ul class="list-unstyled text-xs text-muted mb-0" style="line-height: 1.6;">
-            <li class="mb-1.5"><i class="fas fa-chevron-right text-primary me-1.5" style="font-size: 0.6rem;"></i>Use the filter chips to isolate staff roles.</li>
-            <li class="mb-1.5"><i class="fas fa-chevron-right text-primary me-1.5" style="font-size: 0.6rem;"></i>Search by name, email, or employee ID.</li>
-            <li><i class="fas fa-chevron-right text-primary me-1.5" style="font-size: 0.6rem;"></i>Scan the contact QR code to save details instantly to your mobile phone.</li>
-          </ul>
+        <!-- Futuristic System HUD Widget -->
+        <div class="card-pro p-3 hud-bracket neon-glow" style="background: rgba(23, 23, 23, 0.95); border: 1px solid var(--gray-800); box-shadow: inset 0 0 10px rgba(0,0,0,0.5);">
+          <div class="d-flex align-items-center justify-content-between mb-2">
+            <span class="text-xs fw-semibold text-muted" style="font-family: monospace; color: #10B981 !important;"><i class="fas fa-circle-notch fa-spin me-1.5"></i>CORE INDEX</span>
+            <span class="badge-pro badge-success text-xxs" style="padding: 1px 6px; font-size: 0.625rem;">ONLINE</span>
+          </div>
+          <div style="font-family: monospace; font-size: 0.65rem; color: #A3A3A3; line-height: 1.4;">
+            <div class="text-white">LINK: SECURE_SSL</div>
+            <div>PEERS: 4 HOSTS</div>
+            <div class="text-primary">SYNC: OK</div>
+          </div>
         </div>
       </div>
 
@@ -284,10 +245,18 @@
         <!-- Departments View Panel -->
         <div id="departmentsView" style="display: none;">
           <!-- Welcome Banner -->
-          <div class="card-pro p-4 mb-4" style="border-left: 4px solid var(--primary); background: linear-gradient(135deg, white, var(--gray-50));">
+          <div class="card-pro p-4 mb-4 hud-bracket neon-glow" style="border-left: 3px solid var(--primary); overflow: hidden; position: relative;">
+            <!-- Beautiful background SVG tech doodle for fresh feeling -->
+            <svg class="position-absolute end-0 top-0 h-100 text-primary opacity-10" style="width: 260px; pointer-events: none;" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <path d="M0,60 Q30,40 60,60 T100,60 L100,100 L0,100 Z" fill="currentColor" opacity="0.15"></path>
+              <circle cx="65" cy="35" r="14" fill="none" stroke="currentColor" stroke-width="0.5"></circle>
+              <circle cx="65" cy="35" r="8" fill="none" stroke="currentColor" stroke-dasharray="1 1.5" stroke-width="0.5"></circle>
+              <line x1="65" y1="20" x2="65" y2="50" stroke="currentColor" stroke-width="0.25"></line>
+              <line x1="50" y1="35" x2="80" y2="35" stroke="currentColor" stroke-width="0.25"></line>
+            </svg>
             
-            <div class="text-center py-3" style="position: relative; z-index: 1;">
-              <h4 class="mb-1 fw-extrabold text-dark">Directory Registry</h4>
+            <div class="text-center py-2" style="position: relative; z-index: 1;">
+              <h4 class="mb-1 fw-bold text-dark">MACE Connect</h4>
               <p class="text-muted text-sm mb-0">Search and contact staff members across departments and offices</p>
               <div class="quick-search-box">
                 <i class="fas fa-search text-muted"></i>
@@ -298,9 +267,9 @@
 
           <div class="d-flex align-items-center justify-content-between mb-3 ps-1">
             <div class="section-title mb-0">
-              <i class="fas fa-th-large me-1.5"></i>Departments
+              <i class="fas fa-th-large me-1"></i>Departments
             </div>
-            <button class="btn-pro btn-outline btn-sm" onclick="showStaffList('All Departments')">
+            <button class="btn-pro btn-outline btn-sm hud-bracket" onclick="showStaffList('All Departments')">
               <i class="fas fa-users me-1.5 text-primary"></i>All Departments
             </button>
           </div>
@@ -310,29 +279,27 @@
         <!-- Staff List View Panel -->
         <div id="staffView" style="display: none;">
           <!-- Search and Filters Section -->
-          <div class="card-pro p-3 mb-4">
+          <div class="card-pro p-3 mb-4 hud-bracket neon-glow">
             <div class="row align-items-center g-3">
               <div class="col-lg-5">
-                <div class="input-group-container">
-                  <input type="text" class="input-pro" placeholder="Search by name, email, or ID..." id="searchInput">
-                </div>
+                <input type="text" class="input-pro" placeholder="Search by name, email, or ID..." id="searchInput">
               </div>
               <div class="col-lg-7">
                 <div class="d-flex flex-wrap gap-2 align-items-center justify-content-lg-end">
                   <span class="filter-chip-pro active" data-type="All Staff">
-                    <i class="fas fa-users"></i>All
+                    <i class="fas fa-users me-1"></i>All
                   </span>
                   <span class="filter-chip-pro" data-type="Teaching Staff">
-                    <i class="fas fa-chalkboard-teacher"></i>Teaching
+                    <i class="fas fa-chalkboard-teacher me-1"></i>Teaching
                   </span>
                   <span class="filter-chip-pro" data-type="Non Teaching Staff">
-                    <i class="fas fa-user-tie"></i>Non-Teaching
+                    <i class="fas fa-user-tie me-1"></i>Non-Teaching
                   </span>
                   <span class="filter-chip-pro" data-type="Retired">
-                    <i class="fas fa-user-clock"></i>Retired
+                    <i class="fas fa-user-clock me-1"></i>Retired
                   </span>
                   <button id="adminControlsToggle" class="btn-pro btn-outline btn-sm ms-lg-2" style="display: none;" onclick="toggleAdminControls()">
-                    <i class="fas fa-cog text-primary"></i>Admin Actions
+                    <i class="fas fa-cog"></i>Admin Actions
                   </button>
                 </div>
               </div>
@@ -348,10 +315,10 @@
               </div>
               <div class="d-flex gap-2">
                 <button class="btn-pro btn-outline btn-sm" onclick="toggleBulkSelect()">
-                  <i class="fas fa-list-check me-1.5"></i>Bulk Select Mode
+                  <i class="fas fa-list-check me-1"></i>Bulk Select Mode
                 </button>
                 <button class="btn-pro btn-primary btn-sm" onclick="window.location.href='/admin.html'">
-                  <i class="fas fa-cog me-1.5"></i>Admin Console
+                  <i class="fas fa-cog me-1"></i>Admin Console
                 </button>
               </div>
             </div>
@@ -366,10 +333,10 @@
               </div>
               <div class="d-flex gap-2">
                 <button class="btn-pro btn-danger btn-sm" id="bulkDeleteBtn" onclick="bulkDeleteStaff()" disabled>
-                  <i class="fas fa-trash me-1.5"></i>Delete Selected
+                  <i class="fas fa-trash me-1"></i>Delete Selected
                 </button>
                 <button class="btn-pro btn-outline btn-sm" onclick="clearSelection()">
-                  <i class="fas fa-times me-1.5"></i>Clear
+                  <i class="fas fa-times me-1"></i>Clear
                 </button>
               </div>
             </div>
@@ -446,19 +413,19 @@
   // Modern department styling map
   const deptStyleMap = {
     'CSE': { color: '#F9FAFB', border: '#D97706', icon: 'fa-laptop', text: '#171717' },
-    'ECE': { color: '#F9FAFB', border: '#EA580C', icon: 'fa-microchip', text: '#171717' },
-    'CE': { color: '#F9FAFB', border: '#84CC16', icon: 'fa-drafting-compass', text: '#171717' },
-    'ME': { color: '#F9FAFB', border: '#F59E0B', icon: 'fa-cogs', text: '#171717' },
-    'AD': { color: '#F9FAFB', border: '#6B7280', icon: 'fa-user-shield', text: '#171717' },
-    'EEE': { color: '#F9FAFB', border: '#10B981', icon: 'fa-bolt', text: '#171717' },
-    'MAT': { color: '#F9FAFB', border: '#059669', icon: 'fa-calculator', text: '#171717' },
-    'SH': { color: '#F9FAFB', border: '#4B5563', icon: 'fa-atom', text: '#171717' },
-    'CA': { color: '#F9FAFB', border: '#EA580C', icon: 'fa-code', text: '#171717' }
+    'ECE': { color: '#F9FAFB', border: '#D97706', icon: 'fa-microchip', text: '#171717' },
+    'CE': { color: '#F9FAFB', border: '#D97706', icon: 'fa-drafting-compass', text: '#171717' },
+    'ME': { color: '#F9FAFB', border: '#D97706', icon: 'fa-cogs', text: '#171717' },
+    'AD': { color: '#F9FAFB', border: '#D97706', icon: 'fa-user-shield', text: '#171717' },
+    'EEE': { color: '#F9FAFB', border: '#D97706', icon: 'fa-bolt', text: '#171717' },
+    'MAT': { color: '#F9FAFB', border: '#D97706', icon: 'fa-calculator', text: '#171717' },
+    'SH': { color: '#F9FAFB', border: '#D97706', icon: 'fa-atom', text: '#171717' },
+    'CA': { color: '#F9FAFB', border: '#D97706', icon: 'fa-code', text: '#171717' }
   };
 
   const avatarColors = [
-    '#D97706', '#059669', '#0D9488', '#EA580C', '#78350F',
-    '#DC2626', '#EA580C', '#9A3412', '#4B5563', '#065F46'
+    '#D97706', '#059669', '#0D9488', '#7C3AED', '#DB2777',
+    '#DC2626', '#EA580C', '#0284C7', '#4F46E5', '#0891B2'
   ];
 
   function getAvatarColor(name) {
@@ -678,12 +645,12 @@
     
     deptKeys.forEach((abbr, index) => {
       const fullName = departments[abbr];
-      const style = deptStyleMap[abbr] || { border: 'var(--primary)', icon: 'fa-briefcase' };
+      const style = deptStyleMap[abbr] || { color: '#F9FAFB', border: 'var(--primary)', icon: 'fa-briefcase', text: 'var(--gray-900)' };
       const count = allStaffData.filter(s => s.department === fullName).length;
       
       html += `
         <div class="col-md-6 col-lg-4">
-          <div class="dept-card-pro d-flex align-items-center gap-3" style="border-left: 3px solid ${style.border};" onclick="showStaffList('${abbr}')">
+          <div class="dept-card-pro hud-bracket neon-glow d-flex align-items-center gap-3" style="border-left: 3px solid ${style.border};" onclick="showStaffList('${abbr}')">
             <div class="avatar-pro" style="background: ${style.border};"><i class="fas ${style.icon}"></i></div>
             <div>
               <h6 class="fw-bold mb-0 text-dark">${abbr}</h6>
@@ -770,9 +737,9 @@
       const staffCount = staffByType[type].length;
       
       html += `
-        <div class="d-flex align-items-center justify-content-between mt-4 mb-2 ps-1">
+        <div class="d-flex align-items-center justify-content-between mt-3 mb-2 ps-1">
           <div class="section-title mb-0">
-            <i class="fas ${typeIcon} me-1.5 text-primary"></i>${type}
+            <i class="fas ${typeIcon} me-1"></i>${type}
           </div>
           <span class="badge-pro badge-neutral">${staffCount}</span>
         </div>
@@ -800,6 +767,13 @@
     const avatarColor = getAvatarColor(name);
     const initials = getInitials(name);
     
+    const staffTypeBadge = staffType === 'Teaching Staff' ? 
+      '<span class="badge-pro badge-neutral">Teaching</span>' :
+      staffType === 'Non Teaching Staff' ? 
+      '<span class="badge-pro badge-neutral">Non-Teaching</span>' :
+      staffType === 'Retired' ?
+      '<span class="badge-pro badge-neutral">Retired</span>' : '';
+    
     const deptAbbr = createAbbreviation(department);
     const style = deptStyleMap[deptAbbr] || { border: 'var(--primary)' };
     
@@ -808,7 +782,7 @@
     const isSelected = selectedStaffIds.has(staffId) ? 'selected' : '';
     
     return `
-      <div class="staff-row-card ${isSelected} ${bulkSelectClass}" ${bulkSelectHandler} data-staff-id="${staffId}">
+      <div class="staff-row-card hud-bracket neon-glow ${isSelected} ${bulkSelectClass}" ${bulkSelectHandler} data-staff-id="${staffId}">
         <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
           
           <div class="d-flex align-items-center gap-3 dept-badge-indicator" style="border-left-color: ${style.border};">
@@ -826,9 +800,9 @@
             }
             
             <div>
-              <h6 class="mb-0 fw-semibold text-dark text-base">${name}</h6>
-              <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
-                <span class="text-xs text-muted fw-semibold">${designation || 'Staff Member'}</span>
+              <h6 class="mb-0 fw-semibold text-dark text-sm">${name}</h6>
+              <div class="d-flex align-items-center gap-2 mt-1">
+                <span class="text-xs text-muted fw-medium">${designation || 'Staff Member'}</span>
                 <span class="badge-pro badge-neutral">${department}</span>
                 ${empNo ? `<span class="badge-pro badge-neutral">ID: ${empNo}</span>` : ''}
               </div>
@@ -838,8 +812,8 @@
           <!-- Contact & Action buttons -->
           <div class="d-flex align-items-center gap-3">
             <div class="d-none d-md-flex flex-column text-end">
-              ${email ? `<small class="text-xs text-muted text-truncate" style="max-width: 200px;"><i class="fas fa-envelope me-1.5 text-xs text-primary"></i>${email}</small>` : ''}
-              ${phone ? `<small class="text-xs text-muted mt-0.5"><i class="fas fa-phone me-1.5 text-xs text-primary"></i>${phone}</small>` : ''}
+              ${email ? `<small class="text-xs text-muted text-truncate" style="max-width: 200px;"><i class="fas fa-envelope me-1 text-xs"></i>${email}</small>` : ''}
+              ${phone ? `<small class="text-xs text-muted mt-0.5"><i class="fas fa-phone me-1 text-xs"></i>${phone}</small>` : ''}
             </div>
 
             <div class="d-flex gap-1.5">
@@ -861,10 +835,10 @@
                   <button class="btn-icon dropdown-toggle" type="button" data-bs-toggle="dropdown" onclick="event.stopPropagation();" title="Admin Actions">
                     <i class="fas fa-cog text-xs"></i>
                   </button>
-                  <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-2" style="border-radius: var(--radius-md); font-size: 0.8125rem;">
-                    <li><a class="dropdown-item fw-semibold py-2 rounded-2" href="#" onclick="changeStaffType('${staffId}', '${name}', '${staffType}')"><i class="fas fa-user-edit me-2 text-muted"></i>Change Type</a></li>
+                  <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0" style="border-radius: var(--radius-md); font-size: 0.8125rem;">
+                    <li><a class="dropdown-item fw-medium" href="#" onclick="changeStaffType('${staffId}', '${name}', '${staffType}')"><i class="fas fa-user-edit me-2 text-muted"></i>Change Type</a></li>
                     <li><hr class="dropdown-divider"></li>
-                    <li><a class="dropdown-item text-danger fw-semibold py-2 rounded-2" href="#" onclick="deleteStaff('${staffId}', '${name}')"><i class="fas fa-trash me-2"></i>Delete Staff</a></li>
+                    <li><a class="dropdown-item text-danger fw-medium" href="#" onclick="deleteStaff('${staffId}', '${name}')"><i class="fas fa-trash me-2"></i>Delete Staff</a></li>
                   </ul>
                 </div>
               ` : ''}
@@ -1019,7 +993,7 @@
     const toastHtml = `
       <div class="toast ${bgClass} ${textClass}" id="${toastId}" role="alert" style="border-radius: var(--radius-md); border: none; box-shadow: var(--shadow-md);">
         <div class="d-flex">
-          <div class="toast-body fw-semibold text-xs">
+          <div class="toast-body fw-medium text-xs">
             ${message}
           </div>
           <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-toast="toast"></button>
@@ -1061,13 +1035,13 @@ END:VCARD`;
         <div class="modal-dialog modal-dialog-centered">
           <div class="modal-content">
             <div class="modal-header">
-              <h5 class="modal-title"><i class="fas fa-qrcode me-2 text-primary"></i>Contact QR Code</h5>
+              <h5 class="modal-title"><i class="fas fa-qrcode me-2"></i>Contact QR Code</h5>
               <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body text-center p-4">
               <img id="qrCodeImage" class="img-fluid mb-3 p-2 bg-white" style="max-width: 200px; border-radius: var(--radius-md); border: 1px solid var(--border);">
               <h6 id="qrModalName" class="mb-0 fw-bold text-dark text-sm"></h6>
-              <p id="qrModalDesignation" class="text-muted text-xs fw-semibold mb-2"></p>
+              <p id="qrModalDesignation" class="text-muted text-xs fw-medium mb-2"></p>
               <p class="text-muted text-xs m-0"><i class="fas fa-camera me-1"></i>Scan to save contact directly</p>
             </div>
           </div>
@@ -1080,7 +1054,7 @@ END:VCARD`;
 
   function showError(message) {
     document.getElementById('errorContainer').innerHTML = `
-      <div class="alert alert-danger text-center rounded-3 shadow-sm">
+      <div class="alert alert-danger text-center">
         <i class="fas fa-exclamation-triangle me-2"></i>${message}
       </div>
     `;
