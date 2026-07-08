@@ -3,413 +3,1141 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Directory - MACE-Connect</title>
-  
+  <title>Staff Directory</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <link href="/static/css/design-system.css" rel="stylesheet">
-  
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="/static/js/firebase-client.js"></script>
+  <script src="/static/js/mesh-background.js"></script>
+  <style>
+    body {
+      background: var(--page-bg);
+      position: relative;
+    }
+
+    /* Layout overrides */
+    .layout-with-sidebar {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 2rem;
+      max-width: 1360px;
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
+
+    /* Filter Chips (Professional & Colorful) */
+    .filter-chip-pro {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1.15rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 1px solid var(--gray-200);
+      background: white;
+      color: var(--gray-600);
+      cursor: pointer;
+      box-shadow: var(--shadow-xs);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .filter-chip-pro:hover {
+      border-color: var(--primary-border);
+      color: var(--primary);
+      transform: translateY(-1px);
+    }
+
+    .filter-chip-pro.active {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      border-color: transparent;
+      box-shadow: var(--shadow-primary);
+    }
+
+    /* Staff Card - Clean Horizontal SaaS Style */
+    .staff-row-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.25rem 1.5rem;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .staff-row-card:hover {
+      border-color: var(--primary-border);
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .staff-row-card.selected {
+      border-color: var(--primary);
+      background: var(--primary-subtle);
+    }
+
+    .avatar-pro {
+      width: 46px;
+      height: 46px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9375rem;
+      color: white;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-xs);
+    }
+
+    .dept-badge-indicator {
+      border-left: 3px solid transparent;
+      padding-left: 1rem;
+    }
+
+    .quick-search-box {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-md);
+      background: white;
+      padding: 0.625rem 1rem;
+      max-width: 500px;
+      margin: 1.25rem auto 0;
+      display: flex;
+      align-items: center;
+      box-shadow: var(--shadow-xs);
+      transition: all 0.2s ease;
+    }
+
+    .quick-search-box:focus-within {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-subtle);
+    }
+
+    .quick-search-box input {
+      border: none;
+      outline: none;
+      width: 100%;
+      font-size: 0.8125rem;
+      margin-left: 0.625rem;
+      color: var(--gray-800);
+      background: transparent;
+    }
+
+    /* Department Card */
+    .dept-card-pro {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem 1.25rem;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dept-card-pro:hover {
+      border-color: var(--primary-border);
+      box-shadow: var(--shadow-md);
+      transform: translateY(-4px);
+    }
+
+    .dept-card-pro::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--primary);
+      opacity: 0.8;
+    }
+
+    @media (max-width: 992px) {
+      .layout-with-sidebar {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+      }
+      .sidebar-pro {
+        position: static;
+      }
+    }
+  </style>
 </head>
 <body>
 
-  <!-- Loading State -->
-  <div id="loadingOverlay" style="position:fixed; top:0; left:0; right:0; bottom:0; background:var(--bg-page); z-index:9999; display:flex; align-items:center; justify-content:center; flex-direction:column; gap:1rem;">
-    <div class="spinner"></div>
-    <p class="text-sm fw-600">Loading Directory...</p>
-  </div>
+  <!-- Floating abstract background glow colors -->
+  <div class="bg-blob bg-blob-1"></div>
+  <div class="bg-blob bg-blob-2"></div>
 
-  <div class="page-wrapper animate-slide-up" style="display: none;" id="appWrapper">
-    
-    <!-- Sidebar Navigation -->
-    <aside class="sidebar">
+  <!-- Decorative Background Doodles -->
+  <svg class="futur-doodle animate-float-delayed" style="top: 15%; right: 2%; width: 180px; height: 180px; opacity: 0.08;" viewBox="0 0 100 100">
+    <circle cx="50" cy="50" r="45" fill="none" stroke="var(--primary)" stroke-width="0.75" stroke-dasharray="2 3" />
+    <circle cx="50" cy="50" r="30" fill="none" stroke="var(--primary)" stroke-width="0.5" />
+    <circle cx="50" cy="50" r="10" fill="none" stroke="var(--secondary)" stroke-width="0.5" />
+    <line x1="50" y1="0" x2="50" y2="100" stroke="var(--primary)" stroke-width="0.25" />
+    <line x1="0" y1="50" x2="100" y2="50" stroke="var(--primary)" stroke-width="0.25" />
+  </svg>
+
+  <svg class="futur-doodle animate-float" style="bottom: 10%; left: 1%; width: 140px; height: 140px; opacity: 0.08;" viewBox="0 0 100 100">
+    <rect x="15" y="15" width="70" height="70" rx="10" fill="none" stroke="var(--secondary)" stroke-width="0.75" stroke-dasharray="4 4" />
+    <circle cx="50" cy="50" r="20" fill="none" stroke="var(--primary)" stroke-width="0.75" />
+    <path d="M 10 10 L 25 10 M 10 10 L 10 25" stroke="var(--primary)" stroke-width="0.75" fill="none" />
+    <path d="M 90 90 L 75 90 M 90 90 L 90 75" stroke="var(--primary)" stroke-width="0.75" fill="none" />
+  </svg>
+
+  <!-- Floating Professional Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-pro animate-fade-in">
+    <div class="container-fluid p-0">
+      <a class="navbar-brand-pro" href="#" id="navTitle" onclick="showDepartments()">
+        <span class="brand-dot"></span>Staff Directory
+      </a>
+      <div class="d-flex align-items-center gap-3">
+        <span id="userSpan" class="text-muted text-sm fw-semibold d-none d-sm-inline"></span>
+        <span id="adminBadge" class="badge-pro badge-primary" style="display: none;">Admin</span>
+        <button id="signoutBtn" class="btn-pro btn-outline btn-sm">
+          <i class="fas fa-sign-out-alt"></i>Sign Out
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mt-4 animate-fade-up" style="position: relative; z-index: 10; max-width: 1360px;">
+    <!-- Back Button -->
+    <div id="backButton" class="mb-4" style="display: none;">
+      <button class="btn-pro btn-outline" onclick="showDepartments()">
+        <i class="fas fa-arrow-left me-1.5"></i>Back to Departments
+      </button>
+    </div>
+
+    <!-- Loading Spinner -->
+    <div id="loadingDiv" class="text-center py-5">
+      <div class="loading-spinner-pro mx-auto mb-3"></div>
+      <p class="text-sm text-muted fw-semibold">Retrieving directory index...</p>
+    </div>
+
+    <!-- Layout Wrapper -->
+    <div class="layout-with-sidebar" id="appLayoutWrapper" style="display: none;">
+      
+      <!-- Left Statistics Sidebar Dock -->
+      <div class="d-flex flex-column gap-3" id="statsSidebar">
+        <div class="section-title ps-1 mb-1">
+          <i class="fas fa-chart-pie me-1.5"></i>Portal Metrics
+        </div>
+        
+        <div class="metric-card">
+          <div class="d-flex align-items-center gap-3">
+            <div class="metric-icon" style="background: var(--primary-subtle); color: var(--primary);"><i class="fas fa-users"></i></div>
+            <div>
+              <div class="metric-value" id="totalStaff">0</div>
+              <div class="metric-label">Total Staff</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="d-flex align-items-center gap-3">
+            <div class="metric-icon" style="background: var(--success-bg); color: var(--success);"><i class="fas fa-university"></i></div>
+            <div>
+              <div class="metric-value" id="totalDepartments">0</div>
+              <div class="metric-label">Departments</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="d-flex align-items-center gap-3">
+            <div class="metric-icon" style="background: var(--primary-subtle); color: var(--primary);"><i class="fas fa-chalkboard-teacher"></i></div>
+            <div>
+              <div class="metric-value" id="teachingStaff">0</div>
+              <div class="metric-label">Teaching</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="d-flex align-items-center gap-3">
+            <div class="metric-icon" style="background: var(--secondary-subtle); color: var(--secondary);"><i class="fas fa-user-tie"></i></div>
+            <div>
+              <div class="metric-value" id="nonTeachingStaff">0</div>
+              <div class="metric-label">Non-Teaching</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Help widget (replaces futuristic logs widget) -->
+        <div class="card-pro p-4" style="background: rgba(255,255,255,0.7); backdrop-filter: blur(10px);">
+          <h6 class="fw-bold text-dark text-sm mb-2"><i class="fas fa-info-circle text-primary me-2"></i>Quick Search Tips</h6>
+          <ul class="list-unstyled text-xs text-muted mb-0" style="line-height: 1.6;">
+            <li class="mb-1.5"><i class="fas fa-chevron-right text-primary me-1.5" style="font-size: 0.6rem;"></i>Use the filter chips to isolate staff roles.</li>
+            <li class="mb-1.5"><i class="fas fa-chevron-right text-primary me-1.5" style="font-size: 0.6rem;"></i>Search by name, email, or employee ID.</li>
+            <li><i class="fas fa-chevron-right text-primary me-1.5" style="font-size: 0.6rem;"></i>Scan the contact QR code to save details instantly to your mobile phone.</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Right Main Workspace -->
       <div>
-        <a href="#" class="sidebar-logo mb-8" onclick="showDepartments()">
-          <span class="dot"></span>MACE-Connect
-        </a>
-        
-        <ul class="nav-menu" id="deptNavList">
-          <li>
-            <button class="nav-item active" onclick="showStaffList('All Departments')">
-              All Departments
-            </button>
-          </li>
-          <!-- Department Links will be injected here -->
-        </ul>
-      </div>
-      
-      <div class="mt-8">
-        <p class="text-xs mb-4">User Session</p>
-        <p class="text-sm font-medium mb-4 text-truncate" id="userSpan"></p>
-        <div id="adminBadgeContainer" class="mb-4" style="display:none;">
-          <span class="badge badge-gold">Administrator</span>
-        </div>
-        <button class="btn btn-outline w-100 mb-4" id="adminControlsBtn" style="display:none;" onclick="window.location.href='/admin.html'">
-          Admin Console
-        </button>
-        <button class="btn btn-outline w-100" id="signoutBtn">
-          Sign Out
-        </button>
-      </div>
-    </aside>
+        <!-- Departments View Panel -->
+        <div id="departmentsView" style="display: none;">
+          <!-- Welcome Banner -->
+          <div class="card-pro p-4 mb-4" style="border-left: 4px solid var(--primary); background: linear-gradient(135deg, white, var(--gray-50));">
+            
+            <div class="text-center py-3" style="position: relative; z-index: 1;">
+              <h4 class="mb-1 fw-extrabold text-dark">Directory Registry</h4>
+              <p class="text-muted text-sm mb-0">Search and contact staff members across departments and offices</p>
+              <div class="quick-search-box">
+                <i class="fas fa-search text-muted"></i>
+                <input type="text" placeholder="Quick search by name or department..." id="quickSearch">
+              </div>
+            </div>
+          </div>
 
-    <!-- Main Content Area -->
-    <main class="main-content">
-      
-      <!-- Departments Overview Grid -->
-      <div id="departmentsView">
-        <div class="d-flex align-items-center justify-content-between mb-8">
-          <div>
-            <h1 class="text-h2">Directory Overview</h1>
-            <p class="text-body mt-2">Select a department to view staff members.</p>
-          </div>
-          
-          <div class="form-group" style="margin-bottom:0; width: 300px;">
-            <input type="text" class="input-field" placeholder="Search any name..." id="globalSearchInput" oninput="handleGlobalSearch(this.value)">
-          </div>
-        </div>
-        
-        <div class="staff-grid" id="departmentsGrid">
-          <!-- Department cards injected here -->
-        </div>
-      </div>
-      
-      <!-- Staff List View -->
-      <div id="staffView" style="display: none;">
-        <div class="d-flex align-items-center justify-content-between flex-wrap gap-4 mb-8">
-          <div>
-            <button class="btn btn-icon mb-4" onclick="showDepartments()">
-              <!-- SVG Back Icon -->
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+          <div class="d-flex align-items-center justify-content-between mb-3 ps-1">
+            <div class="section-title mb-0">
+              <i class="fas fa-th-large me-1.5"></i>Departments
+            </div>
+            <button class="btn-pro btn-outline btn-sm" onclick="showStaffList('All Departments')">
+              <i class="fas fa-users me-1.5 text-primary"></i>All Departments
             </button>
-            <h1 class="text-h2" id="departmentTitle">Department</h1>
-            <p class="text-body mt-2"><span id="staffCountBadge" class="badge badge-neutral">0</span> Members</p>
           </div>
-          
-          <div class="d-flex align-items-center gap-4 flex-wrap">
-            <div class="form-group" style="margin-bottom:0; width: 260px;">
-              <input type="text" class="input-field" placeholder="Filter by name..." id="staffSearchInput" oninput="filterStaff()">
-            </div>
-            
-            <div class="form-group" style="margin-bottom:0; width: 200px;">
-              <select class="input-field" id="typeFilter" onchange="filterStaff()">
-                <option value="All">All Roles</option>
-                <option value="Teaching Staff">Teaching Staff</option>
-                <option value="Non Teaching Staff">Non-Teaching Staff</option>
-                <option value="Retired">Retired</option>
-              </select>
-            </div>
-            
-            <!-- Admin Bulk Delete Actions -->
-            <div id="bulkActionContainer" style="display:none;" class="d-flex align-items-center gap-3 ml-4">
-              <span class="text-sm font-medium"><span id="selectedCount">0</span> selected</span>
-              <button class="btn btn-danger" id="bulkDeleteBtn" onclick="openDeleteModal()" disabled>Delete</button>
-              <button class="btn btn-outline" onclick="clearSelection()">Cancel</button>
+          <div id="departmentsGrid" class="row g-3"></div>
+        </div>
+
+        <!-- Staff List View Panel -->
+        <div id="staffView" style="display: none;">
+          <!-- Search and Filters Section -->
+          <div class="card-pro p-3 mb-4">
+            <div class="row align-items-center g-3">
+              <div class="col-lg-5">
+                <div class="input-group-container">
+                  <input type="text" class="input-pro" placeholder="Search by name, email, or ID..." id="searchInput">
+                </div>
+              </div>
+              <div class="col-lg-7">
+                <div class="d-flex flex-wrap gap-2 align-items-center justify-content-lg-end">
+                  <span class="filter-chip-pro active" data-type="All Staff">
+                    <i class="fas fa-users"></i>All
+                  </span>
+                  <span class="filter-chip-pro" data-type="Teaching Staff">
+                    <i class="fas fa-chalkboard-teacher"></i>Teaching
+                  </span>
+                  <span class="filter-chip-pro" data-type="Non Teaching Staff">
+                    <i class="fas fa-user-tie"></i>Non-Teaching
+                  </span>
+                  <span class="filter-chip-pro" data-type="Retired">
+                    <i class="fas fa-user-clock"></i>Retired
+                  </span>
+                  <button id="adminControlsToggle" class="btn-pro btn-outline btn-sm ms-lg-2" style="display: none;" onclick="toggleAdminControls()">
+                    <i class="fas fa-cog text-primary"></i>Admin Actions
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
+
+          <!-- Admin Controls strip -->
+          <div id="adminControls" class="card-pro p-3 mb-3" style="display: none; border-left: 3px solid var(--danger);">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-user-shield text-danger text-sm"></i>
+                <span class="text-sm fw-semibold text-dark">Administrative Actions:</span>
+              </div>
+              <div class="d-flex gap-2">
+                <button class="btn-pro btn-outline btn-sm" onclick="toggleBulkSelect()">
+                  <i class="fas fa-list-check me-1.5"></i>Bulk Select Mode
+                </button>
+                <button class="btn-pro btn-primary btn-sm" onclick="window.location.href='/admin.html'">
+                  <i class="fas fa-cog me-1.5"></i>Admin Console
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bulk Actions strip -->
+          <div id="bulkActions" class="card-pro p-3 mb-3" style="display: none; background: var(--danger-bg); border-color: rgba(220, 38, 38, 0.15);">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-3">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-tasks text-danger text-sm"></i>
+                <span class="text-sm fw-semibold text-dark"><span id="selectedCount" class="fw-bold">0</span> selected</span>
+              </div>
+              <div class="d-flex gap-2">
+                <button class="btn-pro btn-danger btn-sm" id="bulkDeleteBtn" onclick="bulkDeleteStaff()" disabled>
+                  <i class="fas fa-trash me-1.5"></i>Delete Selected
+                </button>
+                <button class="btn-pro btn-outline btn-sm" onclick="clearSelection()">
+                  <i class="fas fa-times me-1.5"></i>Clear
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Staff Results Container -->
+          <div id="staffContainer" class="d-flex flex-column gap-3"></div>
         </div>
         
-        <div class="staff-grid" id="staffContainer">
-          <!-- Staff cards injected here -->
-        </div>
+        <!-- Error/Fallback Container -->
+        <div id="errorContainer" style="display: none;"></div>
       </div>
-      
-    </main>
+
+    </div>
   </div>
-  
-  <!-- Delete Modal -->
-  <div class="modal-overlay" id="deleteModal">
-    <div class="modal-content">
-      <h3 class="text-h3 mb-4">Confirm Deletion</h3>
-      <p class="text-body mb-8">Are you sure you want to delete the selected staff members? This action cannot be undone.</p>
-      <div class="d-flex align-items-center justify-content-between">
-        <button class="btn btn-outline" onclick="closeDeleteModal()">Cancel</button>
-        <button class="btn btn-danger" onclick="executeBulkDelete()">Delete Permanently</button>
+
+  <!-- Delete Confirmation Modal -->
+  <div class="modal fade modal-pro" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title text-danger"><i class="fas fa-exclamation-triangle me-2"></i>Confirm Delete</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4 text-center">
+          <p class="text-base">Are you sure you want to delete <strong id="deleteStaffName" class="text-danger"></strong>?</p>
+          <p class="text-xs text-muted">This action cannot be undone. The staff member's credentials and records will be deleted permanently.</p>
+        </div>
+        <div class="modal-footer justify-content-center">
+          <button type="button" class="btn-pro btn-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn-pro btn-danger" id="confirmDeleteBtn">Delete Permanently</button>
+        </div>
       </div>
     </div>
   </div>
 
+  <!-- Change Type Modal -->
+  <div class="modal fade modal-pro" id="changeTypeModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="fas fa-user-edit me-2"></i>Change Staff Type</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body p-4">
+          <p class="mb-3 text-base">Update status for <strong id="changeTypeStaffName" class="text-primary"></strong>:</p>
+          <label class="label-pro">Staff Designation Type</label>
+          <select class="input-pro form-select" id="staffTypeSelect">
+            <option value="Teaching Staff">Teaching Staff</option>
+            <option value="Non Teaching Staff">Non Teaching Staff</option>
+            <option value="Retired">Retired</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-pro btn-outline" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn-pro btn-primary" id="confirmChangeTypeBtn">Update Status</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Script logic -->
   <script>
-    let allStaffData = [];
-    let departments = {};
-    let selectedDepartment = null;
-    let isAdmin = false;
-    let selectedStaffIds = new Set();
-    
-    // Abstracted Department Info
-    const deptInfo = {
-      'CSE': 'Computer Science',
-      'ECE': 'Electronics',
-      'CE': 'Civil Engineering',
-      'ME': 'Mechanical',
-      'AD': 'Administration',
-      'EEE': 'Electrical',
-      'MAT': 'Mathematics',
-      'SH': 'Science & Humanities',
-      'CA': 'Computer Applications'
+  let allStaffData = [];
+  let departments = {};
+  let selectedDepartment = null;
+  let selectedStaffType = 'All Staff';
+  let searchQuery = '';
+  let isAdmin = false;
+  let bulkSelectMode = false;
+  let selectedStaffIds = new Set();
+  let currentStaffForTypeChange = null;
+
+  // Modern department styling map
+  const deptStyleMap = {
+    'CSE': { color: '#F9FAFB', border: '#D97706', icon: 'fa-laptop', text: '#171717' },
+    'ECE': { color: '#F9FAFB', border: '#EA580C', icon: 'fa-microchip', text: '#171717' },
+    'CE': { color: '#F9FAFB', border: '#84CC16', icon: 'fa-drafting-compass', text: '#171717' },
+    'ME': { color: '#F9FAFB', border: '#F59E0B', icon: 'fa-cogs', text: '#171717' },
+    'AD': { color: '#F9FAFB', border: '#6B7280', icon: 'fa-user-shield', text: '#171717' },
+    'EEE': { color: '#F9FAFB', border: '#10B981', icon: 'fa-bolt', text: '#171717' },
+    'MAT': { color: '#F9FAFB', border: '#059669', icon: 'fa-calculator', text: '#171717' },
+    'SH': { color: '#F9FAFB', border: '#4B5563', icon: 'fa-atom', text: '#171717' },
+    'CA': { color: '#F9FAFB', border: '#EA580C', icon: 'fa-code', text: '#171717' }
+  };
+
+  const avatarColors = [
+    '#D97706', '#059669', '#0D9488', '#EA580C', '#78350F',
+    '#DC2626', '#EA580C', '#9A3412', '#4B5563', '#065F46'
+  ];
+
+  function getAvatarColor(name) {
+    if (!name) return avatarColors[0];
+    const index = name.charCodeAt(0) % avatarColors.length;
+    return avatarColors[index];
+  }
+
+  function getInitials(name) {
+    if (!name) return '?';
+    const parts = name.trim().split(' ');
+    if (parts.length > 1 && parts[0] && parts[parts.length - 1]) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.charAt(0).toUpperCase();
+  }
+
+  function createAbbreviation(fullName) {
+    if (!fullName) return 'UNK';
+    const skipWords = ['and', 'of', 'the', '&', 'for', 'in', 'on', 'at'];
+    const words = fullName.split(' ');
+    if (words.length > 1) {
+      let abbr = '';
+      for (let word of words) {
+        if (word && !skipWords.includes(word.toLowerCase())) {
+          abbr += word[0].toUpperCase();
+        }
+      }
+      return abbr || 'UNK';
+    }
+    return fullName.length > 3 ? fullName.substring(0, 3).toUpperCase() : fullName.toUpperCase();
+  }
+
+  async function checkAdminStatus() {
+    try {
+      const user = firebase.auth().currentUser;
+      if (!user) return false;
+      const token = await user.getIdToken(true);
+      const res = await fetch('/api/staff/test_admin_check', {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        }
+      });
+      isAdmin = res.ok;
+      if (isAdmin) {
+        document.getElementById('adminBadge').style.display = 'inline-block';
+        document.getElementById('adminControlsToggle').style.display = 'block';
+      }
+      return isAdmin;
+    } catch (error) {
+      console.error('Error checking admin status:', error);
+      isAdmin = false;
+      return false;
+    }
+  }
+
+  function animateValue(id, start, end, duration) {
+    const obj = document.getElementById(id);
+    if (!obj) return;
+    if (start === end) {
+      obj.textContent = end;
+      return;
+    }
+    let startTimestamp = null;
+    const step = (timestamp) => {
+      if (!startTimestamp) startTimestamp = timestamp;
+      const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+      obj.textContent = Math.floor(progress * (end - start) + start);
+      if (progress < 1) {
+        window.requestAnimationFrame(step);
+      }
     };
-    
-    // Abstract Color Palette for Avatars
-    const avatarColors = ['#F59E0B', '#10B981', '#E05236', '#4B5563', '#111827'];
-    
-    function getAvatarColor(name) {
-      if(!name) return avatarColors[0];
-      return avatarColors[name.charCodeAt(0) % avatarColors.length];
-    }
-    
-    function getInitials(name) {
-      if(!name) return '?';
-      const parts = name.trim().split(' ');
-      if(parts.length > 1) return (parts[0][0] + parts[parts.length-1][0]).toUpperCase();
-      return name.charAt(0).toUpperCase();
-    }
-    
-    function createAbbreviation(fullName) {
-      if(!fullName) return 'UNK';
-      const skip = ['and', 'of', 'the', '&'];
-      const words = fullName.split(' ');
-      if(words.length > 1) {
-        let abbr = '';
-        words.forEach(w => {
-          if(w && !skip.includes(w.toLowerCase())) abbr += w[0].toUpperCase();
-        });
-        return abbr;
-      }
-      return fullName.substring(0,3).toUpperCase();
-    }
+    window.requestAnimationFrame(step);
+  }
 
-    async function checkAdminStatus() {
-      try {
-        const user = firebase.auth().currentUser;
-        if (!user) return false;
-        const token = await user.getIdToken(true);
-        const res = await fetch('/api/staff/test_admin_check', {
-          headers: { 'Authorization': 'Bearer ' + token }
-        });
-        isAdmin = res.ok;
-        if(isAdmin) {
-          document.getElementById('adminBadgeContainer').style.display = 'block';
-          document.getElementById('adminControlsBtn').style.display = 'block';
-        }
-      } catch(e) { console.error(e); isAdmin = false; }
-    }
-
-    async function loadStaffs() {
-      try {
-        const user = firebase.auth().currentUser;
-        if (!user) return window.location.href = '/';
-        
-        document.getElementById('userSpan').textContent = user.email;
-        await checkAdminStatus();
-        
-        const token = await user.getIdToken(true);
-        const res = await fetch('/api/staffs', {
-          headers: { 'Authorization': 'Bearer ' + token }
-        });
-        const data = await res.json();
-        
-        if(data.staffs) {
-          allStaffData = data.staffs;
-          processDepartments();
-          renderDepartmentsGrid();
-          renderSidebarNav();
-          
-          document.getElementById('loadingOverlay').style.display = 'none';
-          document.getElementById('appWrapper').style.display = 'flex';
-        }
-      } catch(e) {
-        console.error(e);
-        alert("Failed to load directory.");
-      }
-    }
-    
-    function processDepartments() {
-      departments = {};
-      allStaffData.forEach(s => {
-        const dept = s.department || 'Unassigned';
-        const abbr = createAbbreviation(dept);
-        departments[abbr] = dept;
-      });
-    }
-    
-    function renderSidebarNav() {
-      const nav = document.getElementById('deptNavList');
-      let html = `<li><button class="nav-item active" id="nav-All Departments" onclick="showStaffList('All Departments')">All Departments</button></li>`;
-      Object.keys(departments).sort().forEach(abbr => {
-        html += `<li><button class="nav-item" id="nav-${abbr}" onclick="showStaffList('${abbr}')">${abbr}</button></li>`;
-      });
-      nav.innerHTML = html;
-    }
-    
-    function renderDepartmentsGrid() {
-      const grid = document.getElementById('departmentsGrid');
-      let html = '';
-      
-      Object.keys(departments).sort().forEach(abbr => {
-        const fullName = departments[abbr];
-        const count = allStaffData.filter(s => s.department === fullName).length;
-        
-        html += `
-          <div class="glass-card" style="cursor:pointer;" onclick="showStaffList('${abbr}')">
-            <h3 class="text-h3 mb-2">${abbr}</h3>
-            <p class="text-sm mb-4" style="min-height:40px;">${fullName}</p>
-            <span class="badge badge-neutral">${count} Members</span>
-          </div>
-        `;
-      });
-      grid.innerHTML = html;
-    }
-    
-    function showDepartments() {
-      selectedDepartment = null;
-      document.getElementById('globalSearchInput').value = '';
-      document.getElementById('departmentsView').style.display = 'block';
-      document.getElementById('staffView').style.display = 'none';
-      
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-    }
-    
-    function showStaffList(deptAbbr) {
-      selectedDepartment = deptAbbr;
-      clearSelection();
-      
-      document.getElementById('departmentsView').style.display = 'none';
-      document.getElementById('staffView').style.display = 'block';
-      
-      document.getElementById('staffSearchInput').value = '';
-      document.getElementById('typeFilter').value = 'All';
-      
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-      const activeNav = document.getElementById('nav-' + deptAbbr);
-      if(activeNav) activeNav.classList.add('active');
-      
-      document.getElementById('departmentTitle').textContent = deptAbbr === 'All Departments' ? 'All Directory' : (departments[deptAbbr] || deptAbbr);
-      
-      if(isAdmin) document.getElementById('bulkActionContainer').style.display = 'flex';
-      
-      filterStaff();
-    }
-    
-    function handleGlobalSearch(query) {
-      if(query.length > 0) {
-        showStaffList('All Departments');
-        document.getElementById('staffSearchInput').value = query;
-        filterStaff();
-      } else {
-        showDepartments();
-      }
-    }
-    
-    function filterStaff() {
-      const query = document.getElementById('staffSearchInput').value.toLowerCase();
-      const type = document.getElementById('typeFilter').value;
-      
-      const filtered = allStaffData.filter(s => {
-        const matchesSearch = !query || 
-          (s.name || '').toLowerCase().includes(query) ||
-          (s.email || '').toLowerCase().includes(query);
-          
-        const matchesDept = selectedDepartment === 'All Departments' || !selectedDepartment || departments[selectedDepartment] === s.department;
-        
-        const matchesType = type === 'All' || s.type === type;
-        
-        return matchesSearch && matchesDept && matchesType;
-      });
-      
-      document.getElementById('staffCountBadge').textContent = filtered.length;
-      renderStaffGrid(filtered);
-    }
-    
-    function renderStaffGrid(staffList) {
-      const container = document.getElementById('staffContainer');
-      if(staffList.length === 0) {
-        container.innerHTML = '<p class="text-body">No staff members found.</p>';
+  async function loadStaffs() {
+    try {
+      const user = firebase.auth().currentUser;
+      if (!user) {
+        showError('Please <a href="/">login</a> to view staff.');
         return;
       }
+      document.getElementById('userSpan').textContent = user.email;
+      document.getElementById('userSpan').classList.remove('d-none');
+      await checkAdminStatus();
       
-      let html = '';
-      staffList.forEach(s => {
-        const id = s.id || s.email;
-        const color = getAvatarColor(s.name);
-        const initials = getInitials(s.name);
-        const isSelected = selectedStaffIds.has(id);
-        const cardClass = isSelected ? 'staff-card selected' : 'staff-card';
-        const typeBadge = s.type === 'Teaching Staff' ? 'badge-emerald' : 
-                          s.type === 'Retired' ? 'badge-neutral' : 'badge-gold';
-                          
-        html += `
-          <div class="${cardClass}" ${isAdmin ? `onclick="toggleSelection('${id}')" style="cursor:pointer;"` : ''}>
-            <div class="staff-card-header">
-              <div class="avatar" style="background:${color}">${initials}</div>
-              <div class="staff-info">
-                <h4>${s.name || 'Unknown'}</h4>
-                <p>${s.designation || 'Staff Member'}</p>
-              </div>
-            </div>
-            
-            <div class="mt-4">
-              <p class="text-sm mb-2"><strong>Email:</strong> ${s.email || 'N/A'}</p>
-              <p class="text-sm mb-4"><strong>Phone:</strong> ${s.mobileNo || s.Phone || 'N/A'}</p>
-              <div class="d-flex gap-2 flex-wrap">
-                <span class="badge ${typeBadge}">${s.type || 'Unknown Type'}</span>
-                <span class="badge badge-neutral">${s.department ? createAbbreviation(s.department) : 'No Dept'}</span>
-              </div>
-            </div>
-            
-            ${isSelected ? '<div style="position:absolute; top:16px; right:16px; width:20px; height:20px; background:var(--accent-gold); border-radius:50%; display:flex; align-items:center; justify-content:center;"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></div>' : ''}
-          </div>
-        `;
+      const token = await user.getIdToken(true);
+      const res = await fetch('/api/staffs', {
+        method: 'GET',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        }
       });
-      container.innerHTML = html;
-    }
-    
-    function toggleSelection(id) {
-      if(!isAdmin) return;
-      if(selectedStaffIds.has(id)) selectedStaffIds.delete(id);
-      else selectedStaffIds.add(id);
-      
-      document.getElementById('selectedCount').textContent = selectedStaffIds.size;
-      document.getElementById('bulkDeleteBtn').disabled = selectedStaffIds.size === 0;
-      filterStaff();
-    }
-    
-    function clearSelection() {
-      selectedStaffIds.clear();
-      if(isAdmin) {
-        document.getElementById('selectedCount').textContent = '0';
-        document.getElementById('bulkDeleteBtn').disabled = true;
+      const data = await res.json();
+      if (data.staffs) {
+        allStaffData = data.staffs;
+        processDepartments();
+        updateStats();
+        document.getElementById('appLayoutWrapper').style.display = 'grid';
+        showDepartments();
+      } else {
+        showError('Error loading staff data: ' + JSON.stringify(data));
       }
-      filterStaff();
+    } catch (error) {
+      console.error('Error loading staff:', error);
+      showError('Error loading staff data');
+    } finally {
+      document.getElementById('loadingDiv').style.display = 'none';
+    }
+  }
+
+  function processDepartments() {
+    const deptMap = {};
+    allStaffData.forEach(staff => {
+      const fullName = staff.department || 'Unassigned';
+      const abbr = createAbbreviation(fullName);
+      deptMap[abbr] = fullName;
+    });
+    departments = deptMap;
+  }
+
+  function updateStats() {
+    const totalCount = allStaffData.length;
+    const deptCount = Object.keys(departments).length;
+    const teachingCount = allStaffData.filter(s => s.type === 'Teaching Staff').length;
+    const nonTeachingCount = allStaffData.filter(s => s.type === 'Non Teaching Staff').length;
+    
+    animateValue('totalStaff', 0, totalCount, 1000);
+    animateValue('totalDepartments', 0, deptCount, 1000);
+    animateValue('teachingStaff', 0, teachingCount, 1000);
+    animateValue('nonTeachingStaff', 0, nonTeachingCount, 1000);
+  }
+
+  function clearSearchState() {
+    searchQuery = '';
+    selectedStaffType = 'All Staff';
+    bulkSelectMode = false;
+    selectedStaffIds.clear();
+    document.getElementById('quickSearch').value = '';
+    document.getElementById('searchInput').value = '';
+    
+    document.querySelectorAll('.filter-chip-pro').forEach(chip => chip.classList.remove('active'));
+    document.querySelector('.filter-chip-pro[data-type="All Staff"]').classList.add('active');
+    
+    document.getElementById('adminControls').style.display = 'none';
+    document.getElementById('bulkActions').style.display = 'none';
+  }
+
+  function toggleAdminControls() {
+    if (!isAdmin) return;
+    const controls = document.getElementById('adminControls');
+    if (controls.style.display === 'none' || !controls.style.display) {
+      controls.style.display = 'block';
+    } else {
+      controls.style.display = 'none';
+      document.getElementById('bulkActions').style.display = 'none';
+      if (bulkSelectMode) {
+        toggleBulkSelect();
+      }
+    }
+  }
+
+  function toggleBulkSelect() {
+    if (!isAdmin) return;
+    bulkSelectMode = !bulkSelectMode;
+    selectedStaffIds.clear();
+    if (bulkSelectMode) {
+      document.getElementById('bulkActions').style.display = 'block';
+    } else {
+      document.getElementById('bulkActions').style.display = 'none';
+    }
+    updateSelectedCount();
+    filterAndDisplayStaff();
+  }
+
+  function updateSelectedCount() {
+    document.getElementById('selectedCount').textContent = selectedStaffIds.size;
+    document.getElementById('bulkDeleteBtn').disabled = selectedStaffIds.size === 0;
+  }
+
+  function toggleStaffSelection(staffId, element) {
+    if (!bulkSelectMode) return;
+    if (selectedStaffIds.has(staffId)) {
+      selectedStaffIds.delete(staffId);
+      element.classList.remove('selected');
+    } else {
+      selectedStaffIds.add(staffId);
+      element.classList.add('selected');
+    }
+    updateSelectedCount();
+  }
+
+  function clearSelection() {
+    selectedStaffIds.clear();
+    document.querySelectorAll('.staff-row-card').forEach(card => {
+      card.classList.remove('selected');
+    });
+    updateSelectedCount();
+  }
+
+  function showDepartments() {
+    clearSearchState();
+    selectedDepartment = null;
+    
+    document.getElementById('departmentsView').style.display = 'block';
+    document.getElementById('staffView').style.display = 'none';
+    document.getElementById('backButton').style.display = 'none';
+    document.getElementById('navTitle').innerHTML = '<span class="brand-dot"></span>Staff Directory';
+    
+    const deptKeys = Object.keys(departments).sort();
+    const grid = document.getElementById('departmentsGrid');
+    
+    let html = '';
+    
+    deptKeys.forEach((abbr, index) => {
+      const fullName = departments[abbr];
+      const style = deptStyleMap[abbr] || { border: 'var(--primary)', icon: 'fa-briefcase' };
+      const count = allStaffData.filter(s => s.department === fullName).length;
+      
+      html += `
+        <div class="col-md-6 col-lg-4">
+          <div class="dept-card-pro d-flex align-items-center gap-3" style="border-left: 3px solid ${style.border};" onclick="showStaffList('${abbr}')">
+            <div class="avatar-pro" style="background: ${style.border};"><i class="fas ${style.icon}"></i></div>
+            <div>
+              <h6 class="fw-bold mb-0 text-dark">${abbr}</h6>
+              <small class="text-muted text-xs text-truncate d-block" style="max-width: 180px;" title="${fullName}">${fullName} (${count})</small>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    
+    grid.innerHTML = html;
+  }
+
+  function showStaffList(department = null) {
+    selectedDepartment = department;
+    if (department !== 'All Departments') {
+      clearSearchState();
     }
     
-    function openDeleteModal() { document.getElementById('deleteModal').classList.add('active'); }
-    function closeDeleteModal() { document.getElementById('deleteModal').classList.remove('active'); }
+    document.getElementById('departmentsView').style.display = 'none';
+    document.getElementById('staffView').style.display = 'block';
+    document.getElementById('backButton').style.display = 'block';
     
-    async function executeBulkDelete() {
-      if(selectedStaffIds.size === 0) return;
+    const title = department === 'All Departments' ? 'All Departments' : (departments[department] || department);
+    document.getElementById('navTitle').innerHTML = `<span class="brand-dot"></span>${title}`;
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    filterAndDisplayStaff();
+  }
+
+  function filterAndDisplayStaff() {
+    let filteredStaff = allStaffData.filter(staff => {
+      const name = (staff.name || '').toLowerCase();
+      const email = (staff.email || '').toLowerCase();
+      const empNo = (staff['Sl No'] || staff.empNo || '').toString().toLowerCase();
+      const department = staff.department || '';
+      const staffType = staff.type || '';
       
+      const matchesSearch = !searchQuery || 
+        name.includes(searchQuery) || 
+        email.includes(searchQuery) || 
+        empNo.includes(searchQuery);
+      
+      const matchesDepartment = selectedDepartment === 'All Departments' || 
+        !selectedDepartment || 
+        departments[selectedDepartment] === department;
+      
+      const matchesStaffType = selectedStaffType === 'All Staff' || 
+        staffType === selectedStaffType;
+      
+      return matchesSearch && matchesDepartment && matchesStaffType;
+    });
+    
+    displayStaffByType(filteredStaff);
+  }
+
+  function displayStaffByType(staffList) {
+    const container = document.getElementById('staffContainer');
+    if (staffList.length === 0) {
+      container.innerHTML = `
+        <div class="text-center py-5">
+          <i class="fas fa-search fa-2x text-muted mb-3"></i>
+          <h5 class="text-muted fw-bold">No results matching your search</h5>
+          <p class="text-muted text-sm">Try adjusting your filters or search query</p>
+        </div>
+      `;
+      return;
+    }
+    
+    const staffByType = {};
+    staffList.forEach(staff => {
+      const type = staff.type || 'Uncategorized';
+      if (!staffByType[type]) {
+        staffByType[type] = [];
+      }
+      staffByType[type].push(staff);
+    });
+    
+    let html = '';
+    Object.keys(staffByType).forEach(type => {
+      const typeIcon = type === 'Teaching Staff' ? 'fa-chalkboard-teacher' : 
+                       type === 'Non Teaching Staff' ? 'fa-user-tie' :
+                       type === 'Retired' ? 'fa-user-clock' : 'fa-user';
+      const staffCount = staffByType[type].length;
+      
+      html += `
+        <div class="d-flex align-items-center justify-content-between mt-4 mb-2 ps-1">
+          <div class="section-title mb-0">
+            <i class="fas ${typeIcon} me-1.5 text-primary"></i>${type}
+          </div>
+          <span class="badge-pro badge-neutral">${staffCount}</span>
+        </div>
+      `;
+      
+      staffByType[type].forEach(staff => {
+        html += createStaffCard(staff);
+      });
+    });
+    
+    container.innerHTML = html;
+  }
+
+  function createStaffCard(staff) {
+    const name = staff.name || 'Unknown';
+    const department = staff.department || 'N/A';
+    const email = staff.email || '';
+    const phone = staff.mobileNo || staff.Phone || '';
+    const empNo = staff['Sl No'] || staff.empNo || '';
+    const designation = staff.designation || '';
+    const staffType = staff.type || '';
+    const photoUrl = staff.photoUrl || '';
+    const staffId = staff.id || empNo || email;
+    
+    const avatarColor = getAvatarColor(name);
+    const initials = getInitials(name);
+    
+    const deptAbbr = createAbbreviation(department);
+    const style = deptStyleMap[deptAbbr] || { border: 'var(--primary)' };
+    
+    const bulkSelectClass = bulkSelectMode ? 'cursor-pointer' : '';
+    const bulkSelectHandler = bulkSelectMode ? `onclick="toggleStaffSelection('${staffId}', this)"` : '';
+    const isSelected = selectedStaffIds.has(staffId) ? 'selected' : '';
+    
+    return `
+      <div class="staff-row-card ${isSelected} ${bulkSelectClass}" ${bulkSelectHandler} data-staff-id="${staffId}">
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+          
+          <div class="d-flex align-items-center gap-3 dept-badge-indicator" style="border-left-color: ${style.border};">
+            <!-- Checkbox in bulk select mode -->
+            ${bulkSelectMode ? `
+              <input class="form-check-input m-0" type="checkbox" ${selectedStaffIds.has(staffId) ? 'checked' : ''} onclick="event.stopPropagation();">
+            ` : ''}
+
+            <!-- Avatar -->
+            ${photoUrl ? 
+              `<img src="${photoUrl}" class="avatar-pro" style="background-color: ${avatarColor}; object-fit: cover;" 
+                   onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+               <div class="avatar-pro" style="background-color: ${avatarColor}; display: none;">${initials}</div>` :
+              `<div class="avatar-pro" style="background-color: ${avatarColor};">${initials}</div>`
+            }
+            
+            <div>
+              <h6 class="mb-0 fw-semibold text-dark text-base">${name}</h6>
+              <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
+                <span class="text-xs text-muted fw-semibold">${designation || 'Staff Member'}</span>
+                <span class="badge-pro badge-neutral">${department}</span>
+                ${empNo ? `<span class="badge-pro badge-neutral">ID: ${empNo}</span>` : ''}
+              </div>
+            </div>
+          </div>
+
+          <!-- Contact & Action buttons -->
+          <div class="d-flex align-items-center gap-3">
+            <div class="d-none d-md-flex flex-column text-end">
+              ${email ? `<small class="text-xs text-muted text-truncate" style="max-width: 200px;"><i class="fas fa-envelope me-1.5 text-xs text-primary"></i>${email}</small>` : ''}
+              ${phone ? `<small class="text-xs text-muted mt-0.5"><i class="fas fa-phone me-1.5 text-xs text-primary"></i>${phone}</small>` : ''}
+            </div>
+
+            <div class="d-flex gap-1.5">
+              ${email ? `
+                <button class="btn-icon" onclick="event.stopPropagation(); sendEmail('${email}')" title="Send Email">
+                  <i class="fas fa-envelope text-xs"></i>
+                </button>
+              ` : ''}
+              ${phone ? `
+                <button class="btn-icon" onclick="event.stopPropagation(); makeCall('${phone}')" title="Call">
+                  <i class="fas fa-phone text-xs"></i>
+                </button>
+              ` : ''}
+              <button class="btn-icon" onclick="event.stopPropagation(); showQrCode('${name}', '${email}', '${phone}', '${designation}', '${department}')" title="Share Contact">
+                <i class="fas fa-qrcode text-xs"></i>
+              </button>
+              ${isAdmin && !bulkSelectMode ? `
+                <div class="dropdown">
+                  <button class="btn-icon dropdown-toggle" type="button" data-bs-toggle="dropdown" onclick="event.stopPropagation();" title="Admin Actions">
+                    <i class="fas fa-cog text-xs"></i>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end shadow border-0 p-2" style="border-radius: var(--radius-md); font-size: 0.8125rem;">
+                    <li><a class="dropdown-item fw-semibold py-2 rounded-2" href="#" onclick="changeStaffType('${staffId}', '${name}', '${staffType}')"><i class="fas fa-user-edit me-2 text-muted"></i>Change Type</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item text-danger fw-semibold py-2 rounded-2" href="#" onclick="deleteStaff('${staffId}', '${name}')"><i class="fas fa-trash me-2"></i>Delete Staff</a></li>
+                  </ul>
+                </div>
+              ` : ''}
+            </div>
+          </div>
+          
+        </div>
+      </div>
+    `;
+  }
+
+  function changeStaffType(staffId, staffName, currentType) {
+    if (!isAdmin) {
+      alert('Admin access required');
+      return;
+    }
+    currentStaffForTypeChange = { staffId, staffName, currentType };
+    document.getElementById('changeTypeStaffName').textContent = staffName;
+    document.getElementById('staffTypeSelect').value = currentType;
+    const modal = new bootstrap.Modal(document.getElementById('changeTypeModal'));
+    modal.show();
+  }
+
+  async function updateStaffType() {
+    if (!currentStaffForTypeChange) return;
+    const { staffId } = currentStaffForTypeChange;
+    const newType = document.getElementById('staffTypeSelect').value;
+    try {
+      const user = firebase.auth().currentUser;
+      if (!user) throw new Error('Not authenticated');
+      const token = await user.getIdToken(true);
+      const response = await fetch(`/api/staff/${staffId}/type`, {
+        method: 'PUT',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ type: newType })
+      });
+      const result = await response.json();
+      if (response.ok) {
+        const staffIndex = allStaffData.findIndex(s => (s.id || s['Sl No'] || s.empNo || s.email) === staffId);
+        if (staffIndex !== -1) {
+          allStaffData[staffIndex].type = newType;
+        }
+        processDepartments();
+        updateStats();
+        filterAndDisplayStaff();
+        showToast(`Staff type updated to ${newType}`, 'success');
+      } else {
+        throw new Error(result.error || 'Update failed');
+      }
+    } catch (error) {
+      console.error('Error updating staff type:', error);
+      showToast('Failed to update staff type: ' + error.message, 'error');
+    } finally {
+      currentStaffForTypeChange = null;
+      bootstrap.Modal.getInstance(document.getElementById('changeTypeModal')).hide();
+    }
+  }
+
+  async function deleteStaff(staffId, staffName) {
+    if (!isAdmin) {
+      alert('Admin access required');
+      return;
+    }
+    document.getElementById('deleteStaffName').textContent = staffName;
+    const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    modal.show();
+    
+    document.getElementById('confirmDeleteBtn').onclick = async function() {
       try {
         const user = firebase.auth().currentUser;
+        if (!user) throw new Error('Not authenticated');
         const token = await user.getIdToken(true);
-        const idsArray = Array.from(selectedStaffIds);
-        
-        // This simulates bulk deletion endpoint if it existed, otherwise sequential
-        for(const id of idsArray) {
-          await fetch(`/api/staff/${id}`, {
-            method: 'DELETE',
-            headers: { 'Authorization': 'Bearer ' + token }
-          });
+        const response = await fetch(`/api/staff/${staffId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'application/json'
+          }
+        });
+        const result = await response.json();
+        if (response.ok) {
+          allStaffData = allStaffData.filter(s => (s.id || s['Sl No'] || s.empNo || s.email) !== staffId);
+          processDepartments();
+          updateStats();
+          filterAndDisplayStaff();
+          showToast('Staff member deleted successfully', 'success');
+        } else {
+          throw new Error(result.error || 'Delete failed');
         }
-        
-        closeDeleteModal();
-        clearSelection();
-        await loadStaffs();
-      } catch(e) {
-        console.error(e);
-        alert('Failed to delete some records.');
+      } catch (error) {
+        console.error('Error deleting staff:', error);
+        showToast('Failed to delete staff member: ' + error.message, 'error');
+      } finally {
+        modal.hide();
       }
+    };
+  }
+
+  async function bulkDeleteStaff() {
+    if (!isAdmin || selectedStaffIds.size === 0) return;
+    if (!confirm(`Are you sure you want to delete ${selectedStaffIds.size} staff members? This action cannot be undone.`)) {
+      return;
     }
+    try {
+      const user = firebase.auth().currentUser;
+      if (!user) throw new Error('Not authenticated');
+      const token = await user.getIdToken(true);
+      const response = await fetch('/api/staff/bulk_delete', {
+        method: 'POST',
+        headers: {
+          'Authorization': 'Bearer ' + token,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ staff_ids: Array.from(selectedStaffIds) })
+      });
+      const result = await response.json();
+      if (response.ok) {
+        allStaffData = allStaffData.filter(s => {
+          const staffId = s.id || s['Sl No'] || s.empNo || s.email;
+          return !selectedStaffIds.has(staffId);
+        });
+        clearSelection();
+        processDepartments();
+        updateStats();
+        filterAndDisplayStaff();
+        showToast(`Successfully deleted ${result.deleted_staff} staff members`, 'success');
+      } else {
+        throw new Error(result.error || 'Bulk delete failed');
+      }
+    } catch (error) {
+      console.error('Error in bulk delete:', error);
+      showToast('Failed to delete staff members: ' + error.message, 'error');
+    }
+  }
+
+  function showToast(message, type = 'info') {
+    let toastContainer = document.getElementById('toastContainer');
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      toastContainer.id = 'toastContainer';
+      toastContainer.className = 'toast-container position-fixed top-0 end-0 p-3';
+      toastContainer.style.zIndex = '1055';
+      document.body.appendChild(toastContainer);
+    }
+    const toastId = 'toast-' + Date.now();
+    const bgClass = type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : type === 'warning' ? 'bg-warning' : 'bg-info';
+    const textClass = type === 'warning' ? 'text-dark' : 'text-white';
     
+    const toastHtml = `
+      <div class="toast ${bgClass} ${textClass}" id="${toastId}" role="alert" style="border-radius: var(--radius-md); border: none; box-shadow: var(--shadow-md);">
+        <div class="d-flex">
+          <div class="toast-body fw-semibold text-xs">
+            ${message}
+          </div>
+          <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-toast="toast"></button>
+        </div>
+      </div>
+    `;
+    toastContainer.insertAdjacentHTML('beforeend', toastHtml);
+    const toastElement = document.getElementById(toastId);
+    const toast = new bootstrap.Toast(toastElement, { autohide: true, delay: 4000 });
+    toast.show();
+    toastElement.addEventListener('hidden.bs.toast', () => {
+      toastElement.remove();
+    });
+  }
+
+  function sendEmail(email) { window.open(`mailto:${email}`); }
+  function makeCall(phone) { window.open(`tel:${phone}`); }
+
+  function showQrCode(name, email, phone, designation, department) {
+    const vCardData = `BEGIN:VCARD
+VERSION:3.0
+FN:${name}
+ORG:${department}
+TITLE:${designation}
+EMAIL:${email}
+TEL:${phone}
+END:VCARD`;
+    const modal = new bootstrap.Modal(document.getElementById('qrModal') || createQrModal());
+    document.getElementById('qrModalName').textContent = name;
+    document.getElementById('qrModalDesignation').textContent = designation;
+    const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(vCardData)}`;
+    document.getElementById('qrCodeImage').src = qrUrl;
+    modal.show();
+  }
+
+  function createQrModal() {
+    const modalHtml = `
+      <div class="modal fade modal-pro" id="qrModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title"><i class="fas fa-qrcode me-2 text-primary"></i>Contact QR Code</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center p-4">
+              <img id="qrCodeImage" class="img-fluid mb-3 p-2 bg-white" style="max-width: 200px; border-radius: var(--radius-md); border: 1px solid var(--border);">
+              <h6 id="qrModalName" class="mb-0 fw-bold text-dark text-sm"></h6>
+              <p id="qrModalDesignation" class="text-muted text-xs fw-semibold mb-2"></p>
+              <p class="text-muted text-xs m-0"><i class="fas fa-camera me-1"></i>Scan to save contact directly</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    return document.getElementById('qrModal');
+  }
+
+  function showError(message) {
+    document.getElementById('errorContainer').innerHTML = `
+      <div class="alert alert-danger text-center rounded-3 shadow-sm">
+        <i class="fas fa-exclamation-triangle me-2"></i>${message}
+      </div>
+    `;
+    document.getElementById('errorContainer').style.display = 'block';
+  }
+
+  function performQuickSearch(query) {
+    const results = allStaffData.filter(staff => {
+      const name = (staff.name || '').toLowerCase();
+      const dept = (staff.department || '').toLowerCase();
+      return name.includes(query) || dept.includes(query);
+    });
+    if (results.length > 0) {
+      showStaffList('All Departments');
+      document.getElementById('searchInput').value = query;
+      searchQuery = query;
+      filterAndDisplayStaff();
+    }
+  }
+
+  document.getElementById('searchInput').addEventListener('input', (e) => {
+    searchQuery = e.target.value.toLowerCase();
+    filterAndDisplayStaff();
+  });
+
+  document.getElementById('quickSearch').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      const query = e.target.value.toLowerCase().trim();
+      if (query) performQuickSearch(query);
+    }
+  });
+
+  document.addEventListener('click', (e) => {
+    if (e.target.classList.contains('filter-chip-pro') || e.target.closest('.filter-chip-pro')) {
+      const target = e.target.classList.contains('filter-chip-pro') ? e.target : e.target.closest('.filter-chip-pro');
+      document.querySelectorAll('.filter-chip-pro').forEach(chip => chip.classList.remove('active'));
+      target.classList.add('active');
+      selectedStaffType = target.dataset.type;
+      filterAndDisplayStaff();
+    }
+  });
+
+  document.getElementById('signoutBtn').addEventListener('click', async () => {
+    await firebase.auth().signOut();
+    window.location.href = '/';
+  });
+
+  document.getElementById('confirmChangeTypeBtn').addEventListener('click', updateStaffType);
+
+  firebase.auth().onAuthStateChanged(async (user) => {
+    if (user) {
+      await loadStaffs();
+    } else {
+      showError('Please <a href="/">login</a> to view staff.');
+    }
+  });
   </script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
