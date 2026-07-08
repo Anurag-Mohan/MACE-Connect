@@ -1,5 +1,12 @@
-// static/js/mesh-background.js — MACE Connect v2.0 Enhanced Particle Network
+// static/js/mesh-background.js — MACE Connect v3.0 Drifting Dot Grid Background
 document.addEventListener('DOMContentLoaded', () => {
+  // Check for prefers-reduced-motion before initializing
+  const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (prefersReduced) {
+    console.log('Mesh background disabled due to prefers-reduced-motion preference.');
+    return;
+  }
+
   const canvas = document.createElement('canvas');
   canvas.id = 'meshCanvas';
   canvas.style.position = 'fixed';
@@ -12,63 +19,29 @@ document.addEventListener('DOMContentLoaded', () => {
   document.body.prepend(canvas);
 
   const ctx = canvas.getContext('2d');
-  let animationFrameId;
   let width = canvas.width = window.innerWidth;
   let height = canvas.height = window.innerHeight;
 
-  const particles = [];
-  // Slightly reduced particle count for performance
-  const particleCount = Math.min(80, Math.floor((width * height) / 18000));
-  const connectionDistance = 130;
-  const speedScale = 0.3;
+  const points = [];
+  const spacing = 60; // grid spacing in px
+  const cols = Math.ceil(width / spacing) + 2;
+  const rows = Math.ceil(height / spacing) + 2;
 
-  // Color palette — warm tones
-  const colors = [
-    'rgba(217, 119, 6, 0.35)',   // Orange
-    'rgba(245, 158, 11, 0.3)',   // Gold
-    'rgba(139, 92, 246, 0.2)',   // Purple (subtle)
-    'rgba(20, 184, 166, 0.2)',   // Teal (subtle)
-    'rgba(236, 72, 153, 0.15)',  // Pink (very subtle)
-  ];
-
-  class Particle {
-    constructor() {
-      this.x = Math.random() * width;
-      this.y = Math.random() * height;
-      this.vx = (Math.random() - 0.5) * speedScale;
-      this.vy = (Math.random() - 0.5) * speedScale;
-      this.radius = Math.random() * 2 + 1.2;
-      this.color = colors[Math.floor(Math.random() * colors.length)];
-      this.baseRadius = this.radius;
-      this.phase = Math.random() * Math.PI * 2;
+  // Initialize dot positions with small offsets
+  for (let c = 0; c < cols; c++) {
+    for (let r = 0; r < rows; r++) {
+      points.push({
+        baseX: (c - 1) * spacing,
+        baseY: (r - 1) * spacing,
+        x: (c - 1) * spacing,
+        y: (r - 1) * spacing,
+        angle: Math.random() * Math.PI * 2,
+        speed: 0.1 + Math.random() * 0.15, // speed < 0.3px per frame
+        radius: Math.random() * 1.5 + 0.8,
+        // Alternate colors between graphite and amber
+        color: Math.random() > 0.85 ? 'rgba(232, 162, 61, 0.12)' : 'rgba(107, 113, 120, 0.08)'
+      });
     }
-
-    update(time) {
-      this.x += this.vx;
-      this.y += this.vy;
-
-      // Gentle pulsing radius
-      this.radius = this.baseRadius + Math.sin(time * 0.002 + this.phase) * 0.4;
-
-      // Smooth bounce from screen borders
-      if (this.x < 0 || this.x > width) this.vx *= -1;
-      if (this.y < 0 || this.y > height) this.vy *= -1;
-
-      // Keep within bounds
-      this.x = Math.max(0, Math.min(width, this.x));
-      this.y = Math.max(0, Math.min(height, this.y));
-    }
-
-    draw() {
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-      ctx.fillStyle = this.color;
-      ctx.fill();
-    }
-  }
-
-  for (let i = 0; i < particleCount; i++) {
-    particles.push(new Particle());
   }
 
   function resize() {
@@ -77,39 +50,45 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   window.addEventListener('resize', resize);
 
-  function drawConnections() {
-    for (let i = 0; i < particles.length; i++) {
-      for (let j = i + 1; j < particles.length; j++) {
-        const dx = particles[i].x - particles[j].x;
-        const dy = particles[i].y - particles[j].y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+  let angleOffset = 0;
 
-        if (dist < connectionDistance) {
-          const alpha = (1 - dist / connectionDistance) * 0.12;
+  function animate() {
+    ctx.clearRect(0, 0, width, height);
+    angleOffset += 0.002;
+
+    points.forEach(p => {
+      // Slow flow-field/drift using sine and cosine waves
+      const dx = Math.cos(p.angle + angleOffset) * p.speed * 8;
+      const dy = Math.sin(p.angle + angleOffset) * p.speed * 8;
+
+      p.x = p.baseX + dx;
+      p.y = p.baseY + dy;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+    });
+
+    // Draw very subtle lines for close connections to build a network layout
+    ctx.strokeStyle = 'rgba(107, 113, 120, 0.03)';
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i < points.length; i += 2) {
+      const p1 = points[i];
+      // connect to neighbor in the array
+      if (i + 1 < points.length) {
+        const p2 = points[i + 1];
+        const distSq = (p1.x - p2.x) ** 2 + (p1.y - p2.y) ** 2;
+        if (distSq < 8000) {
           ctx.beginPath();
-          ctx.moveTo(particles[i].x, particles[i].y);
-          ctx.lineTo(particles[j].x, particles[j].y);
-          ctx.strokeStyle = `rgba(217, 119, 6, ${alpha})`;
-          ctx.lineWidth = 0.8;
+          ctx.moveTo(p1.x, p1.y);
+          ctx.lineTo(p2.x, p2.y);
           ctx.stroke();
         }
       }
     }
-  }
 
-  let startTime = Date.now();
-
-  function animate() {
-    const time = Date.now() - startTime;
-    ctx.clearRect(0, 0, width, height);
-
-    particles.forEach(p => {
-      p.update(time);
-      p.draw();
-    });
-
-    drawConnections();
-    animationFrameId = requestAnimationFrame(animate);
+    requestAnimationFrame(animate);
   }
 
   animate();

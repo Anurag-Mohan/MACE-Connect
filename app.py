@@ -1,6 +1,6 @@
 # app.py
 import os
-from flask import Flask, request, jsonify, render_template, send_from_directory, session
+from flask import Flask, request, jsonify, render_template, send_from_directory, session, redirect, url_for
 from werkzeug.utils import secure_filename
 from firebase_admin import credentials, initialize_app, auth, firestore, storage
 import firebase_admin
@@ -276,6 +276,11 @@ def allowed_file(filename):
 
 @app.route('/')
 def index():
+    return render_template('landing.html')
+
+
+@app.route('/login')
+def login_page():
     return render_template('login.html')
 
 
@@ -652,11 +657,21 @@ def list_staffs():
 @app.route('/staff_list.html')
 @web_login_required
 def staff_list_page_html():
-    return render_template('staff_list.html')
+    return redirect(url_for('directory_page'))
 
 @app.route('/admin.html')
 @web_login_required
 def admin_page_html():
+    return redirect(url_for('admin_page'))
+
+@app.route('/directory')
+@web_login_required
+def directory_page():
+    return render_template('staff_list.html')
+
+@app.route('/admin')
+@web_login_required
+def admin_page():
     return render_template('admin.html')
 
 
@@ -794,6 +809,39 @@ def update_staff_type(staff_id):
     except Exception as e:
         print(f"Error updating staff type: {e}")
         return jsonify({'error': 'Failed to update staff type', 'detail': str(e)}), 500
+
+
+@app.route('/api/staff/<staff_id>/update', methods=['PUT'])
+@admin_required
+def update_staff_profile(staff_id):
+    """
+    Update staff profile details (admin only)
+    """
+    try:
+        data = request.get_json()
+        staff_ref = db.collection('staff').document(staff_id)
+        staff_doc = staff_ref.get()
+        if not staff_doc.exists:
+            return jsonify({'error': 'Staff member not found'}), 404
+        
+        update_fields = {}
+        fields_to_check = ['name', 'department', 'designation', 'mobileNo', 'type', 'contractType', 'gender', 'bloodGroup', 'permanentAddress']
+        for field in fields_to_check:
+            if field in data:
+                update_fields[field] = data[field]
+                
+        if update_fields:
+            update_fields['updatedAt'] = firestore.SERVER_TIMESTAMP
+            staff_ref.update(update_fields)
+            
+        return jsonify({
+            'success': True,
+            'message': 'Staff profile updated successfully',
+            'staff_id': staff_id
+        })
+    except Exception as e:
+        print(f"Error updating staff profile: {e}")
+        return jsonify({'error': 'Failed to update staff profile', 'detail': str(e)}), 500
 
 
 @app.route('/api/staff/bulk_delete', methods=['POST'])

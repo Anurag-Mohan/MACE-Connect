@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MACE Staff Portal - Login & Registration</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+  <title>MACE-Connect — Login & Registration</title>
+  <meta name="description" content="Access the MACE-Connect staff portal or submit a new registration for admin review.">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link href="/static/css/design-system.css" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
@@ -13,1145 +13,650 @@
   <script src="/static/js/firebase-client.js"></script>
   <script src="/static/js/mesh-background.js"></script>
   <style>
+    /* Split-screen login specific styles */
     body {
-      background: radial-gradient(circle at 0% 0%, #FFFBEB 0%, #FAF9F6 50%, #FEF3C7 100%);
-      background-image: 
-        radial-gradient(circle, rgba(217, 119, 6, 0.06) 1px, transparent 1px),
-        radial-gradient(circle at 0% 0%, #FFFBEB 0%, #FAF9F6 50%, #FEF3C7 100%);
-      background-size: 28px 28px, 100% 100%;
+      background-color: var(--bg-canvas-light);
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
     }
 
-    .login-wrapper {
+    .split-container {
       display: flex;
-      max-width: 1200px;
-      width: 100%;
-      margin: 0 auto;
-      gap: 4rem;
-      padding: 4rem 2rem 2rem;
-      align-items: center;
+      width: 100vw;
+      height: 100vh;
+    }
+
+    /* Left Panel: 55% Width, Light Canvas */
+    .form-panel {
+      flex: 1.2;
+      background-color: var(--bg-canvas-light);
+      color: var(--graphite-900);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4rem;
+      overflow-y: auto;
       position: relative;
       z-index: 10;
-      min-height: 100vh;
     }
 
-    /* Left Panel - Dynamic HTML Network Mockup */
-    .left-panel {
-      flex: 1.3;
+    .form-wrapper {
+      max-width: 480px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Tab Segmented Control */
+    .tab-control-container {
+      position: relative;
+      display: flex;
+      background: rgba(28,32,36,0.04);
+      border-radius: 100px;
+      padding: 4px;
+      margin-bottom: 2.5rem;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 0.6rem 0;
+      border: none;
+      background: transparent;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--graphite-400);
+      cursor: pointer;
+      z-index: 2;
+      transition: var(--transition-fast);
+      text-align: center;
+    }
+
+    .tab-btn.active {
+      color: var(--graphite-900);
+    }
+
+    .tab-slider {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      width: calc(50% - 4px);
+      height: calc(100% - 8px);
+      background: #FFFFFF;
+      border-radius: 100px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      z-index: 1;
+      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    /* Form panels */
+    .form-content {
+      display: none;
+    }
+
+    .form-content.active {
+      display: block;
+    }
+
+    /* Right Panel: 45% Width, Dark Canvas */
+    .info-panel {
+      flex: 1;
+      background-color: var(--bg-canvas);
+      color: #FFFFFF;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 4rem;
+      border-left: 1px solid rgba(255,255,255,0.05);
+      position: relative;
+      z-index: 10;
+    }
+
+    .info-wrapper {
+      max-width: 380px;
+      text-align: center;
+    }
+
+    .info-svg-container {
+      margin-bottom: 2rem;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+    }
+
+    .info-slider {
+      height: 90px;
+      position: relative;
+      overflow: hidden;
+      margin-top: 1rem;
+    }
+
+    .slide-text {
+      position: absolute;
+      width: 100%;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    .slide-text.active {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .slide-text h4 {
+      font-size: 1.2rem;
+      margin-bottom: 0.5rem;
+      color: var(--accent-amber);
+    }
+
+    .slide-text p {
+      color: var(--graphite-400);
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    /* Alert styles */
+    .alert-box {
+      border-radius: 8px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.9rem;
+      display: none;
+    }
+    .alert-box.error {
+      background: rgba(194, 91, 62, 0.1);
+      border: 1px solid var(--accent-rust);
+      color: #df6f50;
+    }
+    .alert-box.success {
+      background: rgba(46, 158, 116, 0.1);
+      border: 1px solid var(--accent-emerald);
+      color: #43c193;
+    }
+
+    /* Neomorphic chips selector for department */
+    .chip-select-label {
+      font-size: 0.85rem;
+      color: var(--graphite-400);
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+
+    .chip-select-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .chip-option {
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      font-size: 0.8rem;
+      font-weight: 500;
+      border: 1px solid var(--line-hairline);
+      background: #FFFFFF;
+      color: var(--graphite-400);
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    .chip-option.selected {
+      background: var(--accent-amber);
+      color: #000000;
+      border-color: var(--accent-amber);
+    }
+
+    .success-state {
+      text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      color: #374151;
-      padding: 2rem;
-      position: relative;
+      gap: 1.5rem;
+      animation: dissolve-in 0.4s ease-out forwards;
     }
 
-    .network-container {
-      position: relative;
-      width: 100%;
-      max-width: 440px;
-      height: 360px;
-      margin-bottom: 2rem;
+    .success-state h3 {
+      font-size: 1.5rem;
+      color: var(--accent-emerald);
     }
 
-    /* Central Access Ring */
-    .portal-hub {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 100px;
-      height: 100px;
-      background: white;
-      border-radius: 50%;
-      border: 4px solid var(--primary-color);
-      box-shadow: 0 10px 25px rgba(217, 119, 6, 0.15);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 2.2rem;
-      color: var(--primary-color);
-      z-index: 10;
-      animation: hub-pulse 3s infinite ease-in-out;
-    }
-
-    @keyframes hub-pulse {
-      0% { transform: translate(-50%, -50%) scale(0.95); box-shadow: 0 0 0 0 rgba(217, 119, 6, 0.4); }
-      70% { transform: translate(-50%, -50%) scale(1.05); box-shadow: 0 0 0 20px rgba(217, 119, 6, 0); }
-      100% { transform: translate(-50%, -50%) scale(0.95); box-shadow: 0 0 0 0 rgba(217, 119, 6, 0); }
-    }
-
-    /* Floating Profile Nodes */
-    .network-node {
-      position: absolute;
-      width: 60px;
-      height: 60px;
-      background: white;
-      border-radius: 18px;
-      border: 3px solid white;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 800;
-      color: white;
-      font-size: 1.1rem;
-      animation: node-bob 6s ease-in-out infinite alternate;
-    }
-
-    .node-1 { top: 8%; left: 8%; background: var(--primary-color); animation-delay: 0s; }
-    .node-2 { top: 5%; right: 15%; background: var(--accent-green); animation-delay: 1.5s; }
-    .node-3 { bottom: 8%; left: 12%; background: var(--accent-teal); animation-delay: 0.7s; }
-    .node-4 { bottom: 10%; right: 8%; background: var(--accent-purple); animation-delay: 2.2s; }
-    .node-5 { top: 50%; left: -2%; background: var(--accent-pink); animation-delay: 1s; transform: translateY(-50%); }
-    .node-6 { top: 50%; right: -2%; background: var(--accent-gold); animation-delay: 2.8s; transform: translateY(-50%); }
-
-    @keyframes node-bob {
-      0% { transform: translateY(0px) rotate(0deg); }
-      100% { transform: translateY(-15px) rotate(8deg); }
-    }
-
-    /* Connector Rays */
-    .network-ray {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 120px;
-      height: 2px;
-      background: linear-gradient(90deg, var(--primary-color), transparent);
-      transform-origin: left center;
-      z-index: 5;
-      opacity: 0.4;
-    }
-
-    .ray-1 { transform: rotate(210deg) translateX(50px); }
-    .ray-2 { transform: rotate(-30deg) translateX(50px); }
-    .ray-3 { transform: rotate(135deg) translateX(50px); }
-    .ray-4 { transform: rotate(45deg) translateX(50px); }
-    .ray-5 { transform: rotate(180deg) translateX(50px); }
-    .ray-6 { transform: rotate(0deg) translateX(50px); }
-
-    .welcome-text h1 {
-      font-size: 3rem;
-      font-weight: 800;
-      margin-bottom: 1rem;
-      letter-spacing: -0.5px;
-    }
-
-    .welcome-text p {
-      font-size: 1.15rem;
-      font-weight: 400;
-      color: #6B7280;
-      line-height: 1.6;
-      max-width: 480px;
-      margin: 0 auto;
-    }
-
-    .welcome-decorative-icons {
-      display: flex;
-      gap: 1.25rem;
-      justify-content: center;
-      margin-top: 1.5rem;
-      opacity: 0.5;
-    }
-
-    .welcome-decorative-icons svg {
-      width: 28px;
-      height: 28px;
-    }
-
-    /* Right Panel - Login Form Stack */
-    .right-panel {
-      flex: 0 0 460px;
-    }
-
-    .login-header {
-      background: linear-gradient(135deg, var(--primary-color) 0%, var(--accent-gold) 100%);
-      color: white;
-      padding: 2.2rem 2rem;
-      text-align: center;
-      position: relative;
-      overflow: hidden;
-      border-radius: 26px 26px 0 0;
-    }
-
-    .login-header .header-doodles {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      pointer-events: none;
-      overflow: hidden;
-    }
-
-    .login-header .icon {
-      font-size: 2.5rem;
-      margin-bottom: 0.5rem;
-      display: inline-block;
-      filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
-      position: relative;
-      z-index: 2;
-    }
-
-    .login-header h2 {
-      font-size: 1.7rem;
-      font-weight: 800;
-      margin-bottom: 0.25rem;
-      position: relative;
-      z-index: 2;
-    }
-
-    .login-header p {
-      font-size: 0.925rem;
-      opacity: 0.9;
-      margin-bottom: 0;
-      position: relative;
-      z-index: 2;
-    }
-
-    .card-body {
-      padding: 2.2rem;
-    }
-
-    /* Wavy divider between header and body */
-    .header-wave-divider {
-      position: relative;
-      margin-top: -2px;
-      z-index: 5;
-    }
-    .header-wave-divider svg {
-      display: block;
-      width: 100%;
-      height: 20px;
-    }
-
-    /* Password eye alignment */
-    .input-group-container {
-      position: relative;
-      display: flex;
-      align-items: center;
-    }
-
-    .password-toggle {
-      position: absolute;
-      right: 18px;
-      cursor: pointer;
-      color: #9CA3AF;
-      z-index: 10;
-      font-size: 1.1rem;
-      transition: color 0.2s ease;
-    }
-
-    .password-toggle:hover {
-      color: var(--primary-color);
-    }
-
-    .alert {
-      border: none;
-      border-radius: 16px;
-      padding: 1rem 1.25rem;
-      font-weight: 600;
+    .success-state p {
+      color: var(--graphite-400);
       font-size: 0.95rem;
-      box-shadow: var(--shadow-inset-3d);
+      line-height: 1.6;
     }
 
-    .alert-danger {
-      background: #FEE2E2;
-      color: var(--accent-red-dark);
-    }
-
-    .alert-success {
-      background: #D1FAE5;
-      color: var(--accent-green-dark);
-    }
-
-    .info-alert {
-      background: #FFFBEB;
-      border-radius: 16px;
-      padding: 1.25rem;
-      border-left: 4px solid var(--primary-color);
-      margin: 1.5rem 0;
-      font-size: 0.925rem;
-      color: #78350F;
-      box-shadow: 0 4px 12px rgba(217, 119, 6, 0.05);
-    }
-
-    .loading-spinner {
-      border: 3px solid rgba(255, 255, 255, 0.3);
-      border-top: 3px solid white;
-      border-radius: 50%;
-      width: 22px;
-      height: 22px;
-      animation: spin 1s linear infinite;
-      display: inline-block;
-    }
-
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    /* Registration form section divider */
-    .form-section-divider {
+    .back-btn {
+      color: var(--accent-amber);
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
-      margin: 0.75rem 0 1rem;
-      color: #9CA3AF;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    .form-section-divider::before,
-    .form-section-divider::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, transparent, #E5E7EB, transparent);
+      gap: 0.5rem;
     }
 
-    /* Registration form field groups */
-    .form-field-group {
-      background: #FEFCF8;
-      border-radius: 16px;
-      padding: 1rem;
-      margin-bottom: 0.5rem;
-      border: 1px solid rgba(229, 231, 235, 0.5);
+    .reg-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
     }
 
-    /* SVG Doodle global styles */
-    .svg-doodle {
-      position: absolute;
-      pointer-events: none;
-      z-index: 1;
-    }
-
-    @keyframes doodle-float {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      25% { transform: translateY(-8px) rotate(2deg); }
-      50% { transform: translateY(-14px) rotate(0deg); }
-      75% { transform: translateY(-6px) rotate(-2deg); }
-    }
-
-    @keyframes doodle-float-alt {
-      0%, 100% { transform: translateY(0px) rotate(0deg); }
-      50% { transform: translateY(-18px) rotate(5deg); }
-    }
-
-    @keyframes doodle-spin-slow {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    @keyframes doodle-wiggle {
-      0%, 100% { transform: rotate(0deg); }
-      25% { transform: rotate(4deg); }
-      75% { transform: rotate(-4deg); }
-    }
-
-    @keyframes doodle-drift {
-      0%, 100% { transform: translate(0, 0) rotate(0deg); }
-      33% { transform: translate(8px, -5px) rotate(3deg); }
-      66% { transform: translate(-5px, -10px) rotate(-2deg); }
-    }
-
-    /* Responsive adjustments */
-    @media (max-width: 992px) {
-      .login-wrapper {
-        flex-direction: column;
-        gap: 3rem;
-        padding: 3rem 1rem 1rem;
-      }
-      
-      .left-panel {
-        order: 2;
-        padding: 1rem;
-      }
-      
-      .welcome-text h1 {
-        font-size: 2.25rem;
-      }
-      
-      .right-panel {
-        width: 100%;
-        max-width: 460px;
-        order: 1;
-      }
-
-      .svg-doodle {
+    @media (max-width: 1024px) {
+      .info-panel {
         display: none;
+      }
+      .form-panel {
+        flex: 1;
+        padding: 2rem;
       }
     }
   </style>
 </head>
-<body>
+<body class="light-canvas">
 
-  <!-- Mesh Constellation background is animated dynamically via canvas -->
-
-  <!-- ═══════════════════════════════════════════
-       SVG DOODLE ILLUSTRATIONS SCATTERED ACROSS PAGE
-       ═══════════════════════════════════════════ -->
-
-  <!-- Star Doodle 1 — large, top-left -->
-  <svg class="svg-doodle" style="top: 5%; left: 3%; width: 80px; height: 80px; opacity: 0.09; animation: doodle-float 7s ease-in-out infinite;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M50 5 L61 38 L95 38 L68 58 L79 92 L50 72 L21 92 L32 58 L5 38 L39 38 Z" stroke="#D97706" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-
-  <!-- Star Doodle 2 — mid-right -->
-  <svg class="svg-doodle" style="top: 15%; right: 5%; width: 55px; height: 55px; opacity: 0.07; animation: doodle-spin-slow 25s linear infinite;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M50 10 L58 40 L90 40 L64 58 L72 88 L50 70 L28 88 L36 58 L10 40 L42 40 Z" stroke="#F59E0B" stroke-width="3" fill="none" stroke-linecap="round"/>
-  </svg>
-
-  <!-- Star Doodle 3 — bottom-left -->
-  <svg class="svg-doodle" style="bottom: 15%; left: 6%; width: 65px; height: 65px; opacity: 0.08; animation: doodle-float-alt 9s ease-in-out infinite;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M50 8 L60 36 L92 36 L66 56 L76 88 L50 68 L24 88 L34 56 L8 36 L40 36 Z" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-
-  <!-- Star Doodle 4 — small, bottom-right -->
-  <svg class="svg-doodle" style="bottom: 25%; right: 10%; width: 40px; height: 40px; opacity: 0.1; animation: doodle-wiggle 5s ease-in-out infinite;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M50 5 L61 38 L95 38 L68 58 L79 92 L50 72 L21 92 L32 58 L5 38 L39 38 Z" stroke="#F59E0B" stroke-width="3" fill="none"/>
-  </svg>
-
-  <!-- Wavy Squiggle 1 — top flowing across -->
-  <svg class="svg-doodle" style="top: 12%; left: 10%; width: 300px; height: 40px; opacity: 0.06;" viewBox="0 0 300 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0 20 Q25 5 50 20 Q75 35 100 20 Q125 5 150 20 Q175 35 200 20 Q225 5 250 20 Q275 35 300 20" stroke="#D97706" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-  </svg>
-
-  <!-- Wavy Squiggle 2 — bottom flowing across -->
-  <svg class="svg-doodle" style="bottom: 8%; left: 20%; width: 400px; height: 35px; opacity: 0.07; animation: doodle-drift 12s ease-in-out infinite;" viewBox="0 0 400 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M0 18 Q30 3 60 18 Q90 33 120 18 Q150 3 180 18 Q210 33 240 18 Q270 3 300 18 Q330 33 360 18 Q390 3 400 18" stroke="#F59E0B" stroke-width="2" fill="none" stroke-linecap="round"/>
-  </svg>
-
-  <!-- Wavy Squiggle 3 — mid-page vertical-ish -->
-  <svg class="svg-doodle" style="top: 40%; right: 3%; width: 35px; height: 200px; opacity: 0.06;" viewBox="0 0 35 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M18 0 Q3 25 18 50 Q33 75 18 100 Q3 125 18 150 Q33 175 18 200" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round"/>
-  </svg>
-
-  <!-- Dotted Circle 1 — top area -->
-  <svg class="svg-doodle" style="top: 8%; left: 25%; width: 90px; height: 90px; opacity: 0.08; animation: doodle-spin-slow 30s linear infinite;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="50" cy="50" r="42" stroke="#D97706" stroke-width="2.5" stroke-dasharray="6 8" fill="none"/>
-  </svg>
-
-  <!-- Dotted Circle 2 — mid-left -->
-  <svg class="svg-doodle" style="top: 55%; left: 2%; width: 70px; height: 70px; opacity: 0.07; animation: doodle-spin-slow 22s linear infinite reverse;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="50" cy="50" r="40" stroke="#F59E0B" stroke-width="2" stroke-dasharray="4 10" fill="none"/>
-  </svg>
-
-  <!-- Dotted Circle 3 — bottom right -->
-  <svg class="svg-doodle" style="bottom: 18%; right: 4%; width: 100px; height: 100px; opacity: 0.06; animation: doodle-spin-slow 35s linear infinite;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="50" cy="50" r="44" stroke="#D97706" stroke-width="2" stroke-dasharray="8 6" fill="none"/>
-  </svg>
-
-  <!-- Dotted Circle 4 — top right area -->
-  <svg class="svg-doodle" style="top: 22%; right: 18%; width: 50px; height: 50px; opacity: 0.1; animation: doodle-spin-slow 18s linear infinite reverse;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="50" cy="50" r="38" stroke="#F59E0B" stroke-width="3" stroke-dasharray="5 12" fill="none"/>
-  </svg>
-
-  <!-- Arrow Doodle 1 — pointing toward login form -->
-  <svg class="svg-doodle" style="top: 35%; right: 38%; width: 50px; height: 40px; opacity: 0.1; animation: doodle-wiggle 4s ease-in-out infinite;" viewBox="0 0 60 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M5 20 L45 20 M35 10 L48 20 L35 30" stroke="#D97706" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-
-  <!-- Arrow Doodle 2 — smaller, pointing down-right -->
-  <svg class="svg-doodle" style="top: 28%; right: 42%; width: 35px; height: 35px; opacity: 0.08; animation: doodle-float 6s ease-in-out infinite;" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M10 10 L35 35 M25 35 L38 35 L38 22" stroke="#F59E0B" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-
-  <!-- Cloud Doodle 1 — top area -->
-  <svg class="svg-doodle" style="top: 3%; left: 40%; width: 120px; height: 60px; opacity: 0.07; animation: doodle-drift 10s ease-in-out infinite;" viewBox="0 0 140 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M25 50 Q5 50 10 35 Q12 20 30 22 Q35 8 55 12 Q70 5 85 15 Q105 8 110 25 Q130 22 128 38 Q135 52 115 50 Z" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-
-  <!-- Cloud Doodle 2 — smaller, right side -->
-  <svg class="svg-doodle" style="top: 6%; right: 15%; width: 90px; height: 50px; opacity: 0.06; animation: doodle-drift 14s ease-in-out infinite 2s;" viewBox="0 0 140 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M25 50 Q5 50 10 35 Q12 20 30 22 Q35 8 55 12 Q70 5 85 15 Q105 8 110 25 Q130 22 128 38 Q135 52 115 50 Z" stroke="#F59E0B" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-  </svg>
-
-  <!-- Heart Doodle 1 — subtle, left -->
-  <svg class="svg-doodle" style="top: 70%; left: 8%; width: 35px; height: 35px; opacity: 0.09; animation: doodle-float 6s ease-in-out infinite 1s;" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M25 42 C10 30 2 18 12 10 C20 4 25 12 25 16 C25 12 30 4 38 10 C48 18 40 30 25 42 Z" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-
-  <!-- Heart Doodle 2 — tiny, top right -->
-  <svg class="svg-doodle" style="top: 20%; right: 8%; width: 25px; height: 25px; opacity: 0.08; animation: doodle-wiggle 5s ease-in-out infinite;" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M25 42 C10 30 2 18 12 10 C20 4 25 12 25 16 C25 12 30 4 38 10 C48 18 40 30 25 42 Z" stroke="#F59E0B" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-  </svg>
-
-  <!-- Heart Doodle 3 — near bottom -->
-  <svg class="svg-doodle" style="bottom: 30%; left: 15%; width: 22px; height: 22px; opacity: 0.07; animation: doodle-float-alt 7s ease-in-out infinite;" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M25 42 C10 30 2 18 12 10 C20 4 25 12 25 16 C25 12 30 4 38 10 C48 18 40 30 25 42 Z" stroke="#D97706" stroke-width="2.5" fill="none"/>
-  </svg>
-
-  <!-- Lightning Bolt — near network hub area -->
-  <svg class="svg-doodle" style="top: 30%; left: 32%; width: 35px; height: 50px; opacity: 0.1; animation: doodle-wiggle 3s ease-in-out infinite;" viewBox="0 0 40 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M22 2 L8 28 L18 28 L14 58 L34 24 L22 24 Z" stroke="#F59E0B" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-
-  <!-- Paper Airplane — floating -->
-  <svg class="svg-doodle" style="top: 18%; left: 55%; width: 50px; height: 50px; opacity: 0.08; animation: doodle-drift 11s ease-in-out infinite;" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M5 30 L55 5 L35 55 L28 32 Z" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M28 32 L55 5" stroke="#D97706" stroke-width="2" stroke-linecap="round"/>
-  </svg>
-
-  <!-- Pencil/Pen Doodle — near registration area -->
-  <svg class="svg-doodle" style="top: 60%; right: 6%; width: 45px; height: 45px; opacity: 0.09; animation: doodle-float 8s ease-in-out infinite 2s;" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M8 42 L38 12 L42 16 L12 46 Z" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M38 12 L42 8 L46 12 L42 16" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M8 42 L5 48 L12 46" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-
-  <!-- Flower/Plant Doodle — bottom-left corner -->
-  <svg class="svg-doodle" style="bottom: 5%; left: 3%; width: 50px; height: 60px; opacity: 0.08; animation: doodle-wiggle 6s ease-in-out infinite;" viewBox="0 0 50 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M25 68 L25 30" stroke="#D97706" stroke-width="2" stroke-linecap="round"/>
-    <path d="M25 40 Q15 35 12 45" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round"/>
-    <path d="M25 35 Q35 30 38 40" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round"/>
-    <circle cx="25" cy="22" r="8" stroke="#F59E0B" stroke-width="2" fill="none"/>
-    <circle cx="17" cy="28" r="6" stroke="#D97706" stroke-width="1.5" fill="none"/>
-    <circle cx="33" cy="28" r="6" stroke="#D97706" stroke-width="1.5" fill="none"/>
-    <circle cx="25" cy="14" r="6" stroke="#D97706" stroke-width="1.5" fill="none"/>
-  </svg>
-
-  <!-- Flower/Plant Doodle 2 — top-right corner -->
-  <svg class="svg-doodle" style="top: 2%; right: 3%; width: 40px; height: 50px; opacity: 0.06; animation: doodle-float 9s ease-in-out infinite 3s;" viewBox="0 0 50 70" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M25 68 L25 32" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
-    <circle cx="25" cy="24" r="9" stroke="#F59E0B" stroke-width="2" fill="none"/>
-    <circle cx="16" cy="30" r="6" stroke="#F59E0B" stroke-width="1.5" fill="none"/>
-    <circle cx="34" cy="30" r="6" stroke="#F59E0B" stroke-width="1.5" fill="none"/>
-  </svg>
-
-  <!-- Code Bracket Doodle 1 — left bracket -->
-  <svg class="svg-doodle" style="top: 45%; left: 1%; width: 30px; height: 50px; opacity: 0.1; animation: doodle-float-alt 8s ease-in-out infinite;" viewBox="0 0 30 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M22 5 L8 30 L22 55" stroke="#D97706" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-
-  <!-- Code Bracket Doodle 2 — right bracket -->
-  <svg class="svg-doodle" style="bottom: 35%; right: 2%; width: 30px; height: 50px; opacity: 0.1; animation: doodle-float-alt 8s ease-in-out infinite 1s;" viewBox="0 0 30 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M8 5 L22 30 L8 55" stroke="#F59E0B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-
-  <!-- Diamond/Gem Doodle 1 -->
-  <svg class="svg-doodle" style="top: 75%; right: 20%; width: 35px; height: 35px; opacity: 0.09; animation: doodle-float 7s ease-in-out infinite 2s;" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M25 5 L45 20 L25 45 L5 20 Z" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-    <path d="M5 20 L45 20" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <path d="M15 5 L20 20 L25 45" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <path d="M35 5 L30 20 L25 45" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-  </svg>
-
-  <!-- Diamond/Gem Doodle 2 — smaller -->
-  <svg class="svg-doodle" style="top: 10%; left: 60%; width: 25px; height: 25px; opacity: 0.07; animation: doodle-spin-slow 20s linear infinite;" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M25 5 L45 20 L25 45 L5 20 Z" stroke="#F59E0B" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-  </svg>
-
-  <!-- Additional tiny scattered dots/plus signs for richness -->
-  <svg class="svg-doodle" style="top: 50%; left: 20%; width: 15px; height: 15px; opacity: 0.12;" viewBox="0 0 20 20" fill="none">
-    <line x1="10" y1="2" x2="10" y2="18" stroke="#D97706" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="2" y1="10" x2="18" y2="10" stroke="#D97706" stroke-width="2.5" stroke-linecap="round"/>
-  </svg>
-
-  <svg class="svg-doodle" style="top: 85%; left: 45%; width: 12px; height: 12px; opacity: 0.1;" viewBox="0 0 20 20" fill="none">
-    <line x1="10" y1="2" x2="10" y2="18" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round"/>
-    <line x1="2" y1="10" x2="18" y2="10" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round"/>
-  </svg>
-
-  <svg class="svg-doodle" style="top: 38%; right: 25%; width: 10px; height: 10px; opacity: 0.15;" viewBox="0 0 20 20" fill="none">
-    <circle cx="10" cy="10" r="4" fill="#D97706"/>
-  </svg>
-
-  <svg class="svg-doodle" style="top: 65%; left: 42%; width: 10px; height: 10px; opacity: 0.12;" viewBox="0 0 20 20" fill="none">
-    <circle cx="10" cy="10" r="4" fill="#F59E0B"/>
-  </svg>
-
-
-  <!-- ═══════════════════════════════════════════
-       MAIN CONTENT
-       ═══════════════════════════════════════════ -->
-  <div class="container-fluid">
-    <div class="login-wrapper">
-      <!-- Left Panel - Dynamic Network Mockup -->
-      <div class="left-panel anim-fade-in-left delay-2">
-        <div class="network-container">
-          <!-- Central Hub -->
-          <div class="portal-hub">
-            <i class="fas fa-graduation-cap"></i>
-          </div>
-          <!-- Surrounding Staff Nodes — 6 nodes -->
-          <div class="network-node node-1" title="John Doe">JD</div>
-          <div class="network-node node-2" title="Jane Smith">JS</div>
-          <div class="network-node node-3" title="Anurag Mohan">AM</div>
-          <div class="network-node node-4" title="Kelly T">KT</div>
-          <div class="network-node node-5" title="Priya R">PR</div>
-          <div class="network-node node-6" title="Sam W">SW</div>
-          
-          <!-- Connections — 6 rays -->
-          <div class="network-ray ray-1"></div>
-          <div class="network-ray ray-2"></div>
-          <div class="network-ray ray-3"></div>
-          <div class="network-ray ray-4"></div>
-          <div class="network-ray ray-5"></div>
-          <div class="network-ray ray-6"></div>
-
-          <!-- Doodle illustrations around the network -->
-          <!-- Graduation Cap doodle -->
-          <svg style="position: absolute; top: -8px; left: 50%; transform: translateX(-50%); width: 36px; height: 30px; opacity: 0.15;" viewBox="0 0 50 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M25 8 L5 18 L25 28 L45 18 Z" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M12 20 L12 32 Q25 40 38 32 L38 20" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round"/>
-            <path d="M42 18 L42 30" stroke="#D97706" stroke-width="2" stroke-linecap="round"/>
-          </svg>
-
-          <!-- Book doodle -->
-          <svg style="position: absolute; bottom: -5px; left: 5%; width: 32px; height: 28px; opacity: 0.12;" viewBox="0 0 50 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5 5 L5 35 Q25 28 25 28 Q25 28 45 35 L45 5 Q25 12 25 12 Q25 12 5 5 Z" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M25 12 L25 28" stroke="#D97706" stroke-width="1.5" stroke-linecap="round"/>
-          </svg>
-
-          <!-- Globe doodle -->
-          <svg style="position: absolute; bottom: 0; right: 5%; width: 30px; height: 30px; opacity: 0.12; animation: doodle-spin-slow 30s linear infinite;" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="25" cy="25" r="20" stroke="#F59E0B" stroke-width="2" fill="none"/>
-            <ellipse cx="25" cy="25" rx="10" ry="20" stroke="#F59E0B" stroke-width="1.5" fill="none"/>
-            <path d="M5 25 L45 25" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round"/>
-            <path d="M10 14 L40 14" stroke="#F59E0B" stroke-width="1" stroke-linecap="round"/>
-            <path d="M10 36 L40 36" stroke="#F59E0B" stroke-width="1" stroke-linecap="round"/>
-          </svg>
-        </div>
-
-        <div class="welcome-text" style="text-align: center;">
-          <h1 class="gradient-text-warm">Welcome to MACE</h1>
-          <p>Access your staff portal with <span class="squiggly-underline">secure authentication</span> and manage your profile seamlessly.</p>
-          
-          <!-- Decorative hand-drawn style icons row -->
-          <div class="welcome-decorative-icons">
-            <!-- Mini shield icon -->
-            <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15 3 L26 8 L26 16 Q26 24 15 28 Q4 24 4 16 L4 8 Z" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M11 15 L14 18 L20 12" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <!-- Mini users icon -->
-            <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="11" cy="10" r="4" stroke="#D97706" stroke-width="1.5" fill="none"/>
-              <path d="M4 24 Q4 18 11 18 Q18 18 18 24" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-              <circle cx="21" cy="10" r="3" stroke="#F59E0B" stroke-width="1.5" fill="none"/>
-              <path d="M18 22 Q18 17 22 17 Q26 17 26 22" stroke="#F59E0B" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-            </svg>
-            <!-- Mini chart icon -->
-            <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M5 25 L5 15 L10 15 L10 25" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M12 25 L12 8 L17 8 L17 25" stroke="#F59E0B" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-              <path d="M19 25 L19 12 L24 12 L24 25" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <!-- Mini star icon -->
-            <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15 3 L18 11 L27 11 L20 17 L23 25 L15 20 L7 25 L10 17 L3 11 L12 11 Z" stroke="#F59E0B" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </div>
-        </div>
+  <div class="split-container">
+    
+    <!-- Left panel with form container -->
+    <div class="form-panel">
+      <div style="position: absolute; top: 2rem; left: 2rem;">
+        <a href="/" class="navbar-brand-custom" style="color: var(--graphite-900);">
+          <i class="fa-solid fa-network-wired" style="color: var(--accent-amber);"></i> MACE-Connect
+        </a>
       </div>
 
-      <!-- Right Panel - Login Card Deck -->
-      <div class="right-panel anim-fade-in-right delay-3">
-        <div class="card-deck-3d">
-          <div class="card-stacked-3d" style="box-shadow: var(--shadow-elevated);">
-            <div class="login-header">
-              <!-- Decorative doodles inside header -->
-              <div class="header-doodles">
-                <!-- Key doodle -->
-                <svg style="position: absolute; top: 12px; left: 16px; width: 28px; height: 28px; opacity: 0.2;" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <circle cx="14" cy="14" r="8" stroke="white" stroke-width="2" fill="none"/>
-                  <path d="M20 20 L36 36" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                  <path d="M30 30 L34 26" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                  <path d="M26 34 L30 30" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
-                </svg>
-                <!-- Lock doodle -->
-                <svg style="position: absolute; top: 12px; right: 16px; width: 26px; height: 30px; opacity: 0.2;" viewBox="0 0 36 42" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect x="4" y="18" width="28" height="20" rx="4" stroke="white" stroke-width="2" fill="none"/>
-                  <path d="M10 18 L10 12 Q10 4 18 4 Q26 4 26 12 L26 18" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
-                  <circle cx="18" cy="28" r="3" stroke="white" stroke-width="2" fill="none"/>
-                  <path d="M18 31 L18 34" stroke="white" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                <!-- Small scattered stars in header -->
-                <svg style="position: absolute; bottom: 8px; left: 30%; width: 14px; height: 14px; opacity: 0.15;" viewBox="0 0 20 20" fill="none">
-                  <path d="M10 2 L12 7 L17 7 L13 11 L14 16 L10 13 L6 16 L7 11 L3 7 L8 7 Z" stroke="white" stroke-width="1.2" fill="none"/>
-                </svg>
-                <svg style="position: absolute; bottom: 15px; right: 25%; width: 10px; height: 10px; opacity: 0.12;" viewBox="0 0 20 20" fill="none">
-                  <path d="M10 2 L12 7 L17 7 L13 11 L14 16 L10 13 L6 16 L7 11 L3 7 L8 7 Z" stroke="white" stroke-width="1.5" fill="none"/>
-                </svg>
-              </div>
-              <div class="icon">
-                <i class="fas fa-key"></i>
-              </div>
-              <h2>MACE Staff Portal</h2>
-              <p>Sign in or register to access your account</p>
-            </div>
+      <div class="form-wrapper">
+        
+        <!-- Segmented Tab Control -->
+        <div class="tab-control-container" id="tabRail">
+          <div class="tab-slider" id="tabSlider"></div>
+          <button class="tab-btn active" onclick="switchAuthTab('login')">Sign In</button>
+          <button class="tab-btn" onclick="switchAuthTab('register')">Register</button>
+        </div>
 
-            <!-- Wavy divider between header and form body -->
-            <div class="header-wave-divider">
-              <svg viewBox="0 0 500 20" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 0 L0 10 Q62.5 20 125 10 Q187.5 0 250 10 Q312.5 20 375 10 Q437.5 0 500 10 L500 0 Z" fill="#D97706"/>
-              </svg>
+        <!-- Login Form Panel -->
+        <div class="form-content active" id="loginPanel">
+          <div id="loginAlert" class="alert-box error"></div>
+          <form id="loginForm">
+            <div class="form-group-custom">
+              <input type="text" id="email" class="form-control-custom" placeholder=" " required autocomplete="username">
+              <label for="email" class="form-label-custom">Email Address</label>
+              <div class="form-input-focus-line"></div>
             </div>
-            
-            <div class="card-body">
-              <!-- Custom Sliding Capsule Selector -->
-              <div class="tab-slider-container mb-4">
-                <div class="tab-slider-indicator" id="tabIndicator"></div>
-                <button type="button" class="tab-slider-btn active" id="loginTabBtn" onclick="switchAuthTab('login')">
-                  <i class="fas fa-sign-in-alt me-2"></i>Login
-                </button>
-                <button type="button" class="tab-slider-btn" id="registerTabBtn" onclick="switchAuthTab('register')">
-                  <i class="fas fa-user-plus me-2"></i>Register
-                </button>
-              </div>
+            <div class="form-group-custom">
+              <input type="password" id="password" class="form-control-custom" placeholder=" " required autocomplete="current-password">
+              <label for="password" class="form-label-custom">Password</label>
+              <div class="form-input-focus-line"></div>
+            </div>
+            <div style="display: flex; justify-content: flex-end; margin-bottom: 2rem;">
+              <a href="#" class="back-btn" style="font-size: 0.85rem;" onclick="forgotPassword()"><i class="fa-solid fa-key"></i> Forgot password?</a>
+            </div>
+            <button type="submit" class="btn-cta btn-cta-primary" style="width: 100%; padding: 0.8rem 0;"><i class="fa-solid fa-right-to-bracket"></i> Sign In</button>
+          </form>
+          <p style="text-align: center; font-size: 0.85rem; color: var(--graphite-400); margin-top: 1.5rem;">
+            New staff member? <a href="#" style="color: var(--accent-amber); text-decoration: none; font-weight: 600;" onclick="switchAuthTab('register')">Switch to Register</a>
+          </p>
+        </div>
 
-              <!-- Hidden Native Bootstrap tabs for trigger mechanism safety -->
-              <ul class="nav nav-tabs" id="authTabs" role="tablist" style="display: none;">
-                <li class="nav-item" role="presentation">
-                  <button class="nav-link active" id="login-tab" data-bs-toggle="tab" data-bs-target="#login" type="button" role="tab" aria-controls="login" aria-selected="true"></button>
-                </li>
-                <li class="nav-item" role="presentation">
-                  <button class="nav-link" id="register-tab" data-bs-toggle="tab" data-bs-target="#register" type="button" role="tab" aria-controls="register" aria-selected="false"></button>
-                </li>
-              </ul>
-              
-              <div class="tab-content" id="authTabsContent">
-                <!-- Login Tab -->
-                <div class="tab-pane fade show active" id="login" role="tabpanel" aria-labelledby="login-tab">
-                  <form id="loginForm">
-                    <div class="mb-4">
-                      <label for="email" class="label-3d">Email Address</label>
-                      <input type="email" id="email" class="input-3d" placeholder="Enter your email" required>
-                    </div>
-                    
-                    <div class="mb-4">
-                      <label for="password" class="label-3d">Password</label>
-                      <div class="input-group-container">
-                        <input type="password" id="password" class="input-3d" placeholder="Enter your password" required>
-                        <span class="password-toggle" id="togglePassword">
-                          <i class="fas fa-eye"></i>
-                        </span>
-                      </div>
-                    </div>
-                    
-                    <div id="errorMsg" class="alert alert-danger d-none mb-4"></div>
-                    <div id="successMsg" class="alert alert-success d-none mb-4"></div>
-                    
-                    <button class="btn-3d btn-3d-orange w-100" type="submit" id="loginButton">
-                      <span id="buttonText">Sign In</span>
-                      <span id="buttonSpinner" class="spinner-border d-none" style="width: 1.25rem; height: 1.25rem; border-width: 0.15em;" role="status"></span>
-                    </button>
-                  </form>
+        <!-- Registration Form Panel -->
+        <div class="form-content" id="registerPanel">
+          <div id="regAlert" class="alert-box error"></div>
+          
+          <div id="registrationFormContainer">
+            <form id="registrationForm">
+              <div class="reg-grid-2">
+                <div class="form-group-custom">
+                  <input type="text" id="name" class="form-control-custom" placeholder=" " required>
+                  <label for="name" class="form-label-custom">Full Name</label>
+                  <div class="form-input-focus-line"></div>
                 </div>
-                
-                <!-- Registration Tab -->
-                <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
-                  <form id="registrationForm" class="registration-form">
-                    <!-- Pen doodle near registration title -->
-                    <div style="position: relative;">
-                      <svg style="position: absolute; top: -2px; right: 0; width: 22px; height: 22px; opacity: 0.2;" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M8 42 L38 12 L42 16 L12 46 Z" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M38 12 L42 8 L46 12 L42 16" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-                        <path d="M8 42 L5 48 L12 46" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round"/>
-                      </svg>
-                    </div>
-
-                    <!-- Personal Information Group -->
-                    <div class="form-section-divider">
-                      <span>Personal Info</span>
-                    </div>
-                    <div class="form-field-group">
-                      <div class="row">
-                        <div class="col-md-6 mb-3">
-                          <label for="name" class="label-3d">Full Name <span class="text-danger">*</span></label>
-                          <input type="text" class="input-3d" id="name" name="name" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                          <label for="emp_no" class="label-3d">Employee Number <span class="text-danger">*</span></label>
-                          <input type="text" class="input-3d" id="emp_no" name="emp_no">
-                        </div>
-                      </div>
-
-                      <div class="row">
-                        <div class="col-md-6 mb-3">
-                          <label for="reg_email" class="label-3d">Email Address <span class="text-danger">*</span></label>
-                          <input type="email" class="input-3d" id="reg_email" name="email" required>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                          <label for="mobile_no" class="label-3d">Mobile Number <span class="text-danger">*</span></label>
-                          <input type="tel" class="input-3d" id="mobile_no" name="mobile_no" required>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Professional Details Group -->
-                    <div class="form-section-divider">
-                      <!-- Small star doodle divider decoration -->
-                      <svg style="width: 14px; height: 14px; opacity: 0.3; flex-shrink: 0;" viewBox="0 0 20 20" fill="none">
-                        <path d="M10 2 L12 7 L17 7 L13 11 L14 16 L10 13 L6 16 L7 11 L3 7 L8 7 Z" stroke="#D97706" stroke-width="1.5" fill="none"/>
-                      </svg>
-                      <span>Professional Details</span>
-                      <svg style="width: 14px; height: 14px; opacity: 0.3; flex-shrink: 0;" viewBox="0 0 20 20" fill="none">
-                        <path d="M10 2 L12 7 L17 7 L13 11 L14 16 L10 13 L6 16 L7 11 L3 7 L8 7 Z" stroke="#D97706" stroke-width="1.5" fill="none"/>
-                      </svg>
-                    </div>
-                    <div class="form-field-group">
-                      <div class="row">
-                        <div class="col-md-6 mb-3">
-                          <label for="department" class="label-3d">Department <span class="text-danger">*</span></label>
-                          <select class="input-3d form-select" id="department" name="department" required>
-                            <option value="">Select Department</option>
-                            <option value="Electronics and Communication Engineering">Electronics & Communication</option>
-                            <option value="Civil Engineering">Civil Engineering</option>
-                            <option value="Mechanical Engineering">Mechanical Engineering</option>
-                            <option value="Computer Science and Engineering">Computer Science & Engineering</option>
-                            <option value="Administrative">Administrative</option>
-                            <option value="Electrical and Electronics Engineering">Electrical & Electronics</option>
-                            <option value="Mathematics">Mathematics</option>
-                            <option value="Science and Humanities">Science & Humanities</option>
-                            <option value="Computer Applications">Computer Applications</option>
-                          </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                          <label for="designation" class="label-3d">Designation <span class="text-danger">*</span></label>
-                          <input type="text" class="input-3d" id="designation" name="designation" required>
-                        </div>
-                      </div>
-
-                      <div class="row">
-                        <div class="col-md-6 mb-3">
-                          <label for="type" class="label-3d">Staff Type</label>
-                          <select class="input-3d form-select" id="type" name="type">
-                            <option value="">Select Type</option>
-                            <option value="Teaching Staff">Teaching Staff</option>
-                            <option value="Non Teaching Staff">Non Teaching Staff</option>
-                          </select>
-                        </div>
-                        <div class="col-md-6 mb-3">
-                          <label for="contract_type" class="label-3d">Contract Type</label>
-                          <select class="input-3d form-select" id="contract_type" name="contract_type">
-                            <option value="">Select Contract Type</option>
-                            <option value="Permanent">Permanent</option>
-                            <option value="Contract">Contract</option>
-                            <option value="Temporary">Temporary</option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-
-                    <!-- Additional Info Group -->
-                    <div class="form-section-divider">
-                      <span>Additional Info</span>
-                    </div>
-                    <div class="form-field-group">
-                      <div class="row">
-                        <div class="col-md-6 mb-3">
-                          <label for="category" class="label-3d">Category</label>
-                          <input type="text" class="input-3d" id="category" name="category">
-                        </div>
-                        <div class="col-md-6 mb-3">
-                          <label for="gender" class="label-3d">Gender</label>
-                          <select class="input-3d form-select" id="gender" name="gender">
-                            <option value="">Select Gender</option>
-                            <option value="Male">Male</option>
-                            <option value="Female">Female</option>
-                            <option value="Other">Other</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <div class="row">
-                        <div class="col-md-6 mb-3">
-                          <label for="blood_group" class="label-3d">Blood Group</label>
-                          <select class="input-3d form-select" id="blood_group" name="blood_group">
-                            <option value="">Select Blood Group</option>
-                            <option value="A+">A+</option>
-                            <option value="A-">A-</option>
-                            <option value="B+">B+</option>
-                            <option value="B-">B-</option>
-                            <option value="AB+">AB+</option>
-                            <option value="AB-">AB-</option>
-                            <option value="O+">O+</option>
-                            <option value="O-">O-</option>
-                          </select>
-                        </div>
-                      </div>
-
-                      <div class="mb-3">
-                        <label for="permanent_address" class="label-3d">Permanent Address</label>
-                        <textarea class="input-3d" id="permanent_address" name="permanent_address" rows="3"></textarea>
-                      </div>
-                    </div>
-
-                    <div class="info-alert">
-                      <i class="fas fa-info-circle me-2"></i>
-                      <strong>Important:</strong> Your registration will be reviewed by the admin. You will be notified once approved.
-                    </div>
-
-                    <div id="regErrorMsg" class="alert alert-danger d-none mb-4"></div>
-                    <div id="regSuccessMsg" class="alert alert-success d-none mb-4"></div>
-                    
-                    <button type="submit" class="btn-3d btn-3d-orange w-100" id="submitBtn">
-                      <i class="fas fa-paper-plane me-2"></i>Submit Registration
-                    </button>
-                  </form>
+                <div class="form-group-custom">
+                  <input type="text" id="emp_no" class="form-control-custom" placeholder=" " required>
+                  <label for="emp_no" class="form-label-custom">Employee ID / Sl No</label>
+                  <div class="form-input-focus-line"></div>
                 </div>
               </div>
-            </div>
+
+              <!-- Department Chip Single-Select -->
+              <div style="margin-bottom: 1.25rem;">
+                <span class="chip-select-label">Department</span>
+                <div class="chip-select-group" id="deptSelector">
+                  <div class="chip-option selected" data-value="CSE">CSE</div>
+                  <div class="chip-option" data-value="ECE">ECE</div>
+                  <div class="chip-option" data-value="EEE">EEE</div>
+                  <div class="chip-option" data-value="ME">ME</div>
+                  <div class="chip-option" data-value="CE">CE</div>
+                  <div class="chip-option" data-value="ADMIN">ADMIN</div>
+                </div>
+                <input type="hidden" id="department" value="CSE">
+              </div>
+
+              <div class="reg-grid-2">
+                <div class="form-group-custom">
+                  <input type="email" id="reg_email" class="form-control-custom" placeholder=" " required>
+                  <label for="reg_email" class="form-label-custom">Email Address</label>
+                  <div class="form-input-focus-line"></div>
+                </div>
+                <div class="form-group-custom">
+                  <input type="tel" id="mobile_no" class="form-control-custom" placeholder=" " required>
+                  <label for="mobile_no" class="form-label-custom">Phone / Mobile No</label>
+                  <div class="form-input-focus-line"></div>
+                </div>
+              </div>
+
+              <div class="reg-grid-2">
+                <div class="form-group-custom">
+                  <input type="text" id="designation" class="form-control-custom" placeholder=" " required>
+                  <label for="designation" class="form-label-custom">Designation</label>
+                  <div class="form-input-focus-line"></div>
+                </div>
+                <div class="form-group-custom">
+                  <select id="type" class="form-control-custom form-select-custom" required>
+                    <option value="Teaching">Teaching</option>
+                    <option value="Non-Teaching">Non-Teaching</option>
+                    <option value="Retired">Retired</option>
+                  </select>
+                  <label for="type" class="form-label-custom">Staff Type</label>
+                  <div class="form-input-focus-line"></div>
+                </div>
+              </div>
+
+              <div class="reg-grid-2">
+                <div class="form-group-custom">
+                  <select id="contract_type" class="form-control-custom form-select-custom" required>
+                    <option value="Permanent">Permanent</option>
+                    <option value="Contract">Contract</option>
+                    <option value="Guest">Guest</option>
+                  </select>
+                  <label for="contract_type" class="form-label-custom">Contract Type</label>
+                  <div class="form-input-focus-line"></div>
+                </div>
+                <div class="form-group-custom">
+                  <input type="text" id="category" class="form-control-custom" placeholder=" " required>
+                  <label for="category" class="form-label-custom">Category (e.g. Gen/OBC)</label>
+                  <div class="form-input-focus-line"></div>
+                </div>
+              </div>
+
+              <div class="reg-grid-2">
+                <div class="form-group-custom">
+                  <select id="gender" class="form-control-custom form-select-custom" required>
+                    <option value="Male">Male</option>
+                    <option value="Female">Female</option>
+                    <option value="Other">Other</option>
+                  </select>
+                  <label for="gender" class="form-label-custom">Gender</label>
+                  <div class="form-input-focus-line"></div>
+                </div>
+                <div class="form-group-custom">
+                  <select id="blood_group" class="form-control-custom form-select-custom" required>
+                    <option value="A+">A+</option>
+                    <option value="A-">A-</option>
+                    <option value="B+">B+</option>
+                    <option value="B-">B-</option>
+                    <option value="AB+">AB+</option>
+                    <option value="AB-">AB-</option>
+                    <option value="O+">O+</option>
+                    <option value="O-">O-</option>
+                  </select>
+                  <label for="blood_group" class="form-label-custom">Blood Group</label>
+                  <div class="form-input-focus-line"></div>
+                </div>
+              </div>
+
+              <div class="form-group-custom">
+                <input type="text" id="permanent_address" class="form-control-custom" placeholder=" " required>
+                <label for="permanent_address" class="form-label-custom">Permanent Address</label>
+                <div class="form-input-focus-line"></div>
+              </div>
+
+              <p style="font-size: 0.75rem; color: var(--graphite-400); margin-bottom: 1.5rem;">
+                *Note: Your phone number will act as your temporary password for your initial login upon approval.
+              </p>
+
+              <button type="submit" id="submitBtn" class="btn-cta btn-cta-primary" style="width: 100%; padding: 0.8rem 0;"><i class="fa-solid fa-paper-plane"></i> Submit for Review</button>
+            </form>
+          </div>
+          
+          <!-- Success State -->
+          <div id="registrationSuccessState" class="success-state" style="display: none;">
+            <!-- confirmation-illustration.svg inline -->
+            <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="25" y="15" width="70" height="90" rx="8" fill="#15181B" stroke="#6B7178" stroke-width="2" />
+              <circle cx="60" cy="50" r="18" fill="var(--accent-amber)" opacity="0.2" />
+              <path class="line-draw-path" d="M50 50 L57 57 L70 43" stroke="var(--accent-amber)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+              <circle cx="85" cy="85" r="15" fill="#15181B" stroke="var(--accent-emerald)" stroke-width="2" />
+              <!-- Clock doodle inside confirmation -->
+              <path d="M85 75 V85 H90" stroke="var(--accent-emerald)" stroke-width="1.5" stroke-linecap="round" />
+            </svg>
+            <h3>Registration Queued</h3>
+            <p>Your registration profile has been submitted successfully and is queued for administrative review. You will be able to log in once an admin approves your request.</p>
+            <a onclick="switchAuthTab('login')" class="back-btn"><i class="fa-solid fa-arrow-left-long"></i> Back to Sign In</a>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Right info panel -->
+    <div class="info-panel">
+      <div class="info-wrapper">
+        <div class="info-svg-container">
+          <!-- lock-shield.svg inline -->
+          <svg width="180" height="180" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path class="line-draw-path" d="M30 40 C 60 20, 140 20, 170 40 C 170 120, 100 180, 100 180 C 100 180, 30 120, 30 40 Z" stroke="#6B7178" stroke-width="2.5" opacity="0.4" />
+            <path class="line-draw-path" d="M100 25 V 175" stroke="#6B7178" stroke-width="1" stroke-dasharray="4 4" opacity="0.4" />
+            <path class="line-draw-path" d="M35 100 H 165" stroke="#6B7178" stroke-width="1" stroke-dasharray="4 4" opacity="0.4" />
+
+            <!-- Lock element -->
+            <g transform="translate(70, 70)">
+              <rect x="10" y="25" width="40" height="30" rx="4" fill="#15181B" stroke="var(--accent-amber)" stroke-width="2" />
+              <path d="M20 25 V 15 C 20 8, 40 8, 40 15 V 25" stroke="var(--accent-amber)" stroke-width="2" stroke-linecap="round" />
+              <circle cx="30" cy="40" r="3" fill="var(--accent-amber)" />
+            </g>
+          </svg>
+        </div>
+
+        <div class="info-slider">
+          <div class="slide-text active">
+            <h4>Secure Portal Gateway</h4>
+            <p>Access-controlled encryption ensures that staff records and college details remain strictly secure.</p>
+          </div>
+          <div class="slide-text">
+            <h4>Role-Based Administration</h4>
+            <p>Verify administrative approvals, rosters, and updates cleanly and dynamically.</p>
+          </div>
+          <div class="slide-text">
+            <h4>Google Sheets Synced</h4>
+            <p>Direct sync pipelines push registrations straight to official administrative review grids.</p>
           </div>
         </div>
       </div>
     </div>
+
   </div>
 
-  <!-- ═══════════════════════════════════════════
-       PREMIUM FOOTER
-       ═══════════════════════════════════════════ -->
-  <footer class="footer-premium anim-fade-in-up delay-5">
-    <!-- Wavy SVG divider -->
-    <div class="wave-divider" style="margin-bottom: 0.5rem;">
-      <svg viewBox="0 0 1200 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M0 25 Q150 5 300 25 Q450 45 600 25 Q750 5 900 25 Q1050 45 1200 25 L1200 40 L0 40 Z" fill="rgba(217,119,6,0.04)"/>
-      </svg>
-    </div>
-    <!-- Doodle icons row -->
-    <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 0.5rem; opacity: 0.35;">
-      <!-- Star -->
-      <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-        <path d="M10 2 L12 7 L17 7 L13 11 L14 16 L10 13 L6 16 L7 11 L3 7 L8 7 Z" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <!-- Code brackets -->
-      <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-        <path d="M7 4 L2 10 L7 16" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M13 4 L18 10 L13 16" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-      <!-- Heart -->
-      <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
-        <path d="M10 17 C5 13 2 9 5 6 C7 4 10 6 10 7 C10 6 13 4 15 6 C18 9 15 13 10 17 Z" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
-    <p style="margin: 0;">Powered by <span class="footer-brand">MACE Connect</span></p>
-  </footer>
-
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
   <script>
-    // Tab switching slider glide logic
-    function switchAuthTab(tabName) {
-      const loginTab = document.getElementById('login-tab');
-      const registerTab = document.getElementById('register-tab');
-      const indicator = document.getElementById('tabIndicator');
-      
-      if (tabName === 'login') {
-        document.getElementById('loginTabBtn').classList.add('active');
-        document.getElementById('registerTabBtn').classList.remove('active');
-        indicator.style.transform = 'translateX(0)';
-        const tabTrigger = new bootstrap.Tab(loginTab);
-        tabTrigger.show();
+    // Segmented slider and tab switching
+    function switchAuthTab(tab) {
+      const tabSlider = document.getElementById('tabSlider');
+      const loginPanel = document.getElementById('loginPanel');
+      const registerPanel = document.getElementById('registerPanel');
+      const tabBtns = document.querySelectorAll('.tab-btn');
+
+      if (tab === 'login') {
+        tabSlider.style.transform = 'translateX(0)';
+        tabBtns[0].classList.add('active');
+        tabBtns[1].classList.remove('active');
+        loginPanel.classList.add('active');
+        registerPanel.classList.remove('active');
       } else {
-        document.getElementById('registerTabBtn').classList.add('active');
-        document.getElementById('loginTabBtn').classList.remove('active');
-        indicator.style.transform = 'translateX(100%)';
-        const tabTrigger = new bootstrap.Tab(registerTab);
-        tabTrigger.show();
+        tabSlider.style.transform = 'translateX(100%)';
+        tabBtns[0].classList.remove('active');
+        tabBtns[1].classList.add('active');
+        loginPanel.classList.remove('active');
+        registerPanel.classList.add('active');
       }
     }
 
-    // Toggle password visibility
-    document.getElementById('togglePassword').addEventListener('click', function() {
-      const passwordInput = document.getElementById('password');
-      const icon = this.querySelector('i');
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        icon.classList.replace('fa-eye', 'fa-eye-slash');
-      } else {
-        passwordInput.type = 'password';
-        icon.classList.replace('fa-eye-slash', 'fa-eye');
+    // Chip selection logic for department
+    const chipSelector = document.getElementById('deptSelector');
+    chipSelector.addEventListener('click', (e) => {
+      if (e.target.classList.contains('chip-option')) {
+        document.querySelectorAll('.chip-option').forEach(chip => chip.classList.remove('selected'));
+        e.target.classList.add('selected');
+        document.getElementById('department').value = e.target.getAttribute('data-value');
       }
     });
 
-    // Show loading state
-    function showLoading() {
-      document.getElementById('buttonText').classList.add('d-none');
-      document.getElementById('buttonSpinner').classList.remove('d-none');
-      document.getElementById('loginButton').disabled = true;
+    // Rotating trust statements
+    let activeSlide = 0;
+    const slides = document.querySelectorAll('.slide-text');
+    setInterval(() => {
+      slides[activeSlide].classList.remove('active');
+      activeSlide = (activeSlide + 1) % slides.length;
+      slides[activeSlide].classList.add('active');
+    }, 4000);
+
+    // Form errors / helpers
+    function showError(msg) {
+      const alert = document.getElementById('loginAlert');
+      alert.textContent = msg;
+      alert.style.display = 'block';
     }
 
-    // Hide loading state
-    function hideLoading() {
-      document.getElementById('buttonText').classList.remove('d-none');
-      document.getElementById('buttonSpinner').classList.add('d-none');
-      document.getElementById('loginButton').disabled = false;
+    function showRegError(msg) {
+      const alert = document.getElementById('regAlert');
+      alert.textContent = msg;
+      alert.style.display = 'block';
     }
 
-    // Show error message
-    function showError(message) {
-      const errorMsg = document.getElementById('errorMsg');
-      const successMsg = document.getElementById('successMsg');
-      errorMsg.textContent = message;
-      errorMsg.classList.remove('d-none');
-      successMsg.classList.add('d-none');
-    }
-
-    // Show success message
-    function showSuccess(message) {
-      const errorMsg = document.getElementById('errorMsg');
-      const successMsg = document.getElementById('successMsg');
-      successMsg.textContent = message;
-      successMsg.classList.remove('d-none');
-      errorMsg.classList.add('d-none');
-    }
-
-    // Hide all messages
-    function hideMessages() {
-      document.getElementById('errorMsg').classList.add('d-none');
-      document.getElementById('successMsg').classList.add('d-none');
-    }
-
-    // Registration message functions
-    function showRegError(message) {
-      const errorMsg = document.getElementById('regErrorMsg');
-      const successMsg = document.getElementById('regSuccessMsg');
-      errorMsg.textContent = message;
-      errorMsg.classList.remove('d-none');
-      successMsg.classList.add('d-none');
-    }
-
-    function showRegSuccess(message) {
-      const errorMsg = document.getElementById('regErrorMsg');
-      const successMsg = document.getElementById('regSuccessMsg');
-      successMsg.textContent = message;
-      successMsg.classList.remove('d-none');
-      errorMsg.classList.add('d-none');
-    }
-
-    // Hide registration messages
-    function hideRegMessages() {
-      document.getElementById('regErrorMsg').classList.add('d-none');
-      document.getElementById('regSuccessMsg').classList.add('d-none');
-    }
-
-    // Handle login form submission
+    // Handle Sign In submission
     document.getElementById('loginForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = document.getElementById('email').value.trim();
       const password = document.getElementById('password').value.trim();
-      
+      const alert = document.getElementById('loginAlert');
+      alert.style.display = 'none';
+
       if (!email || !password) {
-        showError('Please enter both email and password');
+        showError('Please enter both email and password.');
         return;
       }
 
-      if (!email.includes('@')) {
-        showError('Please enter a valid email');
-        return;
-      }
+      const submitBtn = e.target.querySelector('button[type="submit"]');
+      const originalText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Authenticating...';
 
-      showLoading();
-      hideMessages();
-      
       try {
         await signInWithEmailAndPassword(email, password);
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        await new Promise(resolve => setTimeout(resolve, 1500));
         
         const currentUser = firebase.auth().currentUser;
         if (currentUser) {
           const isAdmin = await checkAdminStatus(currentUser);
-          showSuccess('Login successful! Redirecting...');
+          submitBtn.innerHTML = '<i class="fa-solid fa-circle-check"></i> Redirecting...';
           setTimeout(() => {
             if (isAdmin) {
-              window.location.href = '/admin.html';
+              window.location.href = '/admin';
             } else {
-              window.location.href = '/staff_list.html';
+              window.location.href = '/directory';
             }
-          }, 1000);
+          }, 800);
         } else {
-          showError('Login failed. Please try again.');
+          showError('Invalid credentials. Please verify your email and password.');
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = originalText;
         }
       } catch (error) {
         console.log('Login error:', error);
-        showError('Invalid credentials');
-      } finally {
-        hideLoading();
+        showError('Invalid credentials. Please check your spelling.');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
       }
     });
 
-    // Check if user is already logged in
+    // Check auth state on load
     firebase.auth().onAuthStateChanged((user) => {
       if (user) {
         checkAdminStatus(user).then(isAdmin => {
           if (isAdmin) {
-            window.location.href = '/admin.html';
+            window.location.href = '/admin';
           } else {
-            window.location.href = '/staff_list.html';
+            window.location.href = '/directory';
           }
-        }).catch(err => {
-          console.log('Error checking user role:', err);
-        });
+        }).catch(err => console.log('Error checking admin status:', err));
       }
     });
 
-    // Handle registration form submission
+    // Handle Register submission
     document.getElementById('registrationForm').addEventListener('submit', async function(e) {
       e.preventDefault();
-      
+      const alert = document.getElementById('regAlert');
+      alert.style.display = 'none';
+
       const submitBtn = document.getElementById('submitBtn');
       const originalText = submitBtn.innerHTML;
-      
       submitBtn.disabled = true;
-      submitBtn.innerHTML = '<div class="loading-spinner"></div> Submitting...';
-      hideRegMessages();
-      
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
+
       const formData = {
-          name: document.getElementById('name').value.trim(),
-          emp_no: document.getElementById('emp_no').value.trim(),
-          email: document.getElementById('reg_email').value.trim(),
-          mobile_no: document.getElementById('mobile_no').value.trim(),
-          department: document.getElementById('department').value,
-          designation: document.getElementById('designation').value.trim(),
-          type: document.getElementById('type').value,
-          contract_type: document.getElementById('contract_type').value,
-          category: document.getElementById('category').value.trim(),
-          gender: document.getElementById('gender').value,
-          blood_group: document.getElementById('blood_group').value,
-          permanent_address: document.getElementById('permanent_address').value.trim()
+        name: document.getElementById('name').value.trim(),
+        emp_no: document.getElementById('emp_no').value.trim(),
+        email: document.getElementById('reg_email').value.trim(),
+        mobile_no: document.getElementById('mobile_no').value.trim(),
+        department: document.getElementById('department').value,
+        designation: document.getElementById('designation').value.trim(),
+        type: document.getElementById('type').value,
+        contract_type: document.getElementById('contract_type').value,
+        category: document.getElementById('category').value.trim(),
+        gender: document.getElementById('gender').value,
+        blood_group: document.getElementById('blood_group').value,
+        permanent_address: document.getElementById('permanent_address').value.trim()
       };
-      
-      if (!formData.name || !formData.email || !formData.mobile_no || 
-          !formData.department || !formData.designation) {
-          showRegError('Please fill in all required fields');
-          submitBtn.disabled = false;
-          submitBtn.innerHTML = originalText;
-          return;
-      }
-      
+
       try {
-          const response = await fetch('/api/submit_registration', {
-              method: 'POST',
-              headers: {
-                  'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(formData)
-          });
-          
-          const result = await response.json();
-          
-          if (result.success) {
-              showRegSuccess(result.message);
-              this.reset();
-              setTimeout(() => {
-                  switchAuthTab('login');
-              }, 3000);
-          } else {
-              showRegError(result.error || 'Registration failed. Please try again.');
-          }
-      } catch (error) {
-          console.log('Registration error:', error);
-          showRegError('Network error. Please try again.');
-      } finally {
+        const response = await fetch('/api/submit_registration', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formData)
+        });
+
+        const result = await response.json();
+        if (result.success) {
+          // Hide form and show confirmation illustrated success state
+          document.getElementById('registrationFormContainer').style.display = 'none';
+          document.getElementById('registrationSuccessState').style.display = 'flex';
+          this.reset();
+        } else {
+          showRegError(result.error || 'Failed to submit registration. Please verify details.');
           submitBtn.disabled = false;
           submitBtn.innerHTML = originalText;
+        }
+      } catch (error) {
+        console.log('Registration error:', error);
+        showRegError('A network error occurred. Please verify your connection.');
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = originalText;
       }
     });
+
+    function forgotPassword() {
+      const email = document.getElementById('email').value.trim();
+      if (!email) {
+        showError('Please enter your email address to reset password.');
+        return;
+      }
+      firebase.auth().sendPasswordResetEmail(email)
+        .then(() => showError('Password reset email sent. Please check your inbox.'))
+        .catch(err => showError('Error: ' + err.message));
+    }
   </script>
 </body>
 </html>
