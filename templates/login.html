@@ -15,6 +15,10 @@
   <style>
     body {
       background: radial-gradient(circle at 0% 0%, #FFFBEB 0%, #FAF9F6 50%, #FEF3C7 100%);
+      background-image: 
+        radial-gradient(circle, rgba(217, 119, 6, 0.06) 1px, transparent 1px),
+        radial-gradient(circle at 0% 0%, #FFFBEB 0%, #FAF9F6 50%, #FEF3C7 100%);
+      background-size: 28px 28px, 100% 100%;
     }
 
     .login-wrapper {
@@ -23,7 +27,7 @@
       width: 100%;
       margin: 0 auto;
       gap: 4rem;
-      padding: 4rem 2rem;
+      padding: 4rem 2rem 2rem;
       align-items: center;
       position: relative;
       z-index: 10;
@@ -46,7 +50,7 @@
       position: relative;
       width: 100%;
       max-width: 440px;
-      height: 340px;
+      height: 360px;
       margin-bottom: 2rem;
     }
 
@@ -95,10 +99,12 @@
       animation: node-bob 6s ease-in-out infinite alternate;
     }
 
-    .node-1 { top: 10%; left: 10%; background: var(--primary-color); animation-delay: 0s; }
-    .node-2 { top: 15%; right: 10%; background: var(--accent-green); animation-delay: 1.5s; }
-    .node-3 { bottom: 10%; left: 15%; background: var(--accent-teal); animation-delay: 0.7s; }
-    .node-4 { bottom: 12%; right: 15%; background: var(--accent-purple); animation-delay: 2.2s; }
+    .node-1 { top: 8%; left: 8%; background: var(--primary-color); animation-delay: 0s; }
+    .node-2 { top: 5%; right: 15%; background: var(--accent-green); animation-delay: 1.5s; }
+    .node-3 { bottom: 8%; left: 12%; background: var(--accent-teal); animation-delay: 0.7s; }
+    .node-4 { bottom: 10%; right: 8%; background: var(--accent-purple); animation-delay: 2.2s; }
+    .node-5 { top: 50%; left: -2%; background: var(--accent-pink); animation-delay: 1s; transform: translateY(-50%); }
+    .node-6 { top: 50%; right: -2%; background: var(--accent-gold); animation-delay: 2.8s; transform: translateY(-50%); }
 
     @keyframes node-bob {
       0% { transform: translateY(0px) rotate(0deg); }
@@ -122,11 +128,12 @@
     .ray-2 { transform: rotate(-30deg) translateX(50px); }
     .ray-3 { transform: rotate(135deg) translateX(50px); }
     .ray-4 { transform: rotate(45deg) translateX(50px); }
+    .ray-5 { transform: rotate(180deg) translateX(50px); }
+    .ray-6 { transform: rotate(0deg) translateX(50px); }
 
     .welcome-text h1 {
       font-size: 3rem;
       font-weight: 800;
-      color: #78350F;
       margin-bottom: 1rem;
       letter-spacing: -0.5px;
     }
@@ -138,6 +145,19 @@
       line-height: 1.6;
       max-width: 480px;
       margin: 0 auto;
+    }
+
+    .welcome-decorative-icons {
+      display: flex;
+      gap: 1.25rem;
+      justify-content: center;
+      margin-top: 1.5rem;
+      opacity: 0.5;
+    }
+
+    .welcome-decorative-icons svg {
+      width: 28px;
+      height: 28px;
     }
 
     /* Right Panel - Login Form Stack */
@@ -155,27 +175,55 @@
       border-radius: 26px 26px 0 0;
     }
 
+    .login-header .header-doodles {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
     .login-header .icon {
       font-size: 2.5rem;
       margin-bottom: 0.5rem;
       display: inline-block;
       filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.15));
+      position: relative;
+      z-index: 2;
     }
 
     .login-header h2 {
       font-size: 1.7rem;
       font-weight: 800;
       margin-bottom: 0.25rem;
+      position: relative;
+      z-index: 2;
     }
 
     .login-header p {
       font-size: 0.925rem;
       opacity: 0.9;
       margin-bottom: 0;
+      position: relative;
+      z-index: 2;
     }
 
     .card-body {
       padding: 2.2rem;
+    }
+
+    /* Wavy divider between header and body */
+    .header-wave-divider {
+      position: relative;
+      margin-top: -2px;
+      z-index: 5;
+    }
+    .header-wave-divider svg {
+      display: block;
+      width: 100%;
+      height: 20px;
     }
 
     /* Password eye alignment */
@@ -244,12 +292,77 @@
       100% { transform: rotate(360deg); }
     }
 
+    /* Registration form section divider */
+    .form-section-divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin: 0.75rem 0 1rem;
+      color: #9CA3AF;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+    .form-section-divider::before,
+    .form-section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #E5E7EB, transparent);
+    }
+
+    /* Registration form field groups */
+    .form-field-group {
+      background: #FEFCF8;
+      border-radius: 16px;
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+      border: 1px solid rgba(229, 231, 235, 0.5);
+    }
+
+    /* SVG Doodle global styles */
+    .svg-doodle {
+      position: absolute;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    @keyframes doodle-float {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      25% { transform: translateY(-8px) rotate(2deg); }
+      50% { transform: translateY(-14px) rotate(0deg); }
+      75% { transform: translateY(-6px) rotate(-2deg); }
+    }
+
+    @keyframes doodle-float-alt {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-18px) rotate(5deg); }
+    }
+
+    @keyframes doodle-spin-slow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+
+    @keyframes doodle-wiggle {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(4deg); }
+      75% { transform: rotate(-4deg); }
+    }
+
+    @keyframes doodle-drift {
+      0%, 100% { transform: translate(0, 0) rotate(0deg); }
+      33% { transform: translate(8px, -5px) rotate(3deg); }
+      66% { transform: translate(-5px, -10px) rotate(-2deg); }
+    }
+
     /* Responsive adjustments */
     @media (max-width: 992px) {
       .login-wrapper {
         flex-direction: column;
         gap: 3rem;
-        padding: 3rem 1rem;
+        padding: 3rem 1rem 1rem;
       }
       
       .left-panel {
@@ -266,6 +379,10 @@
         max-width: 460px;
         order: 1;
       }
+
+      .svg-doodle {
+        display: none;
+      }
     }
   </style>
 </head>
@@ -273,43 +390,305 @@
 
   <!-- Mesh Constellation background is animated dynamically via canvas -->
 
+  <!-- ═══════════════════════════════════════════
+       SVG DOODLE ILLUSTRATIONS SCATTERED ACROSS PAGE
+       ═══════════════════════════════════════════ -->
+
+  <!-- Star Doodle 1 — large, top-left -->
+  <svg class="svg-doodle" style="top: 5%; left: 3%; width: 80px; height: 80px; opacity: 0.09; animation: doodle-float 7s ease-in-out infinite;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 5 L61 38 L95 38 L68 58 L79 92 L50 72 L21 92 L32 58 L5 38 L39 38 Z" stroke="#D97706" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  <!-- Star Doodle 2 — mid-right -->
+  <svg class="svg-doodle" style="top: 15%; right: 5%; width: 55px; height: 55px; opacity: 0.07; animation: doodle-spin-slow 25s linear infinite;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 10 L58 40 L90 40 L64 58 L72 88 L50 70 L28 88 L36 58 L10 40 L42 40 Z" stroke="#F59E0B" stroke-width="3" fill="none" stroke-linecap="round"/>
+  </svg>
+
+  <!-- Star Doodle 3 — bottom-left -->
+  <svg class="svg-doodle" style="bottom: 15%; left: 6%; width: 65px; height: 65px; opacity: 0.08; animation: doodle-float-alt 9s ease-in-out infinite;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 8 L60 36 L92 36 L66 56 L76 88 L50 68 L24 88 L34 56 L8 36 L40 36 Z" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  <!-- Star Doodle 4 — small, bottom-right -->
+  <svg class="svg-doodle" style="bottom: 25%; right: 10%; width: 40px; height: 40px; opacity: 0.1; animation: doodle-wiggle 5s ease-in-out infinite;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M50 5 L61 38 L95 38 L68 58 L79 92 L50 72 L21 92 L32 58 L5 38 L39 38 Z" stroke="#F59E0B" stroke-width="3" fill="none"/>
+  </svg>
+
+  <!-- Wavy Squiggle 1 — top flowing across -->
+  <svg class="svg-doodle" style="top: 12%; left: 10%; width: 300px; height: 40px; opacity: 0.06;" viewBox="0 0 300 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 20 Q25 5 50 20 Q75 35 100 20 Q125 5 150 20 Q175 35 200 20 Q225 5 250 20 Q275 35 300 20" stroke="#D97706" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  </svg>
+
+  <!-- Wavy Squiggle 2 — bottom flowing across -->
+  <svg class="svg-doodle" style="bottom: 8%; left: 20%; width: 400px; height: 35px; opacity: 0.07; animation: doodle-drift 12s ease-in-out infinite;" viewBox="0 0 400 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M0 18 Q30 3 60 18 Q90 33 120 18 Q150 3 180 18 Q210 33 240 18 Q270 3 300 18 Q330 33 360 18 Q390 3 400 18" stroke="#F59E0B" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </svg>
+
+  <!-- Wavy Squiggle 3 — mid-page vertical-ish -->
+  <svg class="svg-doodle" style="top: 40%; right: 3%; width: 35px; height: 200px; opacity: 0.06;" viewBox="0 0 35 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M18 0 Q3 25 18 50 Q33 75 18 100 Q3 125 18 150 Q33 175 18 200" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </svg>
+
+  <!-- Dotted Circle 1 — top area -->
+  <svg class="svg-doodle" style="top: 8%; left: 25%; width: 90px; height: 90px; opacity: 0.08; animation: doodle-spin-slow 30s linear infinite;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="42" stroke="#D97706" stroke-width="2.5" stroke-dasharray="6 8" fill="none"/>
+  </svg>
+
+  <!-- Dotted Circle 2 — mid-left -->
+  <svg class="svg-doodle" style="top: 55%; left: 2%; width: 70px; height: 70px; opacity: 0.07; animation: doodle-spin-slow 22s linear infinite reverse;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="40" stroke="#F59E0B" stroke-width="2" stroke-dasharray="4 10" fill="none"/>
+  </svg>
+
+  <!-- Dotted Circle 3 — bottom right -->
+  <svg class="svg-doodle" style="bottom: 18%; right: 4%; width: 100px; height: 100px; opacity: 0.06; animation: doodle-spin-slow 35s linear infinite;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="44" stroke="#D97706" stroke-width="2" stroke-dasharray="8 6" fill="none"/>
+  </svg>
+
+  <!-- Dotted Circle 4 — top right area -->
+  <svg class="svg-doodle" style="top: 22%; right: 18%; width: 50px; height: 50px; opacity: 0.1; animation: doodle-spin-slow 18s linear infinite reverse;" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="50" cy="50" r="38" stroke="#F59E0B" stroke-width="3" stroke-dasharray="5 12" fill="none"/>
+  </svg>
+
+  <!-- Arrow Doodle 1 — pointing toward login form -->
+  <svg class="svg-doodle" style="top: 35%; right: 38%; width: 50px; height: 40px; opacity: 0.1; animation: doodle-wiggle 4s ease-in-out infinite;" viewBox="0 0 60 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5 20 L45 20 M35 10 L48 20 L35 30" stroke="#D97706" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  <!-- Arrow Doodle 2 — smaller, pointing down-right -->
+  <svg class="svg-doodle" style="top: 28%; right: 42%; width: 35px; height: 35px; opacity: 0.08; animation: doodle-float 6s ease-in-out infinite;" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M10 10 L35 35 M25 35 L38 35 L38 22" stroke="#F59E0B" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  <!-- Cloud Doodle 1 — top area -->
+  <svg class="svg-doodle" style="top: 3%; left: 40%; width: 120px; height: 60px; opacity: 0.07; animation: doodle-drift 10s ease-in-out infinite;" viewBox="0 0 140 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M25 50 Q5 50 10 35 Q12 20 30 22 Q35 8 55 12 Q70 5 85 15 Q105 8 110 25 Q130 22 128 38 Q135 52 115 50 Z" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  <!-- Cloud Doodle 2 — smaller, right side -->
+  <svg class="svg-doodle" style="top: 6%; right: 15%; width: 90px; height: 50px; opacity: 0.06; animation: doodle-drift 14s ease-in-out infinite 2s;" viewBox="0 0 140 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M25 50 Q5 50 10 35 Q12 20 30 22 Q35 8 55 12 Q70 5 85 15 Q105 8 110 25 Q130 22 128 38 Q135 52 115 50 Z" stroke="#F59E0B" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  </svg>
+
+  <!-- Heart Doodle 1 — subtle, left -->
+  <svg class="svg-doodle" style="top: 70%; left: 8%; width: 35px; height: 35px; opacity: 0.09; animation: doodle-float 6s ease-in-out infinite 1s;" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M25 42 C10 30 2 18 12 10 C20 4 25 12 25 16 C25 12 30 4 38 10 C48 18 40 30 25 42 Z" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  <!-- Heart Doodle 2 — tiny, top right -->
+  <svg class="svg-doodle" style="top: 20%; right: 8%; width: 25px; height: 25px; opacity: 0.08; animation: doodle-wiggle 5s ease-in-out infinite;" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M25 42 C10 30 2 18 12 10 C20 4 25 12 25 16 C25 12 30 4 38 10 C48 18 40 30 25 42 Z" stroke="#F59E0B" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  </svg>
+
+  <!-- Heart Doodle 3 — near bottom -->
+  <svg class="svg-doodle" style="bottom: 30%; left: 15%; width: 22px; height: 22px; opacity: 0.07; animation: doodle-float-alt 7s ease-in-out infinite;" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M25 42 C10 30 2 18 12 10 C20 4 25 12 25 16 C25 12 30 4 38 10 C48 18 40 30 25 42 Z" stroke="#D97706" stroke-width="2.5" fill="none"/>
+  </svg>
+
+  <!-- Lightning Bolt — near network hub area -->
+  <svg class="svg-doodle" style="top: 30%; left: 32%; width: 35px; height: 50px; opacity: 0.1; animation: doodle-wiggle 3s ease-in-out infinite;" viewBox="0 0 40 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M22 2 L8 28 L18 28 L14 58 L34 24 L22 24 Z" stroke="#F59E0B" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  <!-- Paper Airplane — floating -->
+  <svg class="svg-doodle" style="top: 18%; left: 55%; width: 50px; height: 50px; opacity: 0.08; animation: doodle-drift 11s ease-in-out infinite;" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M5 30 L55 5 L35 55 L28 32 Z" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M28 32 L55 5" stroke="#D97706" stroke-width="2" stroke-linecap="round"/>
+  </svg>
+
+  <!-- Pencil/Pen Doodle — near registration area -->
+  <svg class="svg-doodle" style="top: 60%; right: 6%; width: 45px; height: 45px; opacity: 0.09; animation: doodle-float 8s ease-in-out infinite 2s;" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 42 L38 12 L42 16 L12 46 Z" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M38 12 L42 8 L46 12 L42 16" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M8 42 L5 48 L12 46" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  <!-- Flower/Plant Doodle — bottom-left corner -->
+  <svg class="svg-doodle" style="bottom: 5%; left: 3%; width: 50px; height: 60px; opacity: 0.08; animation: doodle-wiggle 6s ease-in-out infinite;" viewBox="0 0 50 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M25 68 L25 30" stroke="#D97706" stroke-width="2" stroke-linecap="round"/>
+    <path d="M25 40 Q15 35 12 45" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M25 35 Q35 30 38 40" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <circle cx="25" cy="22" r="8" stroke="#F59E0B" stroke-width="2" fill="none"/>
+    <circle cx="17" cy="28" r="6" stroke="#D97706" stroke-width="1.5" fill="none"/>
+    <circle cx="33" cy="28" r="6" stroke="#D97706" stroke-width="1.5" fill="none"/>
+    <circle cx="25" cy="14" r="6" stroke="#D97706" stroke-width="1.5" fill="none"/>
+  </svg>
+
+  <!-- Flower/Plant Doodle 2 — top-right corner -->
+  <svg class="svg-doodle" style="top: 2%; right: 3%; width: 40px; height: 50px; opacity: 0.06; animation: doodle-float 9s ease-in-out infinite 3s;" viewBox="0 0 50 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M25 68 L25 32" stroke="#F59E0B" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="25" cy="24" r="9" stroke="#F59E0B" stroke-width="2" fill="none"/>
+    <circle cx="16" cy="30" r="6" stroke="#F59E0B" stroke-width="1.5" fill="none"/>
+    <circle cx="34" cy="30" r="6" stroke="#F59E0B" stroke-width="1.5" fill="none"/>
+  </svg>
+
+  <!-- Code Bracket Doodle 1 — left bracket -->
+  <svg class="svg-doodle" style="top: 45%; left: 1%; width: 30px; height: 50px; opacity: 0.1; animation: doodle-float-alt 8s ease-in-out infinite;" viewBox="0 0 30 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M22 5 L8 30 L22 55" stroke="#D97706" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  <!-- Code Bracket Doodle 2 — right bracket -->
+  <svg class="svg-doodle" style="bottom: 35%; right: 2%; width: 30px; height: 50px; opacity: 0.1; animation: doodle-float-alt 8s ease-in-out infinite 1s;" viewBox="0 0 30 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M8 5 L22 30 L8 55" stroke="#F59E0B" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  <!-- Diamond/Gem Doodle 1 -->
+  <svg class="svg-doodle" style="top: 75%; right: 20%; width: 35px; height: 35px; opacity: 0.09; animation: doodle-float 7s ease-in-out infinite 2s;" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M25 5 L45 20 L25 45 L5 20 Z" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M5 20 L45 20" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M15 5 L20 20 L25 45" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <path d="M35 5 L30 20 L25 45" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  </svg>
+
+  <!-- Diamond/Gem Doodle 2 — smaller -->
+  <svg class="svg-doodle" style="top: 10%; left: 60%; width: 25px; height: 25px; opacity: 0.07; animation: doodle-spin-slow 20s linear infinite;" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M25 5 L45 20 L25 45 L5 20 Z" stroke="#F59E0B" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  <!-- Additional tiny scattered dots/plus signs for richness -->
+  <svg class="svg-doodle" style="top: 50%; left: 20%; width: 15px; height: 15px; opacity: 0.12;" viewBox="0 0 20 20" fill="none">
+    <line x1="10" y1="2" x2="10" y2="18" stroke="#D97706" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="2" y1="10" x2="18" y2="10" stroke="#D97706" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+
+  <svg class="svg-doodle" style="top: 85%; left: 45%; width: 12px; height: 12px; opacity: 0.1;" viewBox="0 0 20 20" fill="none">
+    <line x1="10" y1="2" x2="10" y2="18" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round"/>
+    <line x1="2" y1="10" x2="18" y2="10" stroke="#F59E0B" stroke-width="2.5" stroke-linecap="round"/>
+  </svg>
+
+  <svg class="svg-doodle" style="top: 38%; right: 25%; width: 10px; height: 10px; opacity: 0.15;" viewBox="0 0 20 20" fill="none">
+    <circle cx="10" cy="10" r="4" fill="#D97706"/>
+  </svg>
+
+  <svg class="svg-doodle" style="top: 65%; left: 42%; width: 10px; height: 10px; opacity: 0.12;" viewBox="0 0 20 20" fill="none">
+    <circle cx="10" cy="10" r="4" fill="#F59E0B"/>
+  </svg>
+
+
+  <!-- ═══════════════════════════════════════════
+       MAIN CONTENT
+       ═══════════════════════════════════════════ -->
   <div class="container-fluid">
     <div class="login-wrapper">
       <!-- Left Panel - Dynamic Network Mockup -->
-      <div class="left-panel">
+      <div class="left-panel anim-fade-in-left delay-2">
         <div class="network-container">
           <!-- Central Hub -->
           <div class="portal-hub">
             <i class="fas fa-graduation-cap"></i>
           </div>
-          <!-- Surrounding Staff Nodes -->
+          <!-- Surrounding Staff Nodes — 6 nodes -->
           <div class="network-node node-1" title="John Doe">JD</div>
           <div class="network-node node-2" title="Jane Smith">JS</div>
           <div class="network-node node-3" title="Anurag Mohan">AM</div>
           <div class="network-node node-4" title="Kelly T">KT</div>
+          <div class="network-node node-5" title="Priya R">PR</div>
+          <div class="network-node node-6" title="Sam W">SW</div>
           
-          <!-- Connections -->
+          <!-- Connections — 6 rays -->
           <div class="network-ray ray-1"></div>
           <div class="network-ray ray-2"></div>
           <div class="network-ray ray-3"></div>
           <div class="network-ray ray-4"></div>
+          <div class="network-ray ray-5"></div>
+          <div class="network-ray ray-6"></div>
+
+          <!-- Doodle illustrations around the network -->
+          <!-- Graduation Cap doodle -->
+          <svg style="position: absolute; top: -8px; left: 50%; transform: translateX(-50%); width: 36px; height: 30px; opacity: 0.15;" viewBox="0 0 50 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M25 8 L5 18 L25 28 L45 18 Z" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 20 L12 32 Q25 40 38 32 L38 20" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M42 18 L42 30" stroke="#D97706" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+
+          <!-- Book doodle -->
+          <svg style="position: absolute; bottom: -5px; left: 5%; width: 32px; height: 28px; opacity: 0.12;" viewBox="0 0 50 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 5 L5 35 Q25 28 25 28 Q25 28 45 35 L45 5 Q25 12 25 12 Q25 12 5 5 Z" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M25 12 L25 28" stroke="#D97706" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+
+          <!-- Globe doodle -->
+          <svg style="position: absolute; bottom: 0; right: 5%; width: 30px; height: 30px; opacity: 0.12; animation: doodle-spin-slow 30s linear infinite;" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="25" cy="25" r="20" stroke="#F59E0B" stroke-width="2" fill="none"/>
+            <ellipse cx="25" cy="25" rx="10" ry="20" stroke="#F59E0B" stroke-width="1.5" fill="none"/>
+            <path d="M5 25 L45 25" stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round"/>
+            <path d="M10 14 L40 14" stroke="#F59E0B" stroke-width="1" stroke-linecap="round"/>
+            <path d="M10 36 L40 36" stroke="#F59E0B" stroke-width="1" stroke-linecap="round"/>
+          </svg>
         </div>
-        <div class="welcome-text">
-          <h1>Welcome to MACE</h1>
-          <p>Access your staff portal with secure authentication and manage your profile seamlessly.</p>
+
+        <div class="welcome-text" style="text-align: center;">
+          <h1 class="gradient-text-warm">Welcome to MACE</h1>
+          <p>Access your staff portal with <span class="squiggly-underline">secure authentication</span> and manage your profile seamlessly.</p>
+          
+          <!-- Decorative hand-drawn style icons row -->
+          <div class="welcome-decorative-icons">
+            <!-- Mini shield icon -->
+            <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15 3 L26 8 L26 16 Q26 24 15 28 Q4 24 4 16 L4 8 Z" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M11 15 L14 18 L20 12" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <!-- Mini users icon -->
+            <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="11" cy="10" r="4" stroke="#D97706" stroke-width="1.5" fill="none"/>
+              <path d="M4 24 Q4 18 11 18 Q18 18 18 24" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+              <circle cx="21" cy="10" r="3" stroke="#F59E0B" stroke-width="1.5" fill="none"/>
+              <path d="M18 22 Q18 17 22 17 Q26 17 26 22" stroke="#F59E0B" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            </svg>
+            <!-- Mini chart icon -->
+            <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M5 25 L5 15 L10 15 L10 25" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M12 25 L12 8 L17 8 L17 25" stroke="#F59E0B" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M19 25 L19 12 L24 12 L24 25" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <!-- Mini star icon -->
+            <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M15 3 L18 11 L27 11 L20 17 L23 25 L15 20 L7 25 L10 17 L3 11 L12 11 Z" stroke="#F59E0B" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
         </div>
       </div>
 
       <!-- Right Panel - Login Card Deck -->
-      <div class="right-panel">
+      <div class="right-panel anim-fade-in-right delay-3">
         <div class="card-deck-3d">
-          <div class="card-stacked-3d">
+          <div class="card-stacked-3d" style="box-shadow: var(--shadow-elevated);">
             <div class="login-header">
+              <!-- Decorative doodles inside header -->
+              <div class="header-doodles">
+                <!-- Key doodle -->
+                <svg style="position: absolute; top: 12px; left: 16px; width: 28px; height: 28px; opacity: 0.2;" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="14" cy="14" r="8" stroke="white" stroke-width="2" fill="none"/>
+                  <path d="M20 20 L36 36" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M30 30 L34 26" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                  <path d="M26 34 L30 30" stroke="white" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                <!-- Lock doodle -->
+                <svg style="position: absolute; top: 12px; right: 16px; width: 26px; height: 30px; opacity: 0.2;" viewBox="0 0 36 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="4" y="18" width="28" height="20" rx="4" stroke="white" stroke-width="2" fill="none"/>
+                  <path d="M10 18 L10 12 Q10 4 18 4 Q26 4 26 12 L26 18" stroke="white" stroke-width="2" fill="none" stroke-linecap="round"/>
+                  <circle cx="18" cy="28" r="3" stroke="white" stroke-width="2" fill="none"/>
+                  <path d="M18 31 L18 34" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                <!-- Small scattered stars in header -->
+                <svg style="position: absolute; bottom: 8px; left: 30%; width: 14px; height: 14px; opacity: 0.15;" viewBox="0 0 20 20" fill="none">
+                  <path d="M10 2 L12 7 L17 7 L13 11 L14 16 L10 13 L6 16 L7 11 L3 7 L8 7 Z" stroke="white" stroke-width="1.2" fill="none"/>
+                </svg>
+                <svg style="position: absolute; bottom: 15px; right: 25%; width: 10px; height: 10px; opacity: 0.12;" viewBox="0 0 20 20" fill="none">
+                  <path d="M10 2 L12 7 L17 7 L13 11 L14 16 L10 13 L6 16 L7 11 L3 7 L8 7 Z" stroke="white" stroke-width="1.5" fill="none"/>
+                </svg>
+              </div>
               <div class="icon">
                 <i class="fas fa-key"></i>
               </div>
               <h2>MACE Staff Portal</h2>
               <p>Sign in or register to access your account</p>
+            </div>
+
+            <!-- Wavy divider between header and form body -->
+            <div class="header-wave-divider">
+              <svg viewBox="0 0 500 20" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0 L0 10 Q62.5 20 125 10 Q187.5 0 250 10 Q312.5 20 375 10 Q437.5 0 500 10 L500 0 Z" fill="#D97706"/>
+              </svg>
             </div>
             
             <div class="card-body">
@@ -366,106 +745,140 @@
                 <!-- Registration Tab -->
                 <div class="tab-pane fade" id="register" role="tabpanel" aria-labelledby="register-tab">
                   <form id="registrationForm" class="registration-form">
-                    <div class="row">
-                      <div class="col-md-6 mb-3">
-                        <label for="name" class="label-3d">Full Name <span class="text-danger">*</span></label>
-                        <input type="text" class="input-3d" id="name" name="name" required>
+                    <!-- Pen doodle near registration title -->
+                    <div style="position: relative;">
+                      <svg style="position: absolute; top: -2px; right: 0; width: 22px; height: 22px; opacity: 0.2;" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 42 L38 12 L42 16 L12 46 Z" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M38 12 L42 8 L46 12 L42 16" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M8 42 L5 48 L12 46" stroke="#D97706" stroke-width="2" fill="none" stroke-linecap="round"/>
+                      </svg>
+                    </div>
+
+                    <!-- Personal Information Group -->
+                    <div class="form-section-divider">
+                      <span>Personal Info</span>
+                    </div>
+                    <div class="form-field-group">
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label for="name" class="label-3d">Full Name <span class="text-danger">*</span></label>
+                          <input type="text" class="input-3d" id="name" name="name" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label for="emp_no" class="label-3d">Employee Number <span class="text-danger">*</span></label>
+                          <input type="text" class="input-3d" id="emp_no" name="emp_no">
+                        </div>
                       </div>
-                      <div class="col-md-6 mb-3">
-                        <label for="emp_no" class="label-3d">Employee Number <span class="text-danger">*</span></label>
-                        <input type="text" class="input-3d" id="emp_no" name="emp_no">
+
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label for="reg_email" class="label-3d">Email Address <span class="text-danger">*</span></label>
+                          <input type="email" class="input-3d" id="reg_email" name="email" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label for="mobile_no" class="label-3d">Mobile Number <span class="text-danger">*</span></label>
+                          <input type="tel" class="input-3d" id="mobile_no" name="mobile_no" required>
+                        </div>
                       </div>
                     </div>
 
-                    <div class="row">
-                      <div class="col-md-6 mb-3">
-                        <label for="reg_email" class="label-3d">Email Address <span class="text-danger">*</span></label>
-                        <input type="email" class="input-3d" id="reg_email" name="email" required>
+                    <!-- Professional Details Group -->
+                    <div class="form-section-divider">
+                      <!-- Small star doodle divider decoration -->
+                      <svg style="width: 14px; height: 14px; opacity: 0.3; flex-shrink: 0;" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 2 L12 7 L17 7 L13 11 L14 16 L10 13 L6 16 L7 11 L3 7 L8 7 Z" stroke="#D97706" stroke-width="1.5" fill="none"/>
+                      </svg>
+                      <span>Professional Details</span>
+                      <svg style="width: 14px; height: 14px; opacity: 0.3; flex-shrink: 0;" viewBox="0 0 20 20" fill="none">
+                        <path d="M10 2 L12 7 L17 7 L13 11 L14 16 L10 13 L6 16 L7 11 L3 7 L8 7 Z" stroke="#D97706" stroke-width="1.5" fill="none"/>
+                      </svg>
+                    </div>
+                    <div class="form-field-group">
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label for="department" class="label-3d">Department <span class="text-danger">*</span></label>
+                          <select class="input-3d form-select" id="department" name="department" required>
+                            <option value="">Select Department</option>
+                            <option value="Electronics and Communication Engineering">Electronics & Communication</option>
+                            <option value="Civil Engineering">Civil Engineering</option>
+                            <option value="Mechanical Engineering">Mechanical Engineering</option>
+                            <option value="Computer Science and Engineering">Computer Science & Engineering</option>
+                            <option value="Administrative">Administrative</option>
+                            <option value="Electrical and Electronics Engineering">Electrical & Electronics</option>
+                            <option value="Mathematics">Mathematics</option>
+                            <option value="Science and Humanities">Science & Humanities</option>
+                            <option value="Computer Applications">Computer Applications</option>
+                          </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label for="designation" class="label-3d">Designation <span class="text-danger">*</span></label>
+                          <input type="text" class="input-3d" id="designation" name="designation" required>
+                        </div>
                       </div>
-                      <div class="col-md-6 mb-3">
-                        <label for="mobile_no" class="label-3d">Mobile Number <span class="text-danger">*</span></label>
-                        <input type="tel" class="input-3d" id="mobile_no" name="mobile_no" required>
+
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label for="type" class="label-3d">Staff Type</label>
+                          <select class="input-3d form-select" id="type" name="type">
+                            <option value="">Select Type</option>
+                            <option value="Teaching Staff">Teaching Staff</option>
+                            <option value="Non Teaching Staff">Non Teaching Staff</option>
+                          </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label for="contract_type" class="label-3d">Contract Type</label>
+                          <select class="input-3d form-select" id="contract_type" name="contract_type">
+                            <option value="">Select Contract Type</option>
+                            <option value="Permanent">Permanent</option>
+                            <option value="Contract">Contract</option>
+                            <option value="Temporary">Temporary</option>
+                          </select>
+                        </div>
                       </div>
                     </div>
 
-                    <div class="row">
-                      <div class="col-md-6 mb-3">
-                        <label for="department" class="label-3d">Department <span class="text-danger">*</span></label>
-                        <select class="input-3d form-select" id="department" name="department" required>
-                          <option value="">Select Department</option>
-                          <option value="Electronics and Communication Engineering">Electronics & Communication</option>
-                          <option value="Civil Engineering">Civil Engineering</option>
-                          <option value="Mechanical Engineering">Mechanical Engineering</option>
-                          <option value="Computer Science and Engineering">Computer Science & Engineering</option>
-                          <option value="Administrative">Administrative</option>
-                          <option value="Electrical and Electronics Engineering">Electrical & Electronics</option>
-                          <option value="Mathematics">Mathematics</option>
-                          <option value="Science and Humanities">Science & Humanities</option>
-                          <option value="Computer Applications">Computer Applications</option>
-                        </select>
-                      </div>
-                      <div class="col-md-6 mb-3">
-                        <label for="designation" class="label-3d">Designation <span class="text-danger">*</span></label>
-                        <input type="text" class="input-3d" id="designation" name="designation" required>
-                      </div>
+                    <!-- Additional Info Group -->
+                    <div class="form-section-divider">
+                      <span>Additional Info</span>
                     </div>
+                    <div class="form-field-group">
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label for="category" class="label-3d">Category</label>
+                          <input type="text" class="input-3d" id="category" name="category">
+                        </div>
+                        <div class="col-md-6 mb-3">
+                          <label for="gender" class="label-3d">Gender</label>
+                          <select class="input-3d form-select" id="gender" name="gender">
+                            <option value="">Select Gender</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </div>
+                      </div>
 
-                    <div class="row">
-                      <div class="col-md-6 mb-3">
-                        <label for="type" class="label-3d">Staff Type</label>
-                        <select class="input-3d form-select" id="type" name="type">
-                          <option value="">Select Type</option>
-                          <option value="Teaching Staff">Teaching Staff</option>
-                          <option value="Non Teaching Staff">Non Teaching Staff</option>
-                        </select>
+                      <div class="row">
+                        <div class="col-md-6 mb-3">
+                          <label for="blood_group" class="label-3d">Blood Group</label>
+                          <select class="input-3d form-select" id="blood_group" name="blood_group">
+                            <option value="">Select Blood Group</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                          </select>
+                        </div>
                       </div>
-                      <div class="col-md-6 mb-3">
-                        <label for="contract_type" class="label-3d">Contract Type</label>
-                        <select class="input-3d form-select" id="contract_type" name="contract_type">
-                          <option value="">Select Contract Type</option>
-                          <option value="Permanent">Permanent</option>
-                          <option value="Contract">Contract</option>
-                          <option value="Temporary">Temporary</option>
-                        </select>
-                      </div>
-                    </div>
 
-                    <div class="row">
-                      <div class="col-md-6 mb-3">
-                        <label for="category" class="label-3d">Category</label>
-                        <input type="text" class="input-3d" id="category" name="category">
+                      <div class="mb-3">
+                        <label for="permanent_address" class="label-3d">Permanent Address</label>
+                        <textarea class="input-3d" id="permanent_address" name="permanent_address" rows="3"></textarea>
                       </div>
-                      <div class="col-md-6 mb-3">
-                        <label for="gender" class="label-3d">Gender</label>
-                        <select class="input-3d form-select" id="gender" name="gender">
-                          <option value="">Select Gender</option>
-                          <option value="Male">Male</option>
-                          <option value="Female">Female</option>
-                          <option value="Other">Other</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div class="row">
-                      <div class="col-md-6 mb-3">
-                        <label for="blood_group" class="label-3d">Blood Group</label>
-                        <select class="input-3d form-select" id="blood_group" name="blood_group">
-                          <option value="">Select Blood Group</option>
-                          <option value="A+">A+</option>
-                          <option value="A-">A-</option>
-                          <option value="B+">B+</option>
-                          <option value="B-">B-</option>
-                          <option value="AB+">AB+</option>
-                          <option value="AB-">AB-</option>
-                          <option value="O+">O+</option>
-                          <option value="O-">O-</option>
-                        </select>
-                      </div>
-                    </div>
-
-                    <div class="mb-3">
-                      <label for="permanent_address" class="label-3d">Permanent Address</label>
-                      <textarea class="input-3d" id="permanent_address" name="permanent_address" rows="3"></textarea>
                     </div>
 
                     <div class="info-alert">
@@ -488,6 +901,35 @@
       </div>
     </div>
   </div>
+
+  <!-- ═══════════════════════════════════════════
+       PREMIUM FOOTER
+       ═══════════════════════════════════════════ -->
+  <footer class="footer-premium anim-fade-in-up delay-5">
+    <!-- Wavy SVG divider -->
+    <div class="wave-divider" style="margin-bottom: 0.5rem;">
+      <svg viewBox="0 0 1200 40" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M0 25 Q150 5 300 25 Q450 45 600 25 Q750 5 900 25 Q1050 45 1200 25 L1200 40 L0 40 Z" fill="rgba(217,119,6,0.04)"/>
+      </svg>
+    </div>
+    <!-- Doodle icons row -->
+    <div style="display: flex; justify-content: center; gap: 1rem; margin-bottom: 0.5rem; opacity: 0.35;">
+      <!-- Star -->
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+        <path d="M10 2 L12 7 L17 7 L13 11 L14 16 L10 13 L6 16 L7 11 L3 7 L8 7 Z" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <!-- Code brackets -->
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+        <path d="M7 4 L2 10 L7 16" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M13 4 L18 10 L13 16" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <!-- Heart -->
+      <svg width="16" height="16" viewBox="0 0 20 20" fill="none">
+        <path d="M10 17 C5 13 2 9 5 6 C7 4 10 6 10 7 C10 6 13 4 15 6 C18 9 15 13 10 17 Z" stroke="#D97706" stroke-width="1.5" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <p style="margin: 0;">Powered by <span class="footer-brand">MACE Connect</span></p>
+  </footer>
 
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
