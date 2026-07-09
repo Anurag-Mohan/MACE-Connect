@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MACE-Connect — Departments</title>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="/static/css/design-system.css" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="/static/js/firebase-client.js"></script>
+  <style>
+    body {
+      padding-top: 120px; /* Offset for floating navbar */
+      background: var(--bg-canvas-light);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .dept-hero {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: linear-gradient(180deg, rgba(245, 158, 11, 0.05) 0%, transparent 100%);
+      margin-bottom: 2rem;
+    }
+    
+    .dept-hero h1 {
+      font-size: 3.5rem;
+      color: var(--graphite-900);
+      margin-bottom: 1rem;
+    }
+    
+    .dept-hero p {
+      color: var(--graphite-600);
+      font-size: 1.2rem;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .dept-grid {
+      max-width: 1200px;
+      margin: 0 auto 5rem;
+      padding: 0 2rem;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2.5rem;
+    }
+
+    .dept-card {
+      background: var(--surface-raised-light);
+      border-radius: 24px;
+      padding: 3rem 2rem;
+      text-align: center;
+      border: 1px solid var(--line-hairline);
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition-jaw-drop);
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .dept-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--accent-amber);
+      transform: scaleX(0);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dept-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 20px 40px -10px rgba(245, 158, 11, 0.15);
+      border-color: rgba(245, 158, 11, 0.3);
+    }
+    
+    .dept-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .dept-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--accent-amber);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      transition: var(--transition-smooth);
+    }
+    
+    .dept-card:hover .dept-icon {
+      background: var(--accent-amber);
+      color: white;
+      transform: scale(1.1);
+      box-shadow: 0 10px 20px var(--glow-amber);
+    }
+
+    .dept-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--graphite-900);
+      margin-bottom: 0.5rem;
+    }
+
+    .dept-count {
+      font-size: 1rem;
+      color: var(--graphite-600);
+      font-weight: 500;
+    }
+
+    /* Loader */
+    .loader-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 300px;
+      width: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Navbar -->
+  <nav class="glass-navbar">
+    <a href="/" class="navbar-brand-custom">
+      <i class="fa-solid fa-network-wired" style="color: var(--accent-amber);"></i> MACE-Connect
+    </a>
+    <div style="display: flex; gap: 1rem; align-items: center;">
+      <a href="#" onclick="logout()" class="btn-cta btn-cta-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
+        <i class="fa-solid fa-right-from-bracket"></i> Logout
+      </a>
+    </div>
+  </nav>
+
+  <div class="dept-hero">
+    <h1>Departments Directory</h1>
+    <p>Select a department below to view its staff directory.</p>
+  </div>
+
+  <div id="loader" class="loader-container">
+    <i class="fa-solid fa-circle-notch fa-spin fa-3x" style="color: var(--accent-amber);"></i>
+  </div>
+
+  <div class="dept-grid" id="deptGrid" style="display: none;">
+    <!-- Cards will be dynamically injected here -->
+  </div>
+
+  <script>
+    // Utility to assign icons based on department names (heuristics)
+    function getDeptIcon(deptName) {
+      const name = deptName.toLowerCase();
+      if (name.includes('computer') || name.includes('cse')) return 'fa-laptop-code';
+      if (name.includes('electronics') || name.includes('ece')) return 'fa-microchip';
+      if (name.includes('electrical') || name.includes('eee')) return 'fa-bolt';
+      if (name.includes('mechanical') || name.includes('me')) return 'fa-gears';
+      if (name.includes('civil') || name.includes('ce')) return 'fa-building';
+      if (name.includes('math')) return 'fa-square-root-variable';
+      if (name.includes('physics') || name.includes('science')) return 'fa-atom';
+      if (name.includes('admin') || name.includes('office')) return 'fa-briefcase';
+      return 'fa-users';
+    }
+
+    firebase.auth().onAuthStateChanged(async (user) => {
+      if (user) {
+        try {
+          const token = await user.getIdToken();
+          
+          // Fetch all staff to get unique departments and counts
+          const response = await fetch('/api/staffs', {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          });
+          
+          if (!response.ok) throw new Error('Failed to fetch data');
+          
+          const data = await response.json();
+          const staffs = data.staffs || [];
+          
+          // Aggregate departments
+          const deptMap = {};
+          staffs.forEach(staff => {
+            const d = staff.department || 'Other';
+            deptMap[d] = (deptMap[d] || 0) + 1;
+          });
+
+          // Sort alphabetically
+          const sortedDepts = Object.keys(deptMap).sort();
+
+          const grid = document.getElementById('deptGrid');
+          
+          if (sortedDepts.length === 0) {
+            grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--graphite-600);">No departments found.</div>';
+          } else {
+            sortedDepts.forEach(dept => {
+              const count = deptMap[dept];
+              const icon = getDeptIcon(dept);
+              
+              const card = document.createElement('a');
+              card.href = `/directory?dept=${encodeURIComponent(dept)}`;
+              card.className = 'dept-card';
+              card.innerHTML = `
+                <div class="dept-icon"><i class="fa-solid ${icon}"></i></div>
+                <div class="dept-title">${dept}</div>
+                <div class="dept-count">${count} Staff Member${count !== 1 ? 's' : ''}</div>
+              `;
+              grid.appendChild(card);
+            });
+          }
+
+          document.getElementById('loader').style.display = 'none';
+          grid.style.display = 'grid';
+
+        } catch (error) {
+          console.error("Error:", error);
+          document.getElementById('loader').innerHTML = `<p style="color: var(--accent-rust);">Failed to load departments. Please try again.</p>`;
+        }
+      } else {
+        window.location.href = '/login';
+      }
+    });
+
+    function logout() {
+      firebase.auth().signOut().then(() => {
+        window.location.href = '/login';
+      });
+    }
+  </script>
+</body>
+</html>

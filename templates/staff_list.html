@@ -257,6 +257,7 @@
     </a>
     <ul class="nav-links">
       <li><a href="/" class="nav-link-custom">Home</a></li>
+      <li><a href="/departments" class="nav-link-custom">Departments</a></li>
       <li><a href="/directory" class="nav-link-custom active">Staff Directory</a></li>
       <li id="adminNavBtn" style="display: none;"><a href="/admin" class="nav-link-custom">Admin Portal</a></li>
     </ul>
@@ -449,6 +450,24 @@
           if (isAdmin) {
             document.getElementById('adminNavBtn').style.display = 'block';
           }
+          
+          // Check for URL param
+          const urlParams = new URLSearchParams(window.location.search);
+          const deptParam = urlParams.get('dept');
+          if (deptParam) {
+            selectedDepartment = deptParam;
+            // hide filter row if a specific dept is chosen from the new landing page
+            document.querySelector('.premium-filter-row').style.display = 'none';
+            // Set huge hero title
+            document.querySelector('.directory-hero').innerHTML = `
+              <div style="position:absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 100%;">
+                <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 3.5rem; color: var(--graphite-900);">${deptParam}</h1>
+                <p style="color: var(--graphite-600); font-size: 1.2rem;">Viewing staff directory for this department</p>
+                <a href="/departments" class="btn-cta btn-cta-secondary" style="margin-top: 1.5rem;"><i class="fa-solid fa-arrow-left"></i> Change Department</a>
+              </div>
+            `;
+          }
+          
           await loadStaffData(token);
         } catch (error) {
           console.error(error);
@@ -524,8 +543,7 @@
           designation.includes(searchQuery) ||
           empNo.includes(searchQuery);
 
-        const targetDeptName = deptMap[selectedDepartment];
-        const matchesDept = selectedDepartment === 'All Departments' || dept === targetDeptName;
+        const matchesDept = selectedDepartment === 'All Departments' || dept === selectedDepartment;
 
         return matchesSearch && matchesDept;
       });

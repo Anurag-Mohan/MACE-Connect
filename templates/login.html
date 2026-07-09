@@ -45,7 +45,7 @@
       box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
       width: 100%;
       /* Initial width for Login */
-      max-width: 440px; 
+      max-width: 850px; 
       padding: 3rem;
       margin: 2rem;
       transition: max-width 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.8s ease;
@@ -68,6 +68,9 @@
       margin-bottom: 2.5rem;
       border: 1px solid var(--line-hairline);
       box-shadow: var(--shadow-inner);
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
     .tab-btn {
@@ -126,11 +129,12 @@
       transform: translateX(0);
     }
 
-    /* Registration Grid (Only visible in expanded state) */
+    /* Registration & Login Grid */
     .reg-grid-layout {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 3rem;
+      align-items: center;
     }
 
     .reg-grid-2 {
@@ -223,6 +227,7 @@
       align-items: center;
       text-align: center;
       border: 1px solid var(--line-hairline);
+      height: 100%;
     }
 
     /* Jaw-dropping Illustration / Animation Element */
@@ -234,6 +239,15 @@
       filter: drop-shadow(0 20px 30px rgba(245,158,11,0.15));
       animation: float 6s ease-in-out infinite;
     }
+    
+    .login-doodle {
+      width: 100%;
+      max-width: 350px;
+      height: auto;
+      border-radius: 16px;
+      animation: float 8s ease-in-out infinite;
+      box-shadow: var(--shadow-md);
+    }
 
     @keyframes float {
       0% { transform: translateY(0px) rotate(0deg); }
@@ -242,7 +256,7 @@
     }
 
     @media (max-width: 850px) {
-      .auth-container.expanded { max-width: 440px; }
+      .auth-container.expanded, .auth-container { max-width: 440px; }
       .reg-grid-layout { grid-template-columns: 1fr; gap: 1.5rem; }
       .reg-info-col { display: none; }
       .reg-grid-2 { grid-template-columns: 1fr; }
@@ -271,33 +285,39 @@
       
       <!-- Login Form View -->
       <div class="form-view active" id="loginView">
-        <div style="text-align: center; margin-bottom: 2.5rem;">
-          <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">Welcome Back</h2>
-          <p style="color: var(--graphite-600); font-size: 1rem;">Sign in to access the staff directory.</p>
-        </div>
+        <div class="reg-grid-layout">
+          <div class="reg-info-col" style="background: transparent; border: none; padding: 0;">
+            <img src="/static/login_signin_doodle_1783583060525.png" alt="Premium Login Doodle" class="login-doodle">
+          </div>
+          
+          <div class="reg-form-col">
+            <div style="text-align: left; margin-bottom: 2.5rem;">
+              <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--graphite-900);">Welcome Back</h2>
+              <p style="color: var(--graphite-600); font-size: 1.05rem;">Sign in to access the staff directory.</p>
+            </div>
 
-        <div id="loginAlert" class="alert-box error"></div>
-        
-        <form id="loginForm">
-          <div class="form-group-custom">
-            <input type="text" id="email" class="form-control-custom" placeholder=" " required autocomplete="username">
-            <label for="email" class="form-label-custom">Email Address</label>
-            <div class="form-input-focus-line"></div>
+            <div id="loginAlert" class="alert-box error"></div>
+            
+            <form id="loginForm">
+              <div class="form-group-premium">
+                <input type="text" id="email" class="form-control-premium" placeholder=" " required autocomplete="username">
+                <label for="email" class="form-label-premium">Email Address</label>
+              </div>
+              <div class="form-group-premium">
+                <input type="password" id="password" class="form-control-premium" placeholder=" " required autocomplete="current-password">
+                <label for="password" class="form-label-premium">Password</label>
+              </div>
+              
+              <div style="display: flex; justify-content: flex-end; margin-bottom: 2.5rem;">
+                <a href="#" class="back-btn" style="font-size: 0.95rem;" onclick="forgotPassword()">Forgot password?</a>
+              </div>
+              
+              <button type="submit" class="btn-cta btn-cta-primary" style="width: 100%; padding: 1.2rem 0; justify-content: center; font-size: 1.1rem;">
+                Sign In <i class="fa-solid fa-arrow-right-long" style="margin-left: 0.5rem;"></i>
+              </button>
+            </form>
           </div>
-          <div class="form-group-custom">
-            <input type="password" id="password" class="form-control-custom" placeholder=" " required autocomplete="current-password">
-            <label for="password" class="form-label-custom">Password</label>
-            <div class="form-input-focus-line"></div>
-          </div>
-          
-          <div style="display: flex; justify-content: flex-end; margin-bottom: 2.5rem;">
-            <a href="#" class="back-btn" style="font-size: 0.9rem;" onclick="forgotPassword()">Forgot password?</a>
-          </div>
-          
-          <button type="submit" class="btn-cta btn-cta-primary" style="width: 100%; padding: 1rem 0; justify-content: center; font-size: 1.05rem;">
-            Sign In <i class="fa-solid fa-arrow-right-long" style="margin-left: 0.5rem;"></i>
-          </button>
-        </form>
+        </div>
       </div>
 
       <!-- Registration Form View -->
@@ -309,20 +329,18 @@
           
           <!-- Left side: The form -->
           <div class="reg-form-col">
-            <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Create Profile</h2>
-            <p style="color: var(--graphite-600); font-size: 0.95rem; margin-bottom: 2rem;">Submit your details for administrative review.</p>
+            <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--graphite-900);">Create Profile</h2>
+            <p style="color: var(--graphite-600); font-size: 1.05rem; margin-bottom: 2rem;">Submit your details for administrative review.</p>
 
             <form id="registrationForm">
               <div class="reg-grid-2">
-                <div class="form-group-custom">
-                  <input type="text" id="name" class="form-control-custom" placeholder=" " required>
-                  <label for="name" class="form-label-custom">Full Name</label>
-                  <div class="form-input-focus-line"></div>
+                <div class="form-group-premium">
+                  <input type="text" id="name" class="form-control-premium" placeholder=" " required>
+                  <label for="name" class="form-label-premium">Full Name</label>
                 </div>
-                <div class="form-group-custom">
-                  <input type="text" id="emp_no" class="form-control-custom" placeholder=" " required>
-                  <label for="emp_no" class="form-label-custom">Employee ID / Sl No</label>
-                  <div class="form-input-focus-line"></div>
+                <div class="form-group-premium">
+                  <input type="text" id="emp_no" class="form-control-premium" placeholder=" " required>
+                  <label for="emp_no" class="form-label-premium">Employee ID / Sl No</label>
                 </div>
               </div>
 
@@ -341,64 +359,61 @@
               </div>
 
               <div class="reg-grid-2">
-                <div class="form-group-custom">
-                  <input type="email" id="reg_email" class="form-control-custom" placeholder=" " required>
-                  <label for="reg_email" class="form-label-custom">Email Address</label>
-                  <div class="form-input-focus-line"></div>
+                <div class="form-group-premium">
+                  <input type="email" id="reg_email" class="form-control-premium" placeholder=" " required>
+                  <label for="reg_email" class="form-label-premium">Email Address</label>
                 </div>
-                <div class="form-group-custom">
-                  <input type="tel" id="mobile_no" class="form-control-custom" placeholder=" " required>
-                  <label for="mobile_no" class="form-label-custom">Phone / Mobile No</label>
-                  <div class="form-input-focus-line"></div>
+                <div class="form-group-premium">
+                  <input type="tel" id="mobile_no" class="form-control-premium" placeholder=" " required>
+                  <label for="mobile_no" class="form-label-premium">Phone / Mobile No</label>
                 </div>
               </div>
 
               <div class="reg-grid-2">
-                <div class="form-group-custom">
-                  <input type="text" id="designation" class="form-control-custom" placeholder=" " required>
-                  <label for="designation" class="form-label-custom">Designation</label>
-                  <div class="form-input-focus-line"></div>
+                <div class="form-group-premium">
+                  <input type="text" id="designation" class="form-control-premium" placeholder=" " required>
+                  <label for="designation" class="form-label-premium">Designation</label>
                 </div>
-                <div class="form-group-custom">
-                  <select id="type" class="form-control-custom form-select-custom" required>
+                <div class="form-group-premium">
+                  <select id="type" class="form-control-premium form-select-custom" required>
+                    <option value="" disabled selected hidden></option>
                     <option value="Teaching">Teaching</option>
                     <option value="Non-Teaching">Non-Teaching</option>
                     <option value="Retired">Retired</option>
                   </select>
-                  <label for="type" class="form-label-custom">Staff Type</label>
-                  <div class="form-input-focus-line"></div>
+                  <label for="type" class="form-label-premium">Staff Type</label>
                 </div>
               </div>
 
               <div class="reg-grid-2">
-                <div class="form-group-custom">
-                  <select id="contract_type" class="form-control-custom form-select-custom" required>
+                <div class="form-group-premium">
+                  <select id="contract_type" class="form-control-premium form-select-custom" required>
+                    <option value="" disabled selected hidden></option>
                     <option value="Permanent">Permanent</option>
                     <option value="Contract">Contract</option>
                     <option value="Guest">Guest</option>
                   </select>
-                  <label for="contract_type" class="form-label-custom">Contract Type</label>
-                  <div class="form-input-focus-line"></div>
+                  <label for="contract_type" class="form-label-premium">Contract Type</label>
                 </div>
-                <div class="form-group-custom">
-                  <input type="text" id="category" class="form-control-custom" placeholder=" " required>
-                  <label for="category" class="form-label-custom">Category (e.g. Gen/OBC)</label>
-                  <div class="form-input-focus-line"></div>
+                <div class="form-group-premium">
+                  <input type="text" id="category" class="form-control-premium" placeholder=" " required>
+                  <label for="category" class="form-label-premium">Category (e.g. Gen/OBC)</label>
                 </div>
               </div>
 
               <div class="reg-grid-2">
-                <div class="form-group-custom">
-                  <select id="gender" class="form-control-custom form-select-custom" required>
+                <div class="form-group-premium">
+                  <select id="gender" class="form-control-premium form-select-custom" required>
+                    <option value="" disabled selected hidden></option>
                     <option value="Male">Male</option>
                     <option value="Female">Female</option>
                     <option value="Other">Other</option>
                   </select>
-                  <label for="gender" class="form-label-custom">Gender</label>
-                  <div class="form-input-focus-line"></div>
+                  <label for="gender" class="form-label-premium">Gender</label>
                 </div>
-                <div class="form-group-custom">
-                  <select id="blood_group" class="form-control-custom form-select-custom" required>
+                <div class="form-group-premium">
+                  <select id="blood_group" class="form-control-premium form-select-custom" required>
+                    <option value="" disabled selected hidden></option>
                     <option value="A+">A+</option>
                     <option value="A-">A-</option>
                     <option value="B+">B+</option>
@@ -408,18 +423,16 @@
                     <option value="O+">O+</option>
                     <option value="O-">O-</option>
                   </select>
-                  <label for="blood_group" class="form-label-custom">Blood Group</label>
-                  <div class="form-input-focus-line"></div>
+                  <label for="blood_group" class="form-label-premium">Blood Group</label>
                 </div>
               </div>
 
-              <div class="form-group-custom">
-                <input type="text" id="permanent_address" class="form-control-custom" placeholder=" " required>
-                <label for="permanent_address" class="form-label-custom">Permanent Address</label>
-                <div class="form-input-focus-line"></div>
+              <div class="form-group-premium">
+                <input type="text" id="permanent_address" class="form-control-premium" placeholder=" " required>
+                <label for="permanent_address" class="form-label-premium">Permanent Address</label>
               </div>
 
-              <button type="submit" id="submitBtn" class="btn-cta btn-cta-primary" style="width: 100%; padding: 1rem 0; justify-content: center; font-size: 1.05rem; margin-top: 1rem;">
+              <button type="submit" id="submitBtn" class="btn-cta btn-cta-primary" style="width: 100%; padding: 1.2rem 0; justify-content: center; font-size: 1.1rem; margin-top: 1rem;">
                 Submit for Review <i class="fa-solid fa-paper-plane" style="margin-left: 0.5rem;"></i>
               </button>
             </form>
@@ -449,11 +462,11 @@
               <path d="M105 110 L115 142" stroke="var(--graphite-900)" stroke-width="2" stroke-linecap="round"/>
             </svg>
 
-            <h3 style="font-size: 1.4rem; margin-bottom: 0.5rem;">Join the Network</h3>
-            <p style="color: var(--graphite-600); font-size: 0.95rem; line-height: 1.6; padding: 0 1rem;">
+            <h3 style="font-size: 1.6rem; margin-bottom: 0.5rem; color: var(--graphite-900);">Join the Network</h3>
+            <p style="color: var(--graphite-600); font-size: 1.05rem; line-height: 1.6; padding: 0 1rem;">
               Your profile will be reviewed by the administration. Upon approval, you will gain access to the unified directory. 
               <br><br>
-              <span style="font-weight: 600; color: var(--accent-amber);">Note:</span> Your phone number will act as your temporary password for your initial login.
+              <span style="font-weight: 700; color: var(--accent-amber);">Note:</span> Your phone number will act as your temporary password for your initial login.
             </p>
           </div>
 
@@ -485,30 +498,28 @@
       const tabBtns = document.querySelectorAll('.tab-btn');
 
       if (tab === 'login') {
-        // Contract horizontally
+        // Stay same width actually, since both are grids now, but we can animate if we want
         authBox.classList.remove('expanded');
         tabSlider.style.transform = 'translateX(0)';
         tabBtns[0].classList.add('active');
         tabBtns[1].classList.remove('active');
         
-        // Wait briefly for container to start shrinking before fading in form
         registerView.classList.remove('active');
         setTimeout(() => {
           loginView.classList.add('active');
-        }, 300); // sync with cubic-bezier transition
+        }, 300);
 
       } else {
-        // Expand horizontally
+        // Expand horizontally for register (though both might be wide now, we keep expanded for Register)
         authBox.classList.add('expanded');
         tabSlider.style.transform = 'translateX(100%)';
         tabBtns[0].classList.remove('active');
         tabBtns[1].classList.add('active');
         
-        // Fade out login, fade in register
         loginView.classList.remove('active');
         setTimeout(() => {
           registerView.classList.add('active');
-        }, 400); // wait for container to expand to reveal stunning grid
+        }, 400);
       }
     }
 
@@ -565,7 +576,8 @@
             if (isAdmin) {
               window.location.href = '/admin';
             } else {
-              window.location.href = '/directory';
+              // Redirect to departments selection post-login
+              window.location.href = '/departments';
             }
           }, 800);
         } else {
@@ -588,7 +600,8 @@
           if (isAdmin) {
             window.location.href = '/admin';
           } else {
-            window.location.href = '/directory';
+            // Redirect to departments selection post-login
+            window.location.href = '/departments';
           }
         }).catch(err => console.log('Error checking admin status:', err));
       }

@@ -632,6 +632,25 @@ def create_if_staff():
     except Exception as e:
         return jsonify({'error': 'Server error', 'detail': str(e)}), 500
 
+# Public endpoint for stats
+@app.route('/api/stats', methods=['GET'])
+def get_stats():
+    try:
+        docs = db.collection('staff').get()
+        departments = set()
+        for d in docs:
+            data = d.to_dict()
+            dept = data.get('department')
+            if dept:
+                departments.add(dept)
+        
+        return jsonify({
+            'total_staff': len(docs),
+            'total_departments': len(departments)
+        })
+    except Exception as e:
+        return jsonify({'error': 'Failed to fetch stats', 'detail': str(e)}), 500
+
 # Protected endpoint to list staff entries (for web UI)
 @app.route('/api/staffs', methods=['GET'])
 @login_required
@@ -663,6 +682,11 @@ def staff_list_page_html():
 @web_login_required
 def admin_page_html():
     return redirect(url_for('admin_page'))
+
+@app.route('/departments')
+@web_login_required
+def departments_page():
+    return render_template('departments.html')
 
 @app.route('/directory')
 @web_login_required

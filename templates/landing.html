@@ -577,9 +577,24 @@
       // Trigger count-ups when stats section is scrolled into view
       let statsAnimated = false;
       const statsSection = document.querySelector('.stats-strip');
+      
+      const fetchAndAnimateStats = async () => {
+        try {
+          const response = await fetch('/api/stats');
+          const data = await response.json();
+          if (data && data.total_staff !== undefined) {
+            document.querySelectorAll('.stat-number')[0].setAttribute('data-target', data.total_staff);
+            document.querySelectorAll('.stat-number')[1].setAttribute('data-target', data.total_departments);
+          }
+        } catch (err) {
+          console.error("Failed to fetch dynamic stats:", err);
+        }
+        animateStats();
+      };
+
       const checkStatsScroll = () => {
         if (!statsAnimated && elementInView(statsSection, 1.05)) {
-          animateStats();
+          fetchAndAnimateStats();
           statsAnimated = true;
           window.removeEventListener('scroll', checkStatsScroll);
         }
