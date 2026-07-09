@@ -11,36 +11,44 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="/static/js/firebase-client.js"></script>
-  <script src="/static/js/mesh-background.js"></script>
   <style>
     /* Custom style overrides for directory */
     body {
       background-color: var(--bg-canvas-light);
       min-height: 100vh;
-      padding-top: 150px; /* Leave space for double headers */
+      padding-top: 180px; /* Space for double floating headers */
+    }
+
+    .directory-hero {
+      background: linear-gradient(180deg, var(--surface-raised-light) 0%, var(--bg-canvas-light) 100%);
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 350px;
+      z-index: 1;
+      border-bottom: 1px solid var(--line-hairline);
     }
 
     .sticky-search-bar {
       position: fixed;
-      top: 72px;
-      left: 0;
-      right: 0;
-      background: rgba(246, 244, 239, 0.95);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--line-hairline);
+      top: 90px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: calc(100% - 4rem);
+      max-width: 1000px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--line-hairline);
+      border-radius: 100px;
       z-index: 900;
-      padding: 1rem 2rem;
+      padding: 0.75rem 2rem;
+      box-shadow: var(--shadow-lg);
       transition: var(--transition-smooth);
-    }
-    .dark-canvas .sticky-search-bar {
-      background: rgba(11, 13, 15, 0.95);
-      border-bottom-color: rgba(255, 255, 255, 0.05);
     }
 
     .search-flex-row {
-      max-width: 1200px;
-      margin: 0 auto;
       display: flex;
       gap: 1.5rem;
       align-items: center;
@@ -50,7 +58,6 @@
     .search-input-wrapper {
       position: relative;
       flex: 1;
-      max-width: 600px;
     }
 
     .search-icon-doodle {
@@ -60,47 +67,66 @@
       transform: translateY(-50%);
       width: 20px;
       height: 20px;
-      stroke: var(--graphite-400);
+      stroke: var(--accent-amber);
       fill: none;
-      stroke-width: 1.5;
+      stroke-width: 2.5;
     }
 
     .search-input-field {
       width: 100%;
-      padding: 0.6rem 0 0.6rem 32px;
+      padding: 0.6rem 0 0.6rem 36px;
       background: transparent;
       border: none;
-      border-bottom: 1.5px solid var(--line-hairline);
       color: var(--graphite-900);
-      font-size: 1.05rem;
+      font-size: 1.1rem;
+      font-weight: 500;
       outline: none;
-      transition: var(--transition-fast);
     }
-    .dark-canvas .search-input-field {
-      border-bottom-color: rgba(255, 255, 255, 0.1);
-      color: #FFFFFF;
-    }
-    .search-input-field:focus {
-      border-bottom-color: var(--accent-amber);
+    .search-input-field::placeholder {
+      color: var(--graphite-400);
+      font-weight: 400;
     }
 
     .results-pill-counter {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 600;
-      background: rgba(28, 32, 36, 0.05);
-      color: var(--graphite-900);
-      padding: 0.4rem 0.9rem;
+      font-size: 0.9rem;
+      font-weight: 700;
+      background: rgba(245, 158, 11, 0.1);
+      color: var(--accent-amber);
+      padding: 0.5rem 1.2rem;
       border-radius: 100px;
       white-space: nowrap;
     }
-    .dark-canvas .results-pill-counter {
-      background: rgba(255, 255, 255, 0.08);
-      color: var(--accent-amber);
+
+    /* Distinct Department Wrapper */
+    .department-group-wrapper {
+      margin-bottom: 4rem;
+      position: relative;
+      z-index: 10;
+    }
+
+    .department-header {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.8rem;
+      color: var(--graphite-900);
+      margin-bottom: 1.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid var(--line-hairline);
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    .department-header::before {
+      content: '';
+      display: inline-block;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent-amber);
     }
 
     .directory-content-wrapper {
-      max-width: 1200px;
+      max-width: 1300px;
       margin: 0 auto;
       padding: 0 2rem 4rem;
       position: relative;
@@ -110,61 +136,64 @@
     /* Grid layout */
     .cards-grid {
       display: grid;
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 2rem;
       transition: var(--transition-smooth);
     }
 
+    /* Drawer profile enhancements */
     .drawer-profile-image {
-      width: 140px;
-      height: 140px;
+      width: 160px;
+      height: 160px;
       border-radius: 50%;
       object-fit: cover;
-      border: 3px solid var(--accent-amber);
-      padding: 4px;
+      border: 6px solid var(--surface-raised-light);
       background: var(--surface-raised-light);
       margin-bottom: 1.5rem;
-      box-shadow: 0 4px 12px var(--glow-amber);
+      box-shadow: 0 0 0 2px var(--accent-amber), var(--shadow-xl);
     }
 
     .drawer-profile-title {
       text-align: center;
-      margin-bottom: 2rem;
+      margin-bottom: 2.5rem;
     }
 
     .drawer-profile-title h3 {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       margin-bottom: 0.25rem;
+      color: var(--graphite-900);
     }
 
     .drawer-profile-title p {
-      color: var(--graphite-400);
-      font-size: 0.95rem;
+      color: var(--graphite-600);
+      font-size: 1.1rem;
+      font-weight: 500;
     }
 
     .drawer-detail-list {
       display: flex;
       flex-direction: column;
-      gap: 1.25rem;
+      gap: 1.5rem;
     }
 
     .drawer-detail-item {
       display: flex;
       flex-direction: column;
-      gap: 0.25rem;
+      gap: 0.4rem;
       border-bottom: 1px solid var(--line-hairline);
-      padding-bottom: 0.75rem;
+      padding-bottom: 1rem;
     }
 
     .drawer-detail-item span.label {
-      font-size: 0.8rem;
+      font-size: 0.85rem;
       color: var(--graphite-400);
       text-transform: uppercase;
-      letter-spacing: 0.03em;
-      font-weight: 600;
+      letter-spacing: 0.05em;
+      font-weight: 700;
     }
 
     .drawer-detail-item span.value {
-      font-size: 0.95rem;
+      font-size: 1.05rem;
       color: var(--graphite-900);
       font-weight: 500;
     }
@@ -172,8 +201,8 @@
     .drawer-actions-row {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 1rem;
-      margin-bottom: 2rem;
+      gap: 1.25rem;
+      margin-bottom: 2.5rem;
       width: 100%;
     }
 
@@ -182,41 +211,44 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 0.5rem;
-      padding: 1rem;
+      gap: 0.75rem;
+      padding: 1.25rem 1rem;
       border: 1px solid var(--line-hairline);
-      border-radius: 12px;
+      border-radius: 16px;
       background: var(--surface-raised-light);
       color: var(--graphite-900);
       text-decoration: none;
       cursor: pointer;
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.95rem;
       transition: var(--transition-fast);
+      box-shadow: var(--shadow-sm);
     }
 
     .drawer-action-tile i {
-      font-size: 1.25rem;
+      font-size: 1.5rem;
       color: var(--accent-amber);
     }
 
     .drawer-action-tile:hover {
       border-color: var(--accent-amber);
-      background: rgba(232, 162, 61, 0.04);
+      background: rgba(245, 158, 11, 0.05);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
     }
 
-    /* Admin Toolbar */
-    .admin-toolbar-sticky {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      z-index: 999;
+    /* Distinct Filter distinct row */
+    .premium-filter-row {
+      max-width: 1000px;
+      margin: 1.5rem auto 0;
       display: flex;
-      gap: 0.75rem;
+      justify-content: center;
     }
   </style>
 </head>
 <body class="light-canvas">
+
+  <div class="directory-hero"></div>
 
   <!-- Primary Navigation -->
   <nav class="glass-navbar">
@@ -225,54 +257,58 @@
     </a>
     <ul class="nav-links">
       <li><a href="/" class="nav-link-custom">Home</a></li>
-      <li><a href="/directory" class="nav-link-custom active">Directory Preview</a></li>
-      <li id="adminNavBtn" style="display: none;"><a href="/admin" class="nav-link-custom">Admin Panel</a></li>
+      <li><a href="/directory" class="nav-link-custom active">Staff Directory</a></li>
+      <li id="adminNavBtn" style="display: none;"><a href="/admin" class="nav-link-custom">Admin Portal</a></li>
     </ul>
     <div style="display: flex; align-items: center; gap: 1rem;">
-      <span id="userSpan" class="results-pill-counter d-none" style="background: rgba(28,32,36,0.03);"></span>
+      <span id="userSpan" class="results-pill-counter d-none" style="background: rgba(17,24,39,0.05); color: var(--graphite-900);"></span>
       <button id="signoutBtn" class="btn-cta btn-cta-secondary"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</button>
     </div>
   </nav>
 
-  <!-- Sticky sub-header with Search & Filter Chips -->
-  <div class="sticky-search-bar">
-    <div class="search-flex-row">
-      <div class="search-input-wrapper">
-        <svg class="search-icon-doodle" viewBox="0 0 24 24">
-          <circle cx="11" cy="11" r="8" />
-          <path d="M21 21l-4.35-4.35" stroke-linecap="round" />
-        </svg>
-        <input type="text" id="directorySearch" class="search-input-field" placeholder="Search by name, designation, or employee ID..." autocomplete="off">
+  <!-- Sticky Floating Search Bar & Filter Chips -->
+  <div style="position: fixed; top: 90px; left: 0; right: 0; z-index: 900;">
+    <div class="sticky-search-bar">
+      <div class="search-flex-row">
+        <div class="search-input-wrapper">
+          <svg class="search-icon-doodle" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="8" />
+            <path d="M21 21l-4.35-4.35" stroke-linecap="round" />
+          </svg>
+          <input type="text" id="directorySearch" class="search-input-field" placeholder="Search by name, designation, or employee ID..." autocomplete="off">
+        </div>
+        
+        <div class="results-pill-counter" id="resultsCount">0 Staff Found</div>
       </div>
-      
-      <div class="results-pill-counter" id="resultsCount">0 Staff Found</div>
     </div>
 
-    <!-- Filter chips scrollrow -->
-    <div class="filter-chip-container" id="deptFilterChips" style="max-width: 1200px; margin: 0.75rem auto 0;">
-      <div class="filter-chip active" data-dept="All Departments">All Departments</div>
-      <div class="filter-chip" data-dept="CSE">Computer Science</div>
-      <div class="filter-chip" data-dept="ECE">Electronics</div>
-      <div class="filter-chip" data-dept="EEE">Electrical</div>
-      <div class="filter-chip" data-dept="ME">Mechanical</div>
-      <div class="filter-chip" data-dept="CE">Civil</div>
-      <div class="filter-chip" data-dept="ADMIN">Administration</div>
+    <!-- Filter chips scrollrow beautifully centered -->
+    <div class="premium-filter-row">
+      <div class="filter-chip-container" id="deptFilterChips">
+        <div class="filter-chip active" data-dept="All Departments">All Departments</div>
+        <div class="filter-chip" data-dept="CSE">Computer Science</div>
+        <div class="filter-chip" data-dept="ECE">Electronics</div>
+        <div class="filter-chip" data-dept="EEE">Electrical</div>
+        <div class="filter-chip" data-dept="ME">Mechanical</div>
+        <div class="filter-chip" data-dept="CE">Civil</div>
+        <div class="filter-chip" data-dept="ADMIN">Administration</div>
+      </div>
     </div>
   </div>
 
   <!-- Main Directory Body content -->
-  <div class="directory-content-wrapper">
+  <div class="directory-content-wrapper" style="margin-top: 6rem;">
     <div id="loadingDiv" style="text-align: center; padding: 4rem 0;">
       <i class="fa-solid fa-spinner fa-spin fa-2xl" style="color: var(--accent-amber);"></i>
-      <p style="margin-top: 1rem; color: var(--graphite-400); font-weight: 500;">Accessing staff rosters...</p>
+      <p style="margin-top: 1rem; color: var(--graphite-600); font-weight: 500;">Securely accessing staff rosters...</p>
     </div>
 
     <div id="errorContainer" style="display: none; text-align: center; padding: 4rem 0;">
-      <p id="errorText" class="text-danger" style="font-weight: 600;"></p>
+      <p id="errorText" class="text-danger" style="font-weight: 600; color: var(--accent-rust);"></p>
     </div>
 
-    <!-- Staff cards container -->
-    <div class="cards-grid" id="staffGrid"></div>
+    <!-- Distinct Department Wrapper inside this container will be generated by JS -->
+    <div id="directoryDynamicContainer"></div>
   </div>
 
   <!-- Profile Slide-in Drawer -->
@@ -347,18 +383,18 @@
 
   <!-- Contact QR Code Modal -->
   <div class="drawer-backdrop" id="modalBackdrop" onclick="closeQrModal()" style="z-index: 1060;"></div>
-  <div class="drawer-custom" id="qrModalDrawer" style="z-index: 1070; max-width: 400px;">
+  <div class="drawer-custom" id="qrModalDrawer" style="z-index: 1070; max-width: 440px;">
     <div class="drawer-header">
-      <span class="drawer-title"><i class="fa-solid fa-qrcode me-2"></i>Contact QR Code</span>
+      <span class="drawer-title"><i class="fa-solid fa-qrcode" style="color: var(--accent-amber); margin-right: 0.5rem;"></i>Contact QR Code</span>
       <button class="drawer-close" onclick="closeQrModal()">&times;</button>
     </div>
-    <div class="drawer-body" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem;">
-      <img id="qrImage" style="max-width: 220px; border-radius: 12px; border: 1px solid var(--line-hairline); background: white; padding: 8px;" alt="Contact QR Code">
+    <div class="drawer-body" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem;">
+      <img id="qrImage" style="max-width: 240px; border-radius: 16px; border: 1px solid var(--line-hairline); background: white; padding: 12px; box-shadow: var(--shadow-lg);" alt="Contact QR Code">
       <div>
-        <h4 id="qrName" style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.2rem; margin-bottom: 0.25rem;"></h4>
-        <p id="qrDept" style="color: var(--graphite-400); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;"></p>
+        <h4 id="qrName" style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.4rem; margin-bottom: 0.3rem;"></h4>
+        <p id="qrDept" style="color: var(--accent-blue); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; background: rgba(59, 130, 246, 0.1); padding: 0.3rem 0.8rem; border-radius: 100px; display: inline-block;"></p>
       </div>
-      <p style="color: var(--graphite-400); font-size: 0.85rem;"><i class="fa-solid fa-camera"></i> Scan with your phone camera to import</p>
+      <p style="color: var(--graphite-600); font-size: 0.95rem; font-weight: 500;"><i class="fa-solid fa-camera"></i> Scan with your phone camera to import</p>
     </div>
   </div>
 
@@ -371,68 +407,32 @@
     let searchQuery = '';
     let isAdmin = false;
 
+    const deptMap = {
+      'CSE': 'Computer Science & Engineering',
+      'ECE': 'Electronics & Communication Engineering',
+      'EEE': 'Electrical & Electronics Engineering',
+      'ME': 'Mechanical Engineering',
+      'CE': 'Civil Engineering',
+      'ADMIN': 'Administration'
+    };
+
     // Toast triggers
     function showToast(message, type = 'success') {
       const container = document.getElementById('toastContainer');
       const toast = document.createElement('div');
       toast.className = `toast-custom ${type}`;
       toast.innerHTML = `
-        <span style="font-size: 0.9rem; font-weight: 500;">${message}</span>
-        <button style="background:transparent; border:none; color:white; cursor:pointer; font-size:1.1rem; margin-left:1rem;" onclick="this.parentElement.remove()">&times;</button>
+        <span style="font-size: 0.95rem; font-weight: 600;">${message}</span>
+        <button style="background:transparent; border:none; color:inherit; cursor:pointer; font-size:1.2rem; margin-left:1rem; opacity:0.6;" onclick="this.parentElement.remove()">&times;</button>
       `;
       container.appendChild(toast);
       
-      // Animate entry
       setTimeout(() => toast.classList.add('show'), 50);
-      
-      // Auto dismiss
       setTimeout(() => {
         toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
+        setTimeout(() => toast.remove(), 400);
       }, 4000);
     }
-
-    // Grid Balance Engine
-    function balanceDirectoryGrid() {
-      const grid = document.getElementById('staffGrid');
-      const cols = window.innerWidth >= 1024 ? 3 : (window.innerWidth >= 768 ? 2 : 1);
-      const total = grid.children.length;
-      if (total === 0) return;
-
-      const remainder = total % cols;
-
-      // Reset styles
-      Array.from(grid.children).forEach(child => {
-        child.style.gridColumn = '';
-      });
-
-      // Apply dynamic balance styles
-      grid.style.display = 'grid';
-      grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
-
-      if (remainder > 0) {
-        if (cols === 3) {
-          if (remainder === 1) {
-            grid.children[total - 1].style.gridColumn = 'span 3';
-          } else if (remainder === 2) {
-            grid.style.gridTemplateColumns = 'repeat(6, 1fr)';
-            Array.from(grid.children).forEach((child, idx) => {
-              if (idx >= total - 2) {
-                child.style.gridColumn = 'span 3';
-              } else {
-                child.style.gridColumn = 'span 2';
-              }
-            });
-          }
-        } else if (cols === 2) {
-          if (remainder === 1) {
-            grid.children[total - 1].style.gridColumn = 'span 2';
-          }
-        }
-      }
-    }
-
-    window.addEventListener('resize', balanceDirectoryGrid);
 
     // Initial check auth state
     firebase.auth().onAuthStateChanged(async (user) => {
@@ -441,7 +441,6 @@
         document.getElementById('userSpan').classList.remove('d-none');
         
         try {
-          // Check Admin privilege
           const token = await user.getIdToken();
           const checkRes = await fetch('/api/staff/test_admin_check', {
             headers: { 'Authorization': 'Bearer ' + token }
@@ -450,11 +449,10 @@
           if (isAdmin) {
             document.getElementById('adminNavBtn').style.display = 'block';
           }
-          
           await loadStaffData(token);
         } catch (error) {
           console.error(error);
-          showToast('Failed to check admin status.', 'error');
+          showToast('Failed to verify admin status.', 'error');
         }
       } else {
         showToast('Please sign in to access directory.', 'error');
@@ -467,7 +465,6 @@
       window.location.href = '/login';
     });
 
-    // Load directory records
     async function loadStaffData(token) {
       try {
         const response = await fetch('/api/staffs', {
@@ -501,30 +498,20 @@
       }
     });
 
-    // Search bar binding
     document.getElementById('directorySearch').addEventListener('input', (e) => {
       searchQuery = e.target.value.toLowerCase().trim();
       filterAndRenderDirectory();
     });
 
-    // Filter and Render
+    // Render grouped by distinct departments
     function filterAndRenderDirectory() {
-      const grid = document.getElementById('staffGrid');
+      const container = document.getElementById('directoryDynamicContainer');
       const loading = document.getElementById('loadingDiv');
       
       loading.style.display = 'none';
-      grid.innerHTML = '';
+      container.innerHTML = '';
 
-      const deptMap = {
-        'CSE': 'Computer Science & Engineering',
-        'ECE': 'Electronics & Communication Engineering',
-        'EEE': 'Electrical & Electronics Engineering',
-        'ME': 'Mechanical Engineering',
-        'CE': 'Civil Engineering',
-        'ADMIN': 'Administration'
-      };
-
-      const filtered = allStaffData.filter(staff => {
+      let filtered = allStaffData.filter(staff => {
         const name = (staff.name || '').toLowerCase();
         const email = (staff.email || '').toLowerCase();
         const empNo = (staff['Sl No'] || staff.empNo || '').toString().toLowerCase();
@@ -543,67 +530,86 @@
         return matchesSearch && matchesDept;
       });
 
-      // Update Results Counter (staggered count-up)
       animateCount('resultsCount', filtered.length);
 
       if (filtered.length === 0) {
-        // empty-results.svg inline
-        grid.innerHTML = `
-          <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 2rem;" class="scroll-reveal revealed">
-            <svg width="120" height="120" viewBox="0 0 120 120" fill="none" style="margin-bottom: 1.5rem;" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="60" cy="60" r="45" stroke="#6B7178" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.4" />
-              <!-- magnifying glass over empty tray -->
-              <circle cx="50" cy="50" r="14" stroke="var(--accent-amber)" stroke-width="2" />
-              <line x1="60" y1="60" x2="74" y2="74" stroke="var(--accent-amber)" stroke-width="2.5" stroke-linecap="round" />
-              <line x1="38" y1="85" x2="82" y2="85" stroke="#6B7178" stroke-width="1.5" opacity="0.6"/>
+        container.innerHTML = `
+          <div style="text-align: center; padding: 6rem 2rem;" class="scroll-reveal revealed">
+            <svg width="140" height="140" viewBox="0 0 120 120" fill="none" style="margin-bottom: 2rem;" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="60" cy="60" r="50" fill="var(--surface-raised-light)" stroke="var(--line-hairline)" stroke-width="2" />
+              <circle cx="50" cy="50" r="16" stroke="var(--accent-amber)" stroke-width="3" />
+              <line x1="61" y1="61" x2="80" y2="80" stroke="var(--accent-amber)" stroke-width="4" stroke-linecap="round" />
             </svg>
-            <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.25rem; margin-bottom: 0.5rem; color: var(--graphite-900);">No results match your search</h4>
-            <p style="color: var(--graphite-400); font-size: 0.9rem; margin-bottom: 1.5rem;">Try modifying your search text or switching department filters.</p>
-            <button class="btn-cta btn-cta-secondary" onclick="clearFilters()"><i class="fa-solid fa-filter-circle-xmark"></i> Clear Filters</button>
+            <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; margin-bottom: 0.5rem; color: var(--graphite-900);">No results found</h4>
+            <p style="color: var(--graphite-600); font-size: 1.05rem; margin-bottom: 2rem;">Try adjusting your search keywords or switching filters.</p>
+            <button class="btn-cta btn-cta-secondary" onclick="clearFilters()">Reset Filters</button>
           </div>
         `;
         return;
       }
 
-      filtered.forEach((staff, index) => {
-        const staffId = staff.id || staff.email;
-        const name = staff.name || 'Staff Member';
-        const designation = staff.designation || 'Specialist';
-        const dept = staff.department || 'General';
-        const empNo = staff['Sl No'] || staff.slNo || staff.empNo || 'N/A';
-        const initials = name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
-        
-        const card = document.createElement('div');
-        card.className = 'card-raised staff-card scroll-reveal revealed';
-        card.style.cursor = 'pointer';
-        card.style.transitionDelay = `${index * 30}ms`;
-        card.setAttribute('onclick', `openProfileDrawer('${staffId}')`);
-
-        // Check avatar image
-        const photoHtml = staff.photoUrl ? 
-          `<img src="${staff.photoUrl}" class="staff-avatar" alt="${name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
-           <div class="staff-avatar" style="display: none; align-items: center; justify-content: center; background: #e8a23d; color: #000000; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.5rem;">${initials}</div>` : 
-          `<div class="staff-avatar" style="display: flex; align-items: center; justify-content: center; background: #e8a23d; color: #000000; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.5rem;">${initials}</div>`;
-
-        card.innerHTML = `
-          <div class="staff-avatar-container">
-            ${photoHtml}
-          </div>
-          <h4 class="staff-name">${name}</h4>
-          <p class="staff-designation">${designation}</p>
-          <span class="staff-department">${dept}</span>
-          <span class="staff-id-badge">ID: ${empNo}</span>
-
-          <div class="staff-action-row">
-            ${staff.email ? `<a href="mailto:${staff.email}" class="staff-action-btn" onclick="event.stopPropagation();" aria-label="Email Staff"><i class="fa-solid fa-envelope"></i></a>` : ''}
-            ${(staff.mobileNo || staff.Phone) ? `<a href="tel:${staff.mobileNo || staff.Phone}" class="staff-action-btn" onclick="event.stopPropagation();" aria-label="Call Staff"><i class="fa-solid fa-phone"></i></a>` : ''}
-            <button class="staff-action-btn" onclick="event.stopPropagation(); generateVCardQr('${name}', '${staff.email}', '${staff.mobileNo || staff.Phone}', '${designation}', '${dept}')" aria-label="Share QR"><i class="fa-solid fa-qrcode"></i></button>
-          </div>
-        `;
-        grid.appendChild(card);
+      // Group by department for distinct sections
+      const grouped = {};
+      filtered.forEach(staff => {
+        const d = staff.department || 'Other';
+        if (!grouped[d]) grouped[d] = [];
+        grouped[d].push(staff);
       });
 
-      balanceDirectoryGrid();
+      let delayIndex = 0;
+
+      Object.keys(grouped).sort().forEach(deptName => {
+        const groupDiv = document.createElement('div');
+        groupDiv.className = 'department-group-wrapper scroll-reveal revealed';
+        
+        const header = document.createElement('h2');
+        header.className = 'department-header';
+        header.textContent = deptName;
+        groupDiv.appendChild(header);
+
+        const grid = document.createElement('div');
+        grid.className = 'cards-grid';
+
+        grouped[deptName].forEach(staff => {
+          const staffId = staff.id || staff.email;
+          const name = staff.name || 'Staff Member';
+          const designation = staff.designation || 'Specialist';
+          const dept = staff.department || 'General';
+          const empNo = staff['Sl No'] || staff.slNo || staff.empNo || 'N/A';
+          const initials = name.split(' ').map(n => n[0]).slice(0, 2).join('').toUpperCase();
+          
+          const card = document.createElement('div');
+          card.className = 'staff-card scroll-reveal revealed';
+          card.style.cursor = 'pointer';
+          card.style.transitionDelay = `${(delayIndex % 10) * 40}ms`;
+          delayIndex++;
+          card.setAttribute('onclick', `openProfileDrawer('${staffId}')`);
+
+          const photoHtml = staff.photoUrl ? 
+            `<img src="${staff.photoUrl}" class="staff-avatar" alt="${name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+             <div class="staff-avatar" style="display: none; align-items: center; justify-content: center; background: var(--accent-amber); color: #FFFFFF; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2rem;">${initials}</div>` : 
+            `<div class="staff-avatar" style="display: flex; align-items: center; justify-content: center; background: var(--accent-amber); color: #FFFFFF; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2rem;">${initials}</div>`;
+
+          card.innerHTML = `
+            <div class="staff-avatar-container">
+              ${photoHtml}
+            </div>
+            <h4 class="staff-name">${name}</h4>
+            <p class="staff-designation">${designation}</p>
+            <span class="staff-id-badge">ID: ${empNo}</span>
+
+            <div class="staff-action-row">
+              ${staff.email ? `<a href="mailto:${staff.email}" class="staff-action-btn" onclick="event.stopPropagation();" aria-label="Email Staff"><i class="fa-solid fa-envelope"></i></a>` : ''}
+              ${(staff.mobileNo || staff.Phone) ? `<a href="tel:${staff.mobileNo || staff.Phone}" class="staff-action-btn" onclick="event.stopPropagation();" aria-label="Call Staff"><i class="fa-solid fa-phone"></i></a>` : ''}
+              <button class="staff-action-btn" onclick="event.stopPropagation(); generateVCardQr('${name}', '${staff.email}', '${staff.mobileNo || staff.Phone}', '${designation}', '${dept}')" aria-label="Share QR"><i class="fa-solid fa-qrcode"></i></button>
+            </div>
+          `;
+          grid.appendChild(card);
+        });
+
+        groupDiv.appendChild(grid);
+        container.appendChild(groupDiv);
+      });
     }
 
     function clearFilters() {
@@ -615,11 +621,10 @@
       filterAndRenderDirectory();
     }
 
-    // Count animator
     function animateCount(id, target) {
       const el = document.getElementById(id);
       let current = 0;
-      const step = Math.ceil(target / 25) || 1;
+      const step = Math.ceil(target / 20) || 1;
       const timer = setInterval(() => {
         current += step;
         if (current >= target) {
@@ -637,16 +642,15 @@
 
       const initials = (staff.name || '').split(' ').map(n => n[0]).slice(0,2).join('').toUpperCase();
       const avatarContainer = document.getElementById('drawerAvatarContainer');
-      avatarContainer.innerHTML = '';
       
       if (staff.photoUrl) {
         avatarContainer.innerHTML = `
-          <img src="${staff.photoUrl}" class="drawer-profile-image" alt="${staff.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';">
-          <div class="drawer-profile-image" style="display: none; align-items: center; justify-content: center; background: #e8a23d; color: #000000; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2rem;">${initials}</div>
+          <img src="${staff.photoUrl}" class="drawer-profile-image" alt="${staff.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+          <div class="drawer-profile-image" style="display: none; align-items: center; justify-content: center; background: var(--accent-amber); color: #FFFFFF; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2.5rem;">${initials}</div>
         `;
       } else {
         avatarContainer.innerHTML = `
-          <div class="drawer-profile-image" style="display: flex; align-items: center; justify-content: center; background: #e8a23d; color: #000000; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2rem;">${initials}</div>
+          <div class="drawer-profile-image" style="display: flex; align-items: center; justify-content: center; background: var(--accent-amber); color: #FFFFFF; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2.5rem;">${initials}</div>
         `;
       }
 
@@ -661,7 +665,6 @@
       document.getElementById('drawerBlood').textContent = staff.bloodGroup || 'N/A';
       document.getElementById('drawerAddress').textContent = staff.permanentAddress || 'N/A';
 
-      // Action mappings
       const callBtn = document.getElementById('drawerCallBtn');
       if (staff.mobileNo || staff.Phone) {
         callBtn.style.display = 'flex';
@@ -681,7 +684,6 @@
       const qrBtn = document.getElementById('drawerQrBtn');
       qrBtn.onclick = () => generateVCardQr(staff.name, staff.email, staff.mobileNo || staff.Phone, staff.designation, staff.department);
 
-      // Slide in drawer
       document.getElementById('drawerBackdrop').classList.add('active');
       document.getElementById('profileDrawer').classList.add('active');
     }
@@ -694,7 +696,7 @@
     // QR Code triggers
     function generateVCardQr(name, email, phone, designation, department) {
       const vCard = `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nORG:${department}\nTITLE:${designation}\nEMAIL:${email}\nTEL:${phone || ''}\nEND:VCARD`;
-      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(vCard)}`;
+      const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=240x240&data=${encodeURIComponent(vCard)}&margin=10`;
       
       document.getElementById('qrImage').src = qrUrl;
       document.getElementById('qrName').textContent = name;

@@ -11,48 +11,47 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="/static/js/firebase-client.js"></script>
-  <script src="/static/js/mesh-background.js"></script>
   <style>
-    /* Admin dashboard layout overrides */
+    /* Admin dashboard pure light layout */
     body {
       background-color: var(--bg-canvas-light);
       min-height: 100vh;
       overflow-x: hidden;
-      padding-top: 72px;
+      padding-top: 80px; /* For floating navbar */
     }
 
     .admin-layout {
       display: flex;
-      min-height: calc(100vh - 72px);
+      min-height: calc(100vh - 80px);
       width: 100vw;
+      position: relative;
     }
 
     /* Left Navigation Rail (sidebar) */
     .icon-rail {
-      width: 72px;
-      background: var(--surface-raised-light);
+      width: 80px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       border-right: 1px solid var(--line-hairline);
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 1.5rem 0;
+      padding: 2rem 0;
       gap: 1.5rem;
       position: fixed;
       left: 0;
-      top: 72px;
+      top: 80px;
       bottom: 0;
       z-index: 800;
       transition: var(--transition-smooth);
-    }
-    .dark-canvas .icon-rail {
-      background: var(--surface-raised);
-      border-right-color: rgba(255,255,255,0.05);
+      box-shadow: 10px 0 30px rgba(0, 0, 0, 0.02);
     }
 
     .rail-btn {
       width: 48px;
       height: 48px;
-      border-radius: 12px;
+      border-radius: 14px;
       border: none;
       background: transparent;
       color: var(--graphite-400);
@@ -60,39 +59,40 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       position: relative;
       transition: var(--transition-fast);
     }
 
     .rail-btn:hover {
       color: var(--accent-amber);
-      background: rgba(28, 32, 36, 0.03);
-    }
-    .dark-canvas .rail-btn:hover {
-      background: rgba(255,255,255,0.03);
+      background: rgba(245, 158, 11, 0.08);
+      transform: translateY(-2px);
     }
 
     .rail-btn.active {
       color: var(--accent-amber);
-      background: rgba(232, 162, 61, 0.08);
+      background: rgba(245, 158, 11, 0.12);
+      box-shadow: inset 0 0 0 1.5px var(--accent-amber);
     }
 
     .rail-btn::after {
       content: attr(data-tooltip);
       position: absolute;
       left: 80px;
-      background: #1C2024;
+      background: var(--graphite-900);
       color: #FFFFFF;
-      padding: 0.3rem 0.6rem;
-      border-radius: 4px;
-      font-size: 0.75rem;
+      padding: 0.4rem 0.8rem;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
       white-space: nowrap;
       opacity: 0;
       pointer-events: none;
-      transform: translateX(-5px);
+      transform: translateX(-10px);
       transition: var(--transition-fast);
       z-index: 100;
+      box-shadow: var(--shadow-md);
     }
     .rail-btn:hover::after {
       opacity: 1;
@@ -102,29 +102,34 @@
     /* Right Main Panel area */
     .dashboard-panel-container {
       flex: 1;
-      padding: 2.5rem 3rem;
-      margin-left: 72px; /* space for sidebar */
+      padding: 2.5rem 4rem;
+      margin-left: 80px; /* space for sidebar */
       position: relative;
       z-index: 10;
     }
 
     .admin-panel {
       display: none;
-      animation: dissolve-in 0.4s ease-out forwards;
-      max-width: 1200px;
+      animation: slide-up-fade 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      max-width: 1300px;
       margin: 0 auto;
+    }
+
+    @keyframes slide-up-fade {
+      from { opacity: 0; transform: translateY(15px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .admin-panel.active {
       display: block;
     }
 
-    /* Stat tiles grid (Bento Box format) */
+    /* Stat tiles grid (Premium Bento Box) */
     .bento-overview-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 1.5rem;
-      margin-bottom: 2.5rem;
+      gap: 2rem;
+      margin-bottom: 3rem;
     }
 
     .double-tile {
@@ -133,15 +138,12 @@
 
     /* Department custom bar charts */
     .dept-tally-bar {
-      height: 8px;
-      border-radius: 4px;
-      background: rgba(28, 32, 36, 0.05);
+      height: 10px;
+      border-radius: 100px;
+      background: rgba(17, 24, 39, 0.05);
       position: relative;
       overflow: hidden;
-      margin-top: 0.5rem;
-    }
-    .dark-canvas .dept-tally-bar {
-      background: rgba(255, 255, 255, 0.08);
+      margin-top: 0.75rem;
     }
 
     .dept-tally-fill {
@@ -149,30 +151,28 @@
       left: 0;
       top: 0;
       bottom: 0;
-      background: var(--accent-amber);
-      border-radius: 4px;
+      background: linear-gradient(90deg, var(--accent-emerald), #10b981);
+      border-radius: 100px;
       width: 0;
-      transition: width 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+      transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     /* Drag and Drop Zone */
     .upload-dropzone {
       border: 2px dashed var(--line-hairline);
-      border-radius: 16px;
-      padding: 4rem 2rem;
+      border-radius: 20px;
+      padding: 5rem 2rem;
       text-align: center;
       background: var(--surface-raised-light);
       cursor: pointer;
       transition: var(--transition-smooth);
       position: relative;
-    }
-    .dark-canvas .upload-dropzone {
-      background: var(--surface-raised);
-      border-color: rgba(255,255,255,0.08);
+      box-shadow: var(--shadow-sm);
     }
     .upload-dropzone:hover, .upload-dropzone.dragover {
       border-color: var(--accent-amber);
-      background: rgba(232, 162, 61, 0.02);
+      background: rgba(245, 158, 11, 0.03);
+      box-shadow: var(--shadow-lg);
     }
 
     /* Step timeline upload */
@@ -180,17 +180,32 @@
       display: flex;
       justify-content: space-between;
       gap: 1.5rem;
-      margin: 2.5rem 0;
+      margin: 3rem 0;
+      position: relative;
+    }
+
+    .upload-pipeline-steps::before {
+      content: '';
+      position: absolute;
+      top: 16px;
+      left: 30px;
+      right: 30px;
+      height: 2px;
+      background: var(--line-hairline);
+      z-index: 0;
     }
 
     .pipeline-step {
       flex: 1;
       display: flex;
+      flex-direction: column;
       align-items: center;
       gap: 0.75rem;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       color: var(--graphite-400);
-      font-weight: 500;
+      font-weight: 600;
+      position: relative;
+      z-index: 1;
     }
 
     .pipeline-step.active {
@@ -201,34 +216,38 @@
     }
 
     .pipeline-dot {
-      width: 24px;
-      height: 24px;
+      width: 34px;
+      height: 34px;
       border-radius: 50%;
-      border: 1.5px solid var(--line-hairline);
+      background: var(--bg-canvas-light);
+      border: 2px solid var(--line-hairline);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.75rem;
-      font-weight: 600;
+      font-size: 0.9rem;
+      font-weight: 700;
       transition: var(--transition-fast);
+      box-shadow: 0 0 0 4px var(--bg-canvas-light);
     }
     .pipeline-step.active .pipeline-dot {
       border-color: var(--accent-amber);
-      background: rgba(232, 162, 61, 0.05);
+      background: var(--accent-amber);
+      color: #fff;
+      box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.15);
     }
     .pipeline-step.complete .pipeline-dot {
       border-color: var(--accent-emerald);
-      background: rgba(46, 158, 116, 0.05);
-      color: var(--accent-emerald);
+      background: var(--accent-emerald);
+      color: #fff;
     }
 
     /* Floating Action Button */
     .fab-add-staff {
       position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      width: 56px;
-      height: 56px;
+      bottom: 2.5rem;
+      right: 2.5rem;
+      width: 64px;
+      height: 64px;
       border-radius: 50%;
       background: var(--accent-amber);
       color: #000000;
@@ -237,35 +256,33 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.4rem;
-      box-shadow: 0 10px 25px var(--glow-amber);
+      font-size: 1.6rem;
+      box-shadow: 0 15px 35px var(--glow-amber);
       z-index: 890;
       transition: var(--transition-smooth);
     }
     .fab-add-staff:hover {
-      background: #d18f32;
-      transform: translateY(-3px);
+      background: #e09325;
+      transform: translateY(-5px) scale(1.05);
     }
 
     /* Bulk actions slide-down header bar */
     .bulk-action-bar {
       position: absolute;
-      top: -60px;
+      top: -70px;
       left: 0;
       right: 0;
-      height: 50px;
-      background: var(--bg-canvas-light);
-      border-bottom: 1.5px solid var(--accent-amber);
+      height: 60px;
+      background: var(--surface-raised-light);
+      border-bottom: 2px solid var(--accent-amber);
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 1.25rem;
-      transition: top 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      padding: 0 1.5rem;
+      transition: top 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       z-index: 10;
-      border-radius: 8px 8px 0 0;
-    }
-    .dark-canvas .bulk-action-bar {
-      background: var(--surface-raised);
+      border-radius: 12px 12px 0 0;
+      box-shadow: var(--shadow-md);
     }
     .bulk-action-bar.active {
       top: 0;
@@ -274,22 +291,19 @@
     /* Mini status segmented controls inside tables */
     .status-segment-control {
       display: inline-flex;
-      background: rgba(28,32,36,0.04);
-      border-radius: 6px;
-      padding: 2px;
-    }
-    .dark-canvas .status-segment-control {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(17, 24, 39, 0.05);
+      border-radius: 8px;
+      padding: 4px;
     }
 
     .status-segment-btn {
       border: none;
       background: transparent;
-      padding: 0.2rem 0.6rem;
-      font-size: 0.75rem;
-      font-weight: 600;
+      padding: 0.3rem 0.8rem;
+      font-size: 0.8rem;
+      font-weight: 700;
       color: var(--graphite-400);
-      border-radius: 4px;
+      border-radius: 6px;
       cursor: pointer;
       transition: var(--transition-fast);
     }
@@ -297,11 +311,31 @@
     .status-segment-btn.active {
       background: #FFFFFF;
       color: var(--graphite-900);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+      box-shadow: var(--shadow-sm);
     }
-    .dark-canvas .status-segment-btn.active {
-      background: rgba(255,255,255,0.08);
-      color: #FFFFFF;
+
+    /* Table overrides for Premium Light */
+    .table-responsive-custom {
+      background: var(--surface-raised-light);
+      border-radius: 16px;
+      border: 1px solid var(--line-hairline);
+      box-shadow: var(--shadow-md);
+      overflow: hidden;
+    }
+    .table-custom th {
+      background: rgba(17, 24, 39, 0.02);
+      font-weight: 700;
+      text-transform: uppercase;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      border-bottom: 2px solid var(--line-hairline);
+    }
+    .table-custom td {
+      font-weight: 500;
+      vertical-align: middle;
+    }
+    .table-custom tr:hover td {
+      background: rgba(245, 158, 11, 0.02);
     }
   </style>
 </head>
@@ -314,11 +348,11 @@
     </a>
     <ul class="nav-links">
       <li><a href="/" class="nav-link-custom">Home</a></li>
-      <li><a href="/directory" class="nav-link-custom">Directory Preview</a></li>
-      <li><a href="/admin" class="nav-link-custom active">Admin Panel</a></li>
+      <li><a href="/directory" class="nav-link-custom">Staff Directory</a></li>
+      <li><a href="/admin" class="nav-link-custom active">Admin Portal</a></li>
     </ul>
     <div style="display: flex; align-items: center; gap: 1rem;">
-      <span id="adminEmail" class="results-pill-counter" style="background: rgba(28,32,36,0.03);"></span>
+      <span id="adminEmail" class="results-pill-counter" style="background: rgba(17, 24, 39, 0.05); color: var(--graphite-900); font-weight: 700;"></span>
       <button id="signoutBtn" class="btn-cta btn-cta-secondary"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</button>
     </div>
   </nav>
@@ -331,7 +365,7 @@
       <button class="rail-btn active" data-tab="overview" data-tooltip="Overview"><i class="fa-solid fa-chart-pie"></i></button>
       <button class="rail-btn" data-tab="pending" data-tooltip="Pending Approvals"><i class="fa-solid fa-user-clock"></i></button>
       <button class="rail-btn" data-tab="upload" data-tooltip="Bulk Excel Upload"><i class="fa-solid fa-file-excel"></i></button>
-      <button class="rail-btn" data-tab="manage" data-tooltip="Manage Staff roster"><i class="fa-solid fa-users-cog"></i></button>
+      <button class="rail-btn" data-tab="manage" data-tooltip="Manage Staff Roster"><i class="fa-solid fa-users-cog"></i></button>
     </div>
 
     <!-- Right swappable panels area -->
@@ -339,7 +373,12 @@
       
       <!-- 9.4.1 OVERVIEW TAB PANEL -->
       <section class="admin-panel active" id="overviewTab">
-        <h2 style="font-size: 1.8rem; margin-bottom: 2rem; color: var(--graphite-900); font-family: 'Space Grotesk', sans-serif;">System Overview</h2>
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2.5rem;">
+          <div>
+            <h2 style="font-size: 2.2rem; color: var(--graphite-900); font-family: 'Space Grotesk', sans-serif; margin-bottom: 0.25rem;">System Overview</h2>
+            <p style="color: var(--graphite-600); font-size: 1.05rem;">Manage the MACE-Connect enterprise directory.</p>
+          </div>
+        </div>
 
         <!-- Bento stats grid (Total 4 columns width) -->
         <div class="bento-overview-grid">
@@ -349,67 +388,68 @@
             <span class="stat-label">Total Staff</span>
           </div>
 
-          <div class="stat-tile">
-            <svg class="stat-doodle" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke-width="2"/></svg>
+          <div class="stat-tile" style="border-color: rgba(245, 158, 11, 0.3); background: rgba(245, 158, 11, 0.02);">
+            <svg class="stat-doodle" viewBox="0 0 24 24" fill="none" style="stroke: var(--accent-amber);"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke-width="2"/></svg>
             <span class="stat-number" id="overviewPendingCount" style="color: var(--accent-amber);">0</span>
             <span class="stat-label">Pending Approvals</span>
           </div>
 
           <div class="stat-tile">
             <svg class="stat-doodle" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="18" rx="2" stroke-width="2"/><path d="M16 2v4M8 2v4M3 10h18" stroke-width="2" stroke-linecap="round"/></svg>
-            <span class="stat-number" style="font-size: 1.25rem; font-family: 'Space Grotesk', sans-serif; line-height: 2;" id="overviewLastUpload">8 July 2026</span>
-            <span class="stat-label">Last Upload</span>
+            <span class="stat-number" style="font-size: 1.4rem; font-family: 'Space Grotesk', sans-serif; line-height: 1.7;" id="overviewLastUpload">Active</span>
+            <span class="stat-label">System Status</span>
           </div>
 
           <!-- Staff Breakdown (Bento horizontal bar) -->
           <div class="stat-tile double-tile" style="justify-content: space-between;">
             <span class="stat-label">Teaching vs Non-Teaching Split</span>
-            <div style="margin: 1rem 0;">
-              <div style="display: flex; justify-content: space-between; font-size: 0.85rem; font-weight: 600; color: var(--graphite-900); margin-bottom: 0.25rem;">
+            <div style="margin: 1.25rem 0;">
+              <div style="display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: 700; color: var(--graphite-900); margin-bottom: 0.5rem;">
                 <span id="breakdownTeachingPercent">0% Teaching</span>
                 <span id="breakdownNonTeachingPercent">0% Non-Teaching</span>
               </div>
-              <div class="dept-tally-bar" style="height: 12px; border-radius: 6px;">
-                <div class="dept-tally-fill" id="breakdownTeachingFill" style="background: var(--accent-emerald); border-radius: 6px 0 0 6px;"></div>
+              <div class="dept-tally-bar">
+                <div class="dept-tally-fill" id="breakdownTeachingFill"></div>
               </div>
             </div>
-            <span class="stat-label" style="font-size: 0.75rem; text-transform: none; color: var(--graphite-400);">Based on verified roster documents.</span>
+            <span class="stat-label" style="font-size: 0.85rem; text-transform: none; color: var(--graphite-600);">Based on verified roster documents.</span>
           </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; margin-top: 2rem;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; margin-top: 2rem;">
           <!-- Department-wise tally -->
           <div class="card-raised">
-            <h3 style="font-size: 1.15rem; margin-bottom: 1.5rem; font-family: 'Space Grotesk', sans-serif;">Department Roster Tally</h3>
-            <div style="display: flex; flex-direction: column; gap: 1.25rem;" id="deptTallyList"></div>
+            <h3 style="font-size: 1.3rem; margin-bottom: 1.5rem; font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-layer-group" style="color: var(--accent-amber);"></i> Department Roster</h3>
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;" id="deptTallyList"></div>
           </div>
 
           <!-- Recent activity feed -->
           <div class="card-raised">
-            <h3 style="font-size: 1.15rem; margin-bottom: 1.5rem; font-family: 'Space Grotesk', sans-serif;">Recent Operations</h3>
-            <div style="display: flex; flex-direction: column; gap: 1.25rem;" id="recentActivityList"></div>
+            <h3 style="font-size: 1.3rem; margin-bottom: 1.5rem; font-family: 'Space Grotesk', sans-serif; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-bolt" style="color: var(--accent-amber);"></i> Recent Operations</h3>
+            <div style="display: flex; flex-direction: column; gap: 1.5rem;" id="recentActivityList"></div>
           </div>
         </div>
       </section>
 
       <!-- 9.4.2 PENDING REGISTRATIONS PANEL -->
       <section class="admin-panel" id="pendingTab">
-        <h2 style="font-size: 1.8rem; margin-bottom: 2rem; color: var(--graphite-900); font-family: 'Space Grotesk', sans-serif;">Pending Registrations</h2>
+        <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--graphite-900); font-family: 'Space Grotesk', sans-serif;">Pending Registrations</h2>
+        <p style="color: var(--graphite-600); font-size: 1.05rem; margin-bottom: 2.5rem;">Review and approve new staff profile requests.</p>
         
         <div class="table-responsive-custom" style="position: relative;">
           <!-- Bulk actions header -->
           <div class="bulk-action-bar" id="pendingBulkBar">
-            <span style="font-size: 0.85rem; font-weight: 600; color: var(--graphite-900);" id="pendingSelectedLabel">0 rows selected</span>
-            <div style="display: flex; gap: 0.5rem;">
-              <button class="btn-cta btn-cta-primary" style="padding: 0.4rem 1rem; font-size: 0.8rem; background: var(--accent-emerald); color: white;" onclick="bulkApprovePending()"><i class="fa-solid fa-check"></i> Bulk Approve</button>
-              <button class="btn-cta btn-cta-secondary" style="padding: 0.4rem 1rem; font-size: 0.8rem; border-color: var(--accent-rust); color: var(--accent-rust);" onclick="bulkRejectPending()"><i class="fa-solid fa-xmark"></i> Bulk Reject</button>
+            <span style="font-size: 0.95rem; font-weight: 700; color: var(--graphite-900);" id="pendingSelectedLabel">0 rows selected</span>
+            <div style="display: flex; gap: 0.75rem;">
+              <button class="btn-cta btn-cta-primary" style="padding: 0.5rem 1.25rem; font-size: 0.85rem; background: var(--accent-emerald); border-color: var(--accent-emerald); color: white;" onclick="bulkApprovePending()"><i class="fa-solid fa-check"></i> Approve Selection</button>
+              <button class="btn-cta btn-cta-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.85rem; border-color: var(--accent-rust); color: var(--accent-rust);" onclick="bulkRejectPending()"><i class="fa-solid fa-xmark"></i> Reject Selection</button>
             </div>
           </div>
 
           <table class="table-custom">
             <thead>
               <tr>
-                <th style="width: 40px;"><input type="checkbox" id="selectAllPending" onclick="toggleSelectAllPending(this)"></th>
+                <th style="width: 50px; text-align: center;"><input type="checkbox" id="selectAllPending" onclick="toggleSelectAllPending(this)"></th>
                 <th>Staff Member</th>
                 <th>Employee ID</th>
                 <th>Department</th>
@@ -424,87 +464,93 @@
           </table>
         </div>
 
-        <div id="pendingEmptyState" style="display: none; text-align: center; padding: 4rem 2rem;"></div>
+        <div id="pendingEmptyState" style="display: none; text-align: center; padding: 6rem 2rem;">
+          <i class="fa-solid fa-clipboard-check" style="font-size: 4rem; color: var(--line-hairline); margin-bottom: 1.5rem;"></i>
+          <h3 style="font-size: 1.4rem; color: var(--graphite-900); margin-bottom: 0.5rem;">All Caught Up!</h3>
+          <p style="color: var(--graphite-400);">There are no pending registration requests.</p>
+        </div>
       </section>
 
       <!-- 9.4.3 EXCEL BULK UPLOAD PANEL -->
       <section class="admin-panel" id="uploadTab">
-        <h2 style="font-size: 1.8rem; margin-bottom: 2rem; color: var(--graphite-900); font-family: 'Space Grotesk', sans-serif;">Excel Bulk Import</h2>
+        <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--graphite-900); font-family: 'Space Grotesk', sans-serif;">Excel Bulk Import</h2>
+        <p style="color: var(--graphite-600); font-size: 1.05rem; margin-bottom: 2.5rem;">Upload spreadsheets to instantly provision multiple staff accounts.</p>
 
         <div class="upload-dropzone" id="uploadArea">
-          <!-- upload-pipeline.svg inline -->
-          <svg width="100" height="100" viewBox="0 0 100 100" fill="none" style="margin-bottom: 1.5rem;" xmlns="http://www.w3.org/2000/svg">
-            <rect x="25" y="15" width="50" height="70" rx="6" fill="#15181B" stroke="#6B7178" stroke-width="2" />
-            <path class="line-draw-path" d="M35 35 H 65 M35 50 H 65 M35 65 H 55" stroke="#6B7178" stroke-width="2.5" stroke-linecap="round" opacity="0.6" />
-            <circle cx="70" cy="70" r="14" fill="#15181B" stroke="var(--accent-amber)" stroke-width="2" />
-            <path d="M70 63 V 77 M63 70 H 77" stroke="var(--accent-amber)" stroke-width="2" stroke-linecap="round" />
+          <!-- Premium Upload Illustration -->
+          <svg width="120" height="120" viewBox="0 0 100 100" fill="none" style="margin-bottom: 2rem;" xmlns="http://www.w3.org/2000/svg">
+            <rect x="25" y="15" width="50" height="70" rx="8" fill="var(--surface-raised-light)" stroke="var(--accent-amber)" stroke-width="2.5" />
+            <path d="M35 35 H 65 M35 50 H 65 M35 65 H 55" stroke="var(--graphite-400)" stroke-width="3" stroke-linecap="round" opacity="0.4" />
+            <circle cx="75" cy="75" r="18" fill="var(--surface-raised-light)" stroke="var(--accent-emerald)" stroke-width="3" />
+            <path d="M75 63 V 87 M63 75 H 87" stroke="var(--accent-emerald)" stroke-width="3" stroke-linecap="round" />
           </svg>
-          <h4 style="font-size: 1.2rem; margin-bottom: 0.5rem;">Drag and drop campus staff sheets here</h4>
-          <p style="color: var(--graphite-400); font-size: 0.9rem; margin-bottom: 1.5rem;">Supports Excel files (.xlsx) format. Size limit 5MB.</p>
-          <button class="btn-cta btn-cta-primary" onclick="document.getElementById('excelFile').click()"><i class="fa-solid fa-file-arrow-up"></i> Browse Local Sheets</button>
+          <h4 style="font-size: 1.5rem; margin-bottom: 0.5rem; color: var(--graphite-900);">Drop spreadsheet files here</h4>
+          <p style="color: var(--graphite-600); font-size: 1rem; margin-bottom: 2rem;">Supports Excel (.xlsx) formats. Maximum file size 5MB.</p>
+          <button class="btn-cta btn-cta-primary" style="padding: 1rem 2rem; font-size: 1.1rem;" onclick="document.getElementById('excelFile').click()"><i class="fa-solid fa-cloud-arrow-up"></i> Browse Files</button>
           <input type="file" id="excelFile" accept=".xlsx" style="display: none;" onchange="handleFileSelected(this)">
         </div>
 
         <!-- Parser progress steps -->
         <div class="upload-pipeline-steps" id="uploadPipeline" style="display: none;">
           <div class="pipeline-step" id="step1">
-            <span class="pipeline-dot">1</span>
-            <span>Reading columns</span>
+            <div class="pipeline-dot">1</div>
+            <span>Reading Schema</span>
           </div>
           <div class="pipeline-step" id="step2">
-            <span class="pipeline-dot">2</span>
-            <span>Extracting photos</span>
+            <div class="pipeline-dot">2</div>
+            <span>Validating Data</span>
           </div>
           <div class="pipeline-step" id="step3">
-            <span class="pipeline-dot">3</span>
-            <span>Validating rows</span>
+            <div class="pipeline-dot">3</div>
+            <span>Syncing Firestore</span>
           </div>
           <div class="pipeline-step" id="step4">
-            <span class="pipeline-dot">4</span>
-            <span>Ready</span>
+            <div class="pipeline-dot">4</div>
+            <span>Complete</span>
           </div>
         </div>
 
         <!-- Parsing preview results -->
-        <div id="resultsSection" style="display: none; margin-top: 3rem;">
-          <h3 style="font-size: 1.2rem; margin-bottom: 1.5rem; font-family: 'Space Grotesk', sans-serif;"> Roster Upload Results</h3>
-          <div class="card-raised mb-4" id="uploadResults"></div>
+        <div id="resultsSection" style="display: none; margin-top: 3.5rem;">
+          <h3 style="font-size: 1.4rem; margin-bottom: 1.5rem; font-family: 'Space Grotesk', sans-serif;">Import Results</h3>
+          <div class="card-raised" id="uploadResults" style="padding: 2rem;"></div>
         </div>
       </section>
 
       <!-- 9.4.4 MANAGE STAFF PANEL -->
       <section class="admin-panel" id="manageTab">
-        <h2 style="font-size: 1.8rem; margin-bottom: 2rem; color: var(--graphite-900); font-family: 'Space Grotesk', sans-serif;">Roster Management</h2>
+        <h2 style="font-size: 2.2rem; margin-bottom: 0.5rem; color: var(--graphite-900); font-family: 'Space Grotesk', sans-serif;">Roster Management</h2>
+        <p style="color: var(--graphite-600); font-size: 1.05rem; margin-bottom: 2.5rem;">Edit profiles, change staff types, or remove members from the directory.</p>
         
         <!-- Search and filters -->
         <div style="display: flex; gap: 1.5rem; align-items: center; margin-bottom: 1.5rem;">
-          <div class="search-input-wrapper" style="flex: 1; max-width: 400px;">
-            <svg class="search-icon-doodle" viewBox="0 0 24 24">
+          <div class="search-input-wrapper" style="flex: 1; max-width: 500px;">
+            <svg class="search-icon-doodle" viewBox="0 0 24 24" style="stroke: var(--accent-amber); stroke-width: 2.5;">
               <circle cx="11" cy="11" r="8" />
               <path d="M21 21l-4.35-4.35" stroke-linecap="round" />
             </svg>
-            <input type="text" id="manageSearchInput" class="search-input-field" placeholder="Search verified roster..." autocomplete="off">
+            <input type="text" id="manageSearchInput" class="search-input-field" style="border-bottom: 2px solid var(--line-hairline);" placeholder="Search verified roster by name, email, or ID..." autocomplete="off">
           </div>
-          <div class="results-pill-counter" id="manageCount">0 verified records</div>
+          <div class="results-pill-counter" id="manageCount" style="background: rgba(17, 24, 39, 0.05); color: var(--graphite-900);">0 verified records</div>
         </div>
 
         <div class="table-responsive-custom" style="position: relative;">
           <!-- Bulk actions header -->
           <div class="bulk-action-bar" id="manageBulkBar">
-            <span style="font-size: 0.85rem; font-weight: 600; color: var(--graphite-900);" id="manageSelectedLabel">0 rows selected</span>
-            <button class="btn-cta btn-cta-secondary" style="padding: 0.4rem 1rem; font-size: 0.8rem; border-color: var(--accent-rust); color: var(--accent-rust);" onclick="bulkDeleteStaff()"><i class="fa-solid fa-trash"></i> Bulk Delete</button>
+            <span style="font-size: 0.95rem; font-weight: 700; color: var(--graphite-900);" id="manageSelectedLabel">0 rows selected</span>
+            <button class="btn-cta btn-cta-secondary" style="padding: 0.5rem 1.25rem; font-size: 0.85rem; border-color: var(--accent-rust); color: var(--accent-rust);" onclick="bulkDeleteStaff()"><i class="fa-solid fa-trash"></i> Delete Selection</button>
           </div>
 
           <table class="table-custom">
             <thead>
               <tr>
-                <th style="width: 40px;"><input type="checkbox" id="selectAllManage" onclick="toggleSelectAllManage(this)"></th>
+                <th style="width: 50px; text-align: center;"><input type="checkbox" id="selectAllManage" onclick="toggleSelectAllManage(this)"></th>
                 <th>Staff Member</th>
                 <th>Employee ID</th>
                 <th>Department</th>
                 <th>Designation</th>
                 <th>Email</th>
-                <th>Roster Status</th>
+                <th style="text-align: center;">Role Type</th>
                 <th style="width: 120px; text-align: right;">Action</th>
               </tr>
             </thead>
@@ -517,6 +563,11 @@
 
     </div>
   </div>
+
+  <!-- Floating Action Button for Manual Addition -->
+  <button class="fab-add-staff" onclick="openFormDrawerForAdd()" aria-label="Add Staff Member">
+    <i class="fa-solid fa-plus"></i>
+  </button>
 
   <!-- Reusable Manual Add / Edit slide-in drawer form -->
   <div class="drawer-backdrop" id="drawerBackdrop" onclick="closeFormDrawer()"></div>
@@ -598,14 +649,10 @@
 
         <div class="form-group-custom">
           <select id="formBlood" class="form-control-custom form-select-custom" required>
-            <option value="A+">A+</option>
-            <option value="A-">A-</option>
-            <option value="B+">B+</option>
-            <option value="B-">B-</option>
-            <option value="AB+">AB+</option>
-            <option value="AB-">AB-</option>
-            <option value="O+">O+</option>
-            <option value="O-">O-</option>
+            <option value="A+">A+</option><option value="A-">A-</option>
+            <option value="B+">B+</option><option value="B-">B-</option>
+            <option value="AB+">AB+</option><option value="AB-">AB-</option>
+            <option value="O+">O+</option><option value="O-">O-</option>
           </select>
           <label for="formBlood" class="form-label-custom">Blood Group</label>
           <div class="form-input-focus-line"></div>
@@ -617,137 +664,75 @@
           <div class="form-input-focus-line"></div>
         </div>
 
-        <button type="submit" id="formSubmitBtn" class="btn-cta btn-cta-primary" style="width: 100%; padding: 0.8rem 0; margin-top: 1.5rem;"><i class="fa-solid fa-save"></i> Save Profile</button>
+        <button type="submit" id="formSubmitBtn" class="btn-cta btn-cta-primary" style="width: 100%; padding: 1.2rem; font-size: 1.1rem; justify-content: center; margin-top: 1rem;"><i class="fa-solid fa-save" style="margin-right: 0.5rem;"></i> Save Record</button>
       </form>
     </div>
   </div>
 
-  <!-- Warnings/Confirmations Slide-in Drawer -->
+  <!-- Reusable Action Confirmation Drawer / Modal -->
   <div class="drawer-backdrop" id="warningBackdrop" onclick="closeWarningDrawer()" style="z-index: 1060;"></div>
-  <div class="drawer-custom" id="warningDrawer" style="z-index: 1070; max-width: 400px;">
-    <div class="drawer-header" style="border-bottom-color: var(--accent-rust);">
-      <span class="drawer-title" style="color: var(--accent-rust);"><i class="fa-solid fa-triangle-exclamation"></i> Warning Alert</span>
+  <div class="drawer-custom" id="warningDrawer" style="z-index: 1070; max-width: 440px; padding: 1.5rem;">
+    <div class="drawer-header" style="border-bottom: none; padding-bottom: 0;">
+      <h3 class="drawer-title" id="warningTitle" style="color: var(--accent-rust); display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-triangle-exclamation"></i> Action Required</h3>
       <button class="drawer-close" onclick="closeWarningDrawer()">&times;</button>
     </div>
-    <div class="drawer-body" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.5rem;">
-      <svg width="80" height="80" viewBox="0 0 100 100" fill="none">
-        <path d="M50 15 L85 75 H15 Z" stroke="var(--accent-rust)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-        <line x1="50" y1="38" x2="50" y2="58" stroke="var(--accent-rust)" stroke-width="3" stroke-linecap="round" />
-        <circle cx="50" cy="68" r="3" fill="var(--accent-rust)" />
-      </svg>
-      <div>
-        <h4 id="warningHeading" style="font-family: 'Space Grotesk', sans-serif; font-weight: 600; font-size: 1.15rem; margin-bottom: 0.5rem;">Confirm Action</h4>
-        <p id="warningBody" style="color: var(--graphite-400); font-size: 0.9rem; line-height: 1.5;"></p>
-      </div>
-      <div style="display: flex; gap: 1rem; width: 100%;">
-        <button class="btn-cta btn-cta-secondary" style="flex: 1;" onclick="closeWarningDrawer()">Cancel</button>
-        <button class="btn-cta btn-cta-primary" id="warningConfirmBtn" style="flex: 1; background-color: var(--accent-rust); color: white;">Confirm</button>
+    <div class="drawer-body" style="padding-top: 1rem;">
+      <p id="warningMessage" style="color: var(--graphite-600); font-size: 1.05rem; line-height: 1.6; margin-bottom: 2rem;"></p>
+      <div style="display: flex; gap: 1rem;">
+        <button class="btn-cta btn-cta-secondary" style="flex: 1; justify-content: center;" onclick="closeWarningDrawer()">Cancel</button>
+        <button id="warningConfirmBtn" class="btn-cta btn-cta-primary" style="flex: 1; justify-content: center; background: var(--accent-rust); border-color: var(--accent-rust); color: white;">Confirm</button>
       </div>
     </div>
   </div>
-
-  <!-- Persistent Floating Action Button on Manage Panel only -->
-  <button class="fab-add-staff" id="addStaffFAB" style="display: none;" onclick="openFormDrawerForAdd()"><i class="fa-solid fa-plus"></i></button>
 
   <!-- Reusable Toast Notification Container -->
   <div class="toast-container-custom" id="toastContainer"></div>
 
   <script>
+    // Tab Switching Logic
+    const railBtns = document.querySelectorAll('.rail-btn');
+    const adminPanels = document.querySelectorAll('.admin-panel');
+
+    railBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Remove active class from all
+        railBtns.forEach(b => b.classList.remove('active'));
+        adminPanels.forEach(p => p.classList.remove('active'));
+        
+        // Add active class to clicked
+        btn.classList.add('active');
+        const targetTab = document.getElementById(btn.getAttribute('data-tab') + 'Tab');
+        targetTab.classList.add('active');
+      });
+    });
+
+    // Globals
     let allStaffData = [];
     let pendingData = [];
+    let activityLog = JSON.parse(localStorage.getItem('adminActivityLog')) || [];
+    
     let selectedPendingIds = new Set();
     let selectedManageIds = new Set();
-    let recentOperations = [];
-    let activeTab = 'overview';
 
-    // Toast triggers
-    function showToast(message, type = 'success') {
-      const container = document.getElementById('toastContainer');
-      const toast = document.createElement('div');
-      toast.className = `toast-custom ${type}`;
-      toast.innerHTML = `
-        <span style="font-size: 0.9rem; font-weight: 500;">${message}</span>
-        <button style="background:transparent; border:none; color:white; cursor:pointer; font-size:1.1rem; margin-left:1rem;" onclick="this.parentElement.remove()">&times;</button>
-      `;
-      container.appendChild(toast);
-      
-      setTimeout(() => toast.classList.add('show'), 50);
-      
-      setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-      }, 4000);
-    }
-
-    // Warnings slide-in drawer
-    let warningConfirmCallback = null;
-    function openWarningDrawer(heading, bodyText, callback) {
-      document.getElementById('warningHeading').textContent = heading;
-      document.getElementById('warningBody').textContent = bodyText;
-      warningConfirmCallback = callback;
-      
-      document.getElementById('warningBackdrop').classList.add('active');
-      document.getElementById('warningDrawer').classList.add('active');
-    }
-
-    function closeWarningDrawer() {
-      document.getElementById('warningBackdrop').classList.remove('active');
-      document.getElementById('warningDrawer').classList.remove('active');
-      warningConfirmCallback = null;
-    }
-
-    document.getElementById('warningConfirmBtn').addEventListener('click', () => {
-      if (warningConfirmCallback) {
-        warningConfirmCallback();
-      }
-      closeWarningDrawer();
-    });
-
-    // In-page tab navigation rail
-    const sidebar = document.getElementById('adminSidebar');
-    sidebar.addEventListener('click', (e) => {
-      const btn = e.target.closest('.rail-btn');
-      if (!btn) return;
-      
-      document.querySelectorAll('.rail-btn').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      
-      const tab = btn.getAttribute('data-tab');
-      activeTab = tab;
-      
-      document.querySelectorAll('.admin-panel').forEach(p => p.classList.remove('active'));
-      document.getElementById(`${tab}Tab`).classList.add('active');
-
-      // FAB visibilities
-      const fab = document.getElementById('addStaffFAB');
-      if (tab === 'manage') {
-        fab.style.display = 'flex';
-      } else {
-        fab.style.display = 'none';
-      }
-    });
-
-    // Initial auth check
+    // Check Auth & Admin Status
     firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
         document.getElementById('adminEmail').textContent = user.email;
         try {
           const token = await user.getIdToken();
-          
-          // Verify Admin
           const checkRes = await fetch('/api/staff/test_admin_check', {
             headers: { 'Authorization': 'Bearer ' + token }
           });
-          if (!checkRes.ok) {
-            showToast('Access Denied. Admins only.', 'error');
-            setTimeout(() => window.location.href = '/directory', 1000);
-            return;
+          if (checkRes.ok) {
+            // User is admin, load data
+            await Promise.all([loadStaffData(token), loadPendingRegistrations(token)]);
+            renderActivityLog();
+          } else {
+            showToast('Access denied. Admin privileges required.', 'error');
+            setTimeout(() => { window.location.href = '/directory'; }, 1500);
           }
-
-          await Promise.all([loadStaffData(token), loadPendingRegistrations(token)]);
         } catch (error) {
-          console.error(error);
-          showToast('Failed to retrieve authentication tokens.', 'error');
+          showToast('Failed to verify privileges.', 'error');
         }
       } else {
         window.location.href = '/login';
@@ -759,138 +744,175 @@
       window.location.href = '/login';
     });
 
-    // Load staff verified roster data
+    // Toast notifications
+    function showToast(message, type = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast-custom ${type}`;
+      toast.innerHTML = `
+        <span style="font-size: 0.95rem; font-weight: 600;">${message}</span>
+        <button style="background:transparent; border:none; color:inherit; cursor:pointer; font-size:1.2rem; margin-left:1rem; opacity:0.6;" onclick="this.parentElement.remove()">&times;</button>
+      `;
+      container.appendChild(toast);
+      
+      setTimeout(() => toast.classList.add('show'), 50);
+      setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => toast.remove(), 400);
+      }, 4000);
+    }
+
+    // Modal / Drawer interactions
+    function openWarningDrawer(title, message, confirmCallback) {
+      document.getElementById('warningTitle').innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${title}`;
+      document.getElementById('warningMessage').textContent = message;
+      const btn = document.getElementById('warningConfirmBtn');
+      
+      // Remove old listeners
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+      
+      newBtn.addEventListener('click', () => {
+        confirmCallback();
+        closeWarningDrawer();
+      });
+
+      document.getElementById('warningBackdrop').classList.add('active');
+      document.getElementById('warningDrawer').classList.add('active');
+    }
+
+    function closeWarningDrawer() {
+      document.getElementById('warningBackdrop').classList.remove('active');
+      document.getElementById('warningDrawer').classList.remove('active');
+    }
+
+    // Logging Activity
+    function addOperationLog(message) {
+      const log = { msg: message, time: new Date().toISOString() };
+      activityLog.unshift(log);
+      if (activityLog.length > 5) activityLog.pop();
+      localStorage.setItem('adminActivityLog', JSON.stringify(activityLog));
+      renderActivityLog();
+    }
+
+    function renderActivityLog() {
+      const list = document.getElementById('recentActivityList');
+      list.innerHTML = '';
+      if (activityLog.length === 0) {
+        list.innerHTML = '<p style="color: var(--graphite-400); font-style: italic; font-size: 0.95rem;">No recent operations recorded in local session.</p>';
+        return;
+      }
+      
+      activityLog.forEach(log => {
+        const d = new Date(log.time);
+        const timeStr = d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const html = `
+          <div style="display: flex; gap: 1rem; align-items: flex-start; padding-bottom: 1rem; border-bottom: 1px solid var(--line-hairline);">
+            <div style="width: 32px; height: 32px; border-radius: 50%; background: rgba(245, 158, 11, 0.1); display: flex; align-items: center; justify-content: center; color: var(--accent-amber); flex-shrink: 0;">
+              <i class="fa-solid fa-bolt" style="font-size: 0.8rem;"></i>
+            </div>
+            <div>
+              <p style="margin: 0 0 0.25rem 0; font-size: 0.95rem; font-weight: 600; color: var(--graphite-900);">${log.msg}</p>
+              <p style="margin: 0; font-size: 0.8rem; color: var(--graphite-400);">${d.toLocaleDateString()} at ${timeStr}</p>
+            </div>
+          </div>
+        `;
+        list.insertAdjacentHTML('beforeend', html);
+      });
+    }
+
+    // Fetch and Load Data
     async function loadStaffData(token) {
-      if (!token) token = await firebase.auth().currentUser.getIdToken();
       try {
         const response = await fetch('/api/staffs', {
           headers: { 'Authorization': 'Bearer ' + token }
         });
         const result = await response.json();
+        
         if (result.staffs) {
           allStaffData = result.staffs;
-          updateOverview();
+          updateOverviewStats();
           renderManageTable();
         }
       } catch (error) {
-        showToast('Failed to connect to roster database.', 'error');
+        console.log("Error loading staff", error);
       }
     }
 
-    // Load pending spreadsheet registrations
     async function loadPendingRegistrations(token) {
-      if (!token) token = await firebase.auth().currentUser.getIdToken();
       try {
         const response = await fetch('/api/pending_registrations', {
           headers: { 'Authorization': 'Bearer ' + token }
         });
         const result = await response.json();
-        if (result.success && result.registrations) {
-          pendingData = result.registrations;
+        if (result.pending) {
+          pendingData = result.pending;
+          document.getElementById('overviewPendingCount').textContent = pendingData.length;
           renderPendingTable();
-          animateCount('overviewPendingCount', pendingData.length);
-        } else {
-          pendingData = [];
-          renderPendingTable();
-          animateCount('overviewPendingCount', 0);
         }
       } catch (error) {
-        pendingData = [];
-        renderPendingTable();
+        console.log("Error loading pending", error);
       }
     }
 
-    // Count Animator Helper
-    function animateCount(id, target) {
-      const el = document.getElementById(id);
-      if (!el) return;
-      let current = 0;
-      const step = Math.ceil(target / 25) || 1;
-      const timer = setInterval(() => {
-        current += step;
-        if (current >= target) {
-          current = target;
-          clearInterval(timer);
-        }
-        el.textContent = current;
-      }, 15);
-    }
+    // Overview Statistics Logic
+    function updateOverviewStats() {
+      // Total count
+      document.getElementById('overviewTotalCount').textContent = allStaffData.length;
 
-    // Overview Stats
-    function updateOverview() {
-      animateCount('overviewTotalCount', allStaffData.length);
-      
-      // Calculate teaching split %
-      const teaching = allStaffData.filter(s => s.type === 'Teaching Staff').length;
-      const nonTeaching = allStaffData.filter(s => s.type === 'Non Teaching Staff').length;
-      const retired = allStaffData.filter(s => s.type === 'Retired').length;
-      const total = allStaffData.length || 1;
+      // Teaching vs Non Teaching
+      let tCount = 0;
+      let nCount = 0;
+      const deptCounts = {};
 
-      const teachingPercent = Math.round((teaching / total) * 100);
-      const nonTeachingPercent = Math.round((nonTeaching / total) * 100);
-      
-      document.getElementById('breakdownTeachingPercent').textContent = `${teachingPercent}% Teaching`;
-      document.getElementById('breakdownNonTeachingPercent').textContent = `${nonTeachingPercent}% Non-Teaching`;
-      document.getElementById('breakdownTeachingFill').style.width = `${teachingPercent}%`;
-
-      // Department tally SVG list
-      const tallyContainer = document.getElementById('deptTallyList');
-      tallyContainer.innerHTML = '';
-      
-      const depts = {};
       allStaffData.forEach(s => {
-        const d = s.department || 'Other';
-        depts[d] = (depts[d] || 0) + 1;
+        const type = s.type || 'Teaching Staff';
+        if (type.includes('Non')) nCount++;
+        else if (type.includes('Teaching')) tCount++;
+
+        const dept = s.department || 'Other';
+        deptCounts[dept] = (deptCounts[dept] || 0) + 1;
       });
 
-      const maxCount = Math.max(...Object.values(depts)) || 1;
+      const totalValid = tCount + nCount;
+      let tPct = 0;
+      if (totalValid > 0) {
+        tPct = Math.round((tCount / totalValid) * 100);
+      }
+      const nPct = 100 - tPct;
 
-      Object.keys(depts).sort().forEach(d => {
-        const count = depts[d];
-        const percent = Math.round((count / maxCount) * 100);
+      document.getElementById('breakdownTeachingPercent').textContent = `${tPct}% Teaching`;
+      document.getElementById('breakdownNonTeachingPercent').textContent = `${nPct}% Non-Teaching`;
+      document.getElementById('breakdownTeachingFill').style.width = `${tPct}%`;
+
+      // Department Tally rendering
+      const tallyList = document.getElementById('deptTallyList');
+      tallyList.innerHTML = '';
+      
+      const sortedDepts = Object.keys(deptCounts).sort((a,b) => deptCounts[b] - deptCounts[a]);
+      sortedDepts.forEach(dept => {
+        const count = deptCounts[dept];
+        const pct = Math.round((count / allStaffData.length) * 100);
         
         const row = document.createElement('div');
         row.innerHTML = `
-          <div style="display:flex; justify-content:space-between; font-size:0.85rem; font-weight:600; color:var(--graphite-900);">
-            <span>${d}</span>
-            <span>${count}</span>
+          <div style="display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 0.4rem; color: var(--graphite-900); font-weight: 600;">
+            <span>${dept}</span>
+            <span>${count} staff</span>
           </div>
           <div class="dept-tally-bar">
-            <div class="dept-tally-fill" style="width: ${percent}%;"></div>
+            <div class="dept-tally-fill" style="width: ${pct}%; background: linear-gradient(90deg, var(--accent-amber), #e09325);"></div>
           </div>
         `;
-        tallyContainer.appendChild(row);
+        tallyList.appendChild(row);
       });
-
-      // Populate recent activities (mocked using operations log)
-      const activityContainer = document.getElementById('recentActivityList');
-      activityContainer.innerHTML = '';
-      if (recentOperations.length === 0) {
-        activityContainer.innerHTML = '<p style="color:var(--graphite-400); font-size:0.9rem; text-align:center;">No recent operations log found.</p>';
-        return;
-      }
-      recentOperations.slice(0, 5).forEach(op => {
-        const item = document.createElement('div');
-        item.style.display = 'flex';
-        item.style.gap = '0.75rem';
-        item.style.alignItems = 'center';
-        item.innerHTML = `
-          <i class="fa-solid fa-info-circle" style="color:var(--accent-amber);"></i>
-          <span style="font-size:0.85rem; color:var(--graphite-900);">${op}</span>
-        `;
-        activityContainer.appendChild(item);
-      });
-    }
-
-    function addOperationLog(desc) {
-      recentOperations.unshift(`${desc} at ${new Date().toLocaleTimeString()}`);
-      updateOverview();
     }
 
     // Pending Table rendering
     function renderPendingTable() {
       const body = document.getElementById('pendingTableBody');
-      const empty = document.getElementById('pendingEmptyState');
+      const emptyState = document.getElementById('pendingEmptyState');
+      const tableWrapper = body.closest('table');
       
       body.innerHTML = '';
       selectedPendingIds.clear();
@@ -898,35 +920,29 @@
       document.getElementById('pendingBulkBar').classList.remove('active');
 
       if (pendingData.length === 0) {
-        empty.innerHTML = `
-          <svg width="120" height="120" viewBox="0 0 120 120" fill="none" style="margin-bottom:1.5rem;">
-            <circle cx="60" cy="60" r="40" stroke="#6B7178" stroke-width="1.5" stroke-dasharray="4 4" opacity="0.4" />
-            <path class="line-draw-path" d="M45 60 L55 70 L75 45" stroke="var(--accent-emerald)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-          </svg>
-          <h4 style="font-family:'Space Grotesk', sans-serif; font-size:1.2rem; margin-bottom:0.5rem;">Zero Pending Registrations</h4>
-          <p style="color:var(--graphite-400); font-size:0.9rem;">All candidate profiles are approved and verified.</p>
-        `;
-        empty.style.display = 'block';
+        tableWrapper.style.display = 'none';
+        emptyState.style.display = 'block';
         return;
       }
 
-      empty.style.display = 'none';
+      tableWrapper.style.display = 'table';
+      emptyState.style.display = 'none';
 
-      pendingData.forEach(reg => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td><input type="checkbox" class="pending-check" data-email="${reg.Email}" onclick="handlePendingRowCheck()"></td>
-          <td style="font-weight:600; color:var(--graphite-900);">${reg.Name || 'N/A'}</td>
-          <td>${reg['Employee ID'] || reg.empNo || 'N/A'}</td>
-          <td>${reg.Department || 'N/A'}</td>
-          <td>${reg.Designation || 'N/A'}</td>
-          <td>${reg.Email || 'N/A'}</td>
+      pendingData.forEach(req => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td style="text-align: center;"><input type="checkbox" class="pending-check" data-email="${req.email}" onclick="handlePendingRowCheck()"></td>
+          <td style="font-weight: 700; color: var(--graphite-900);">${req.name || 'N/A'}</td>
+          <td>${req.emp_no || 'N/A'}</td>
+          <td><span style="background: rgba(17,24,39,0.05); padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.8rem; font-weight: 700;">${req.department || 'N/A'}</span></td>
+          <td>${req.designation || 'N/A'}</td>
+          <td>${req.email || 'N/A'}</td>
           <td style="text-align: right;">
-            <button class="btn-cta btn-cta-primary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; background: var(--accent-emerald); color: white;" onclick="approveRegistration('${reg.Email}')"><i class="fa-solid fa-check"></i></button>
-            <button class="btn-cta btn-cta-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; border-color: var(--accent-rust); color: var(--accent-rust);" onclick="confirmRejectPending('${reg.Email}')"><i class="fa-solid fa-xmark"></i></button>
+            <button class="btn-cta btn-cta-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; border-color: var(--accent-emerald); color: var(--accent-emerald);" onclick="approveRegistration('${req.email}')"><i class="fa-solid fa-check"></i></button>
+            <button class="btn-cta btn-cta-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; border-color: var(--accent-rust); color: var(--accent-rust);" onclick="rejectRegistration('${req.email}')"><i class="fa-solid fa-xmark"></i></button>
           </td>
         `;
-        body.appendChild(row);
+        body.appendChild(tr);
       });
     }
 
@@ -953,8 +969,8 @@
     }
 
     async function approveRegistration(email) {
+      const token = await firebase.auth().currentUser.getIdToken();
       try {
-        const token = await firebase.auth().currentUser.getIdToken();
         const res = await fetch('/api/approve_registration', {
           method: 'POST',
           headers: {
@@ -965,7 +981,7 @@
         });
         const result = await res.json();
         if (result.success) {
-          showToast(`Approved registration for ${email}`, 'success');
+          showToast('Registration approved.', 'success');
           addOperationLog(`Approved registration for ${email}`);
           await Promise.all([loadStaffData(token), loadPendingRegistrations(token)]);
         } else {
@@ -976,15 +992,9 @@
       }
     }
 
-    function confirmRejectPending(email) {
-      openWarningDrawer('Reject Registration', `Are you sure you want to reject the registration request for ${email}? This action cannot be undone.`, () => {
-        rejectRegistration(email);
-      });
-    }
-
     async function rejectRegistration(email) {
+      const token = await firebase.auth().currentUser.getIdToken();
       try {
-        const token = await firebase.auth().currentUser.getIdToken();
         const res = await fetch('/api/reject_registration', {
           method: 'POST',
           headers: {
@@ -995,7 +1005,7 @@
         });
         const result = await res.json();
         if (result.success) {
-          showToast(`Rejected registration for ${email}`, 'success');
+          showToast('Registration rejected.', 'success');
           addOperationLog(`Rejected registration for ${email}`);
           await loadPendingRegistrations(token);
         } else {
@@ -1069,25 +1079,25 @@
       // Clear steps
       [step1, step2, step3, step4].forEach(s => s.className = 'pipeline-step');
 
-      // Step 1: Read columns
+      // Step 1
       step1.classList.add('active');
       await new Promise(r => setTimeout(r, 600));
       step1.classList.remove('active');
       step1.classList.add('complete');
 
-      // Step 2: Extract photos
+      // Step 2
       step2.classList.add('active');
       await new Promise(r => setTimeout(r, 600));
       step2.classList.remove('active');
       step2.classList.add('complete');
 
-      // Step 3: Validate rows
+      // Step 3
       step3.classList.add('active');
       await new Promise(r => setTimeout(r, 600));
       step3.classList.remove('active');
       step3.classList.add('complete');
 
-      // Step 4: Ready
+      // Step 4
       step4.classList.add('complete');
 
       // Actually upload
@@ -1126,8 +1136,8 @@
       const container = document.getElementById('uploadResults');
       if (result.success) {
         container.innerHTML = `
-          <div style="color: var(--accent-emerald); font-weight: 600; margin-bottom: 1rem;"><i class="fa-solid fa-circle-check"></i> Import Successful</div>
-          <div style="font-size: 0.9rem; color: var(--graphite-900);">
+          <div style="color: var(--accent-emerald); font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-circle-check"></i> Import Successful</div>
+          <div style="font-size: 1.05rem; color: var(--graphite-900); line-height: 1.8;">
             <p>Total Records found: <strong>${result.totalRecords || 0}</strong></p>
             <p>Processed successfully: <strong style="color: var(--accent-emerald);">${result.processedRecords || result.uploadedRecords || 0}</strong></p>
             ${result.failedRecords ? `<p>Failed rows: <strong style="color: var(--accent-rust);">${result.failedRecords}</strong></p>` : ''}
@@ -1135,8 +1145,8 @@
         `;
       } else {
         container.innerHTML = `
-          <div style="color: var(--accent-rust); font-weight: 600; margin-bottom: 1rem;"><i class="fa-solid fa-circle-xmark"></i> Import Failed</div>
-          <p style="font-size: 0.9rem; color: var(--accent-rust);">${result.error || 'Check column formatting and try again.'}</p>
+          <div style="color: var(--accent-rust); font-size: 1.2rem; font-weight: 700; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem;"><i class="fa-solid fa-circle-xmark"></i> Import Failed</div>
+          <p style="font-size: 1.05rem; color: var(--accent-rust);">${result.error || 'Check column formatting and try again.'}</p>
         `;
       }
     }
@@ -1183,13 +1193,13 @@
 
         const row = document.createElement('tr');
         row.innerHTML = `
-          <td><input type="checkbox" class="manage-check" data-id="${staffId}" onclick="handleManageRowCheck()"></td>
-          <td style="font-weight: 600; color: var(--graphite-900);">${name}</td>
+          <td style="text-align: center;"><input type="checkbox" class="manage-check" data-id="${staffId}" onclick="handleManageRowCheck()"></td>
+          <td style="font-weight: 700; color: var(--graphite-900);">${name}</td>
           <td>${empNo}</td>
-          <td>${dept}</td>
+          <td><span style="background: rgba(17,24,39,0.05); padding: 0.3rem 0.6rem; border-radius: 6px; font-size: 0.8rem; font-weight: 700;">${dept}</span></td>
           <td>${designation}</td>
           <td>${email}</td>
-          <td>
+          <td style="text-align: center;">
             <div class="status-segment-control">
               <button class="status-segment-btn ${type === 'Teaching Staff' ? 'active' : ''}" onclick="updateStaffRosterStatus('${staffId}', 'Teaching Staff')">T</button>
               <button class="status-segment-btn ${type === 'Non Teaching Staff' ? 'active' : ''}" onclick="updateStaffRosterStatus('${staffId}', 'Non Teaching Staff')">N</button>
@@ -1197,8 +1207,8 @@
             </div>
           </td>
           <td style="text-align: right;">
-            <button class="btn-cta btn-cta-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="openFormDrawerForEdit('${staffId}')"><i class="fa-solid fa-edit"></i></button>
-            <button class="btn-cta btn-cta-secondary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem; border-color: var(--accent-rust); color: var(--accent-rust);" onclick="confirmDeleteStaff('${staffId}', '${name}')"><i class="fa-solid fa-trash"></i></button>
+            <button class="btn-cta btn-cta-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem;" onclick="openFormDrawerForEdit('${staffId}')"><i class="fa-solid fa-edit"></i></button>
+            <button class="btn-cta btn-cta-secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; border-color: var(--accent-rust); color: var(--accent-rust);" onclick="confirmDeleteStaff('${staffId}', '${name}')"><i class="fa-solid fa-trash"></i></button>
           </td>
         `;
         body.appendChild(row);
@@ -1311,7 +1321,6 @@
       document.getElementById('formStaffId').value = '';
       document.getElementById('staffForm').reset();
       
-      // Email is unique primary identifier, editable in Add mode
       document.getElementById('formEmail').disabled = false;
 
       document.getElementById('drawerBackdrop').classList.add('active');
@@ -1374,7 +1383,6 @@
       try {
         let response, result;
         if (isEdit) {
-          // Update profile via our newly added app.py PUT route
           response = await fetch(`/api/staff/${staffId}/update`, {
             method: 'PUT',
             headers: {
@@ -1384,7 +1392,6 @@
             body: JSON.stringify(payload)
           });
         } else {
-          // Add manually via POST
           response = await fetch('/api/add_staff_manual', {
             method: 'POST',
             headers: {

@@ -11,51 +11,63 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
   <script src="/static/js/firebase-client.js"></script>
-  <script src="/static/js/mesh-background.js"></script>
   <style>
-    /* Split-screen login specific styles */
+    /* Premium Login Specific Styles */
     body {
-      background-color: var(--bg-canvas-light);
+      background: var(--bg-canvas-light);
+      background-image: radial-gradient(circle at 10% 20%, rgba(245, 158, 11, 0.05) 0%, transparent 20%), 
+                        radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.05) 0%, transparent 20%);
       margin: 0;
       padding: 0;
-      height: 100vh;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Absolute Navbar Logo */
+    .brand-top-left {
+      position: absolute;
+      top: 2rem;
+      left: 2.5rem;
+      z-index: 100;
+    }
+
+    /* Jaw-dropping expanding container */
+    .auth-container {
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid var(--line-hairline);
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+      width: 100%;
+      /* Initial width for Login */
+      max-width: 440px; 
+      padding: 3rem;
+      margin: 2rem;
+      transition: max-width 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.8s ease;
+      position: relative;
       overflow: hidden;
     }
 
-    .split-container {
-      display: flex;
-      width: 100vw;
-      height: 100vh;
-    }
-
-    /* Left Panel: 55% Width, Light Canvas */
-    .form-panel {
-      flex: 1.2;
-      background-color: var(--bg-canvas-light);
-      color: var(--graphite-900);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 4rem;
-      overflow-y: auto;
-      position: relative;
-      z-index: 10;
-    }
-
-    .form-wrapper {
-      max-width: 480px;
-      margin: 0 auto;
-      width: 100%;
+    /* Expanded state for Register */
+    .auth-container.expanded {
+      max-width: 900px;
     }
 
     /* Tab Segmented Control */
     .tab-control-container {
       position: relative;
       display: flex;
-      background: rgba(28,32,36,0.04);
+      background: var(--bg-canvas-light);
       border-radius: 100px;
-      padding: 4px;
+      padding: 6px;
       margin-bottom: 2.5rem;
+      border: 1px solid var(--line-hairline);
+      box-shadow: var(--shadow-inner);
     }
 
     .tab-btn {
@@ -64,7 +76,7 @@
       border: none;
       background: transparent;
       font-family: 'Space Grotesk', sans-serif;
-      font-weight: 600;
+      font-weight: 700;
       font-size: 0.95rem;
       color: var(--graphite-400);
       cursor: pointer;
@@ -79,234 +91,227 @@
 
     .tab-slider {
       position: absolute;
-      top: 4px;
-      left: 4px;
-      width: calc(50% - 4px);
-      height: calc(100% - 8px);
-      background: #FFFFFF;
+      top: 6px;
+      left: 6px;
+      width: calc(50% - 6px);
+      height: calc(100% - 12px);
+      background: var(--surface-raised-light);
       border-radius: 100px;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      box-shadow: var(--shadow-sm);
       z-index: 1;
-      transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+      transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    /* Form panels */
-    .form-content {
-      display: none;
-    }
-
-    .form-content.active {
-      display: block;
-    }
-
-    /* Right Panel: 45% Width, Dark Canvas */
-    .info-panel {
-      flex: 1;
-      background-color: var(--bg-canvas);
-      color: #FFFFFF;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 4rem;
-      border-left: 1px solid rgba(255,255,255,0.05);
+    /* View containers for Crossfade & Slide */
+    .view-container {
       position: relative;
-      z-index: 10;
-    }
-
-    .info-wrapper {
-      max-width: 380px;
-      text-align: center;
-    }
-
-    .info-svg-container {
-      margin-bottom: 2rem;
       width: 100%;
-      display: flex;
-      justify-content: center;
     }
 
-    .info-slider {
-      height: 90px;
-      position: relative;
-      overflow: hidden;
-      margin-top: 1rem;
-    }
-
-    .slide-text {
+    .form-view {
       position: absolute;
+      top: 0;
+      left: 0;
       width: 100%;
       opacity: 0;
-      transform: translateY(15px);
-      transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+      visibility: hidden;
+      transform: translateX(20px);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .slide-text.active {
+    .form-view.active {
+      position: relative;
       opacity: 1;
-      transform: translateY(0);
+      visibility: visible;
+      transform: translateX(0);
     }
 
-    .slide-text h4 {
-      font-size: 1.2rem;
-      margin-bottom: 0.5rem;
-      color: var(--accent-amber);
+    /* Registration Grid (Only visible in expanded state) */
+    .reg-grid-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
     }
 
-    .slide-text p {
-      color: var(--graphite-400);
-      font-size: 0.9rem;
-      line-height: 1.5;
+    .reg-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.5rem;
     }
 
     /* Alert styles */
     .alert-box {
-      border-radius: 8px;
-      padding: 0.75rem 1rem;
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
       margin-bottom: 1.5rem;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       display: none;
+      font-weight: 500;
     }
     .alert-box.error {
-      background: rgba(194, 91, 62, 0.1);
-      border: 1px solid var(--accent-rust);
-      color: #df6f50;
+      background: rgba(239, 68, 68, 0.05);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+      color: var(--accent-rust);
     }
     .alert-box.success {
-      background: rgba(46, 158, 116, 0.1);
-      border: 1px solid var(--accent-emerald);
-      color: #43c193;
+      background: rgba(16, 185, 129, 0.05);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+      color: var(--accent-emerald);
     }
 
-    /* Neomorphic chips selector for department */
+    /* Premium Chip Selector Override */
     .chip-select-label {
-      font-size: 0.85rem;
-      color: var(--graphite-400);
-      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: var(--graphite-600);
+      margin-bottom: 0.75rem;
       display: block;
     }
-
     .chip-select-group {
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.75rem;
     }
 
-    .chip-option {
-      padding: 0.4rem 1rem;
-      border-radius: 100px;
-      font-size: 0.8rem;
-      font-weight: 500;
-      border: 1px solid var(--line-hairline);
-      background: #FFFFFF;
-      color: var(--graphite-400);
-      cursor: pointer;
-      transition: var(--transition-fast);
-    }
-    .chip-option.selected {
-      background: var(--accent-amber);
-      color: #000000;
-      border-color: var(--accent-amber);
-    }
-
+    /* Success State */
     .success-state {
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 1.5rem;
-      animation: dissolve-in 0.4s ease-out forwards;
+      animation: dissolve-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      padding: 2rem;
     }
 
     .success-state h3 {
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       color: var(--accent-emerald);
     }
 
     .success-state p {
-      color: var(--graphite-400);
-      font-size: 0.95rem;
-      line-height: 1.6;
+      color: var(--graphite-600);
+      font-size: 1.05rem;
+      line-height: 1.7;
+      max-width: 400px;
     }
 
     .back-btn {
       color: var(--accent-amber);
       text-decoration: none;
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       gap: 0.5rem;
+      transition: var(--transition-fast);
+    }
+    .back-btn:hover {
+      transform: translateX(-4px);
     }
 
-    .reg-grid-2 {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
+    /* Info Column inside Register Expanded View */
+    .reg-info-col {
+      background: var(--bg-canvas-light);
+      border-radius: 16px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      border: 1px solid var(--line-hairline);
     }
 
-    @media (max-width: 1024px) {
-      .info-panel {
-        display: none;
-      }
-      .form-panel {
-        flex: 1;
-        padding: 2rem;
-      }
+    /* Jaw-dropping Illustration / Animation Element */
+    .magic-illustration {
+      width: 100%;
+      max-width: 280px;
+      height: auto;
+      margin-bottom: 2rem;
+      filter: drop-shadow(0 20px 30px rgba(245,158,11,0.15));
+      animation: float 6s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-15px) rotate(2deg); }
+      100% { transform: translateY(0px) rotate(0deg); }
+    }
+
+    @media (max-width: 850px) {
+      .auth-container.expanded { max-width: 440px; }
+      .reg-grid-layout { grid-template-columns: 1fr; gap: 1.5rem; }
+      .reg-info-col { display: none; }
+      .reg-grid-2 { grid-template-columns: 1fr; }
     }
   </style>
 </head>
-<body class="light-canvas">
+<body>
 
-  <div class="split-container">
+  <!-- Absolute Brand Logo -->
+  <div class="brand-top-left">
+    <a href="/" class="navbar-brand-custom">
+      <i class="fa-solid fa-network-wired" style="color: var(--accent-amber);"></i> MACE-Connect
+    </a>
+  </div>
+
+  <div class="auth-container" id="authBox">
     
-    <!-- Left panel with form container -->
-    <div class="form-panel">
-      <div style="position: absolute; top: 2rem; left: 2rem;">
-        <a href="/" class="navbar-brand-custom" style="color: var(--graphite-900);">
-          <i class="fa-solid fa-network-wired" style="color: var(--accent-amber);"></i> MACE-Connect
-        </a>
+    <!-- Segmented Tab Control -->
+    <div class="tab-control-container" id="tabRail">
+      <div class="tab-slider" id="tabSlider"></div>
+      <button class="tab-btn active" onclick="switchAuthTab('login')">Sign In</button>
+      <button class="tab-btn" onclick="switchAuthTab('register')">Register Profile</button>
+    </div>
+
+    <div class="view-container">
+      
+      <!-- Login Form View -->
+      <div class="form-view active" id="loginView">
+        <div style="text-align: center; margin-bottom: 2.5rem;">
+          <h2 style="font-size: 2rem; margin-bottom: 0.5rem;">Welcome Back</h2>
+          <p style="color: var(--graphite-600); font-size: 1rem;">Sign in to access the staff directory.</p>
+        </div>
+
+        <div id="loginAlert" class="alert-box error"></div>
+        
+        <form id="loginForm">
+          <div class="form-group-custom">
+            <input type="text" id="email" class="form-control-custom" placeholder=" " required autocomplete="username">
+            <label for="email" class="form-label-custom">Email Address</label>
+            <div class="form-input-focus-line"></div>
+          </div>
+          <div class="form-group-custom">
+            <input type="password" id="password" class="form-control-custom" placeholder=" " required autocomplete="current-password">
+            <label for="password" class="form-label-custom">Password</label>
+            <div class="form-input-focus-line"></div>
+          </div>
+          
+          <div style="display: flex; justify-content: flex-end; margin-bottom: 2.5rem;">
+            <a href="#" class="back-btn" style="font-size: 0.9rem;" onclick="forgotPassword()">Forgot password?</a>
+          </div>
+          
+          <button type="submit" class="btn-cta btn-cta-primary" style="width: 100%; padding: 1rem 0; justify-content: center; font-size: 1.05rem;">
+            Sign In <i class="fa-solid fa-arrow-right-long" style="margin-left: 0.5rem;"></i>
+          </button>
+        </form>
       </div>
 
-      <div class="form-wrapper">
+      <!-- Registration Form View -->
+      <div class="form-view" id="registerView">
         
-        <!-- Segmented Tab Control -->
-        <div class="tab-control-container" id="tabRail">
-          <div class="tab-slider" id="tabSlider"></div>
-          <button class="tab-btn active" onclick="switchAuthTab('login')">Sign In</button>
-          <button class="tab-btn" onclick="switchAuthTab('register')">Register</button>
-        </div>
-
-        <!-- Login Form Panel -->
-        <div class="form-content active" id="loginPanel">
-          <div id="loginAlert" class="alert-box error"></div>
-          <form id="loginForm">
-            <div class="form-group-custom">
-              <input type="text" id="email" class="form-control-custom" placeholder=" " required autocomplete="username">
-              <label for="email" class="form-label-custom">Email Address</label>
-              <div class="form-input-focus-line"></div>
-            </div>
-            <div class="form-group-custom">
-              <input type="password" id="password" class="form-control-custom" placeholder=" " required autocomplete="current-password">
-              <label for="password" class="form-label-custom">Password</label>
-              <div class="form-input-focus-line"></div>
-            </div>
-            <div style="display: flex; justify-content: flex-end; margin-bottom: 2rem;">
-              <a href="#" class="back-btn" style="font-size: 0.85rem;" onclick="forgotPassword()"><i class="fa-solid fa-key"></i> Forgot password?</a>
-            </div>
-            <button type="submit" class="btn-cta btn-cta-primary" style="width: 100%; padding: 0.8rem 0;"><i class="fa-solid fa-right-to-bracket"></i> Sign In</button>
-          </form>
-          <p style="text-align: center; font-size: 0.85rem; color: var(--graphite-400); margin-top: 1.5rem;">
-            New staff member? <a href="#" style="color: var(--accent-amber); text-decoration: none; font-weight: 600;" onclick="switchAuthTab('register')">Switch to Register</a>
-          </p>
-        </div>
-
-        <!-- Registration Form Panel -->
-        <div class="form-content" id="registerPanel">
-          <div id="regAlert" class="alert-box error"></div>
+        <div id="regAlert" class="alert-box error"></div>
+        
+        <div id="registrationFormContainer" class="reg-grid-layout">
           
-          <div id="registrationFormContainer">
+          <!-- Left side: The form -->
+          <div class="reg-form-col">
+            <h2 style="font-size: 1.8rem; margin-bottom: 0.5rem;">Create Profile</h2>
+            <p style="color: var(--graphite-600); font-size: 0.95rem; margin-bottom: 2rem;">Submit your details for administrative review.</p>
+
             <form id="registrationForm">
               <div class="reg-grid-2">
                 <div class="form-group-custom">
@@ -322,15 +327,15 @@
               </div>
 
               <!-- Department Chip Single-Select -->
-              <div style="margin-bottom: 1.25rem;">
-                <span class="chip-select-label">Department</span>
+              <div style="margin-bottom: 1.5rem;">
+                <span class="chip-select-label">Primary Department</span>
                 <div class="chip-select-group" id="deptSelector">
-                  <div class="chip-option selected" data-value="CSE">CSE</div>
-                  <div class="chip-option" data-value="ECE">ECE</div>
-                  <div class="chip-option" data-value="EEE">EEE</div>
-                  <div class="chip-option" data-value="ME">ME</div>
-                  <div class="chip-option" data-value="CE">CE</div>
-                  <div class="chip-option" data-value="ADMIN">ADMIN</div>
+                  <div class="filter-chip active" data-value="CSE">CSE</div>
+                  <div class="filter-chip" data-value="ECE">ECE</div>
+                  <div class="filter-chip" data-value="EEE">EEE</div>
+                  <div class="filter-chip" data-value="ME">ME</div>
+                  <div class="filter-chip" data-value="CE">CE</div>
+                  <div class="filter-chip" data-value="ADMIN">ADMIN</div>
                 </div>
                 <input type="hidden" id="department" value="CSE">
               </div>
@@ -414,114 +419,108 @@
                 <div class="form-input-focus-line"></div>
               </div>
 
-              <p style="font-size: 0.75rem; color: var(--graphite-400); margin-bottom: 1.5rem;">
-                *Note: Your phone number will act as your temporary password for your initial login upon approval.
-              </p>
-
-              <button type="submit" id="submitBtn" class="btn-cta btn-cta-primary" style="width: 100%; padding: 0.8rem 0;"><i class="fa-solid fa-paper-plane"></i> Submit for Review</button>
+              <button type="submit" id="submitBtn" class="btn-cta btn-cta-primary" style="width: 100%; padding: 1rem 0; justify-content: center; font-size: 1.05rem; margin-top: 1rem;">
+                Submit for Review <i class="fa-solid fa-paper-plane" style="margin-left: 0.5rem;"></i>
+              </button>
             </form>
           </div>
-          
-          <!-- Success State -->
-          <div id="registrationSuccessState" class="success-state" style="display: none;">
-            <!-- confirmation-illustration.svg inline -->
-            <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="25" y="15" width="70" height="90" rx="8" fill="#15181B" stroke="#6B7178" stroke-width="2" />
-              <circle cx="60" cy="50" r="18" fill="var(--accent-amber)" opacity="0.2" />
-              <path class="line-draw-path" d="M50 50 L57 57 L70 43" stroke="var(--accent-amber)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
-              <circle cx="85" cy="85" r="15" fill="#15181B" stroke="var(--accent-emerald)" stroke-width="2" />
-              <!-- Clock doodle inside confirmation -->
-              <path d="M85 75 V85 H90" stroke="var(--accent-emerald)" stroke-width="1.5" stroke-linecap="round" />
+
+          <!-- Right side: Breathtaking visual / info -->
+          <div class="reg-info-col">
+            <!-- Jaw-dropping magic illustration (abstract nodes floating) -->
+            <svg class="magic-illustration" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="100" cy="100" r="80" fill="var(--surface-raised-light)" stroke="var(--line-hairline)" stroke-width="2"/>
+              <!-- Glowing core -->
+              <circle cx="100" cy="100" r="30" fill="var(--accent-amber)" opacity="0.15" />
+              <circle cx="100" cy="100" r="15" fill="var(--accent-amber)" />
+              
+              <!-- Orbital rings -->
+              <circle cx="100" cy="100" r="50" stroke="var(--accent-emerald)" stroke-width="1.5" stroke-dasharray="8 8" opacity="0.6"/>
+              <circle cx="100" cy="100" r="70" stroke="var(--line-hairline)" stroke-width="2" />
+              
+              <!-- Nodes -->
+              <circle cx="50" cy="100" r="8" fill="var(--accent-emerald)" />
+              <circle cx="135" cy="65" r="6" fill="var(--accent-blue)" />
+              <circle cx="120" cy="150" r="10" fill="var(--graphite-900)" />
+              
+              <!-- Connecting lines -->
+              <path d="M85 100 L58 100" stroke="var(--accent-emerald)" stroke-width="2" stroke-linecap="round"/>
+              <path d="M110 90 L130 70" stroke="var(--accent-blue)" stroke-width="2" stroke-linecap="round"/>
+              <path d="M105 110 L115 142" stroke="var(--graphite-900)" stroke-width="2" stroke-linecap="round"/>
             </svg>
-            <h3>Registration Queued</h3>
-            <p>Your registration profile has been submitted successfully and is queued for administrative review. You will be able to log in once an admin approves your request.</p>
-            <a onclick="switchAuthTab('login')" class="back-btn"><i class="fa-solid fa-arrow-left-long"></i> Back to Sign In</a>
+
+            <h3 style="font-size: 1.4rem; margin-bottom: 0.5rem;">Join the Network</h3>
+            <p style="color: var(--graphite-600); font-size: 0.95rem; line-height: 1.6; padding: 0 1rem;">
+              Your profile will be reviewed by the administration. Upon approval, you will gain access to the unified directory. 
+              <br><br>
+              <span style="font-weight: 600; color: var(--accent-amber);">Note:</span> Your phone number will act as your temporary password for your initial login.
+            </p>
           </div>
 
         </div>
-
-      </div>
-    </div>
-
-    <!-- Right info panel -->
-    <div class="info-panel">
-      <div class="info-wrapper">
-        <div class="info-svg-container">
-          <!-- lock-shield.svg inline -->
-          <svg width="180" height="180" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path class="line-draw-path" d="M30 40 C 60 20, 140 20, 170 40 C 170 120, 100 180, 100 180 C 100 180, 30 120, 30 40 Z" stroke="#6B7178" stroke-width="2.5" opacity="0.4" />
-            <path class="line-draw-path" d="M100 25 V 175" stroke="#6B7178" stroke-width="1" stroke-dasharray="4 4" opacity="0.4" />
-            <path class="line-draw-path" d="M35 100 H 165" stroke="#6B7178" stroke-width="1" stroke-dasharray="4 4" opacity="0.4" />
-
-            <!-- Lock element -->
-            <g transform="translate(70, 70)">
-              <rect x="10" y="25" width="40" height="30" rx="4" fill="#15181B" stroke="var(--accent-amber)" stroke-width="2" />
-              <path d="M20 25 V 15 C 20 8, 40 8, 40 15 V 25" stroke="var(--accent-amber)" stroke-width="2" stroke-linecap="round" />
-              <circle cx="30" cy="40" r="3" fill="var(--accent-amber)" />
-            </g>
+        
+        <!-- Success State -->
+        <div id="registrationSuccessState" class="success-state" style="display: none;">
+          <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style="margin-bottom: 1rem;">
+            <circle cx="60" cy="60" r="50" fill="rgba(16, 185, 129, 0.1)" stroke="var(--accent-emerald)" stroke-width="4" />
+            <path d="M40 60 L55 75 L80 45" stroke="var(--accent-emerald)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
           </svg>
+          <h3>Registration Queued</h3>
+          <p>Your profile has been securely submitted and is queued for administrative review. You will be able to log in once an admin approves your request.</p>
+          <a onclick="switchAuthTab('login')" class="btn-cta btn-cta-secondary" style="margin-top: 1rem;"><i class="fa-solid fa-arrow-left"></i> Return to Sign In</a>
         </div>
 
-        <div class="info-slider">
-          <div class="slide-text active">
-            <h4>Secure Portal Gateway</h4>
-            <p>Access-controlled encryption ensures that staff records and college details remain strictly secure.</p>
-          </div>
-          <div class="slide-text">
-            <h4>Role-Based Administration</h4>
-            <p>Verify administrative approvals, rosters, and updates cleanly and dynamically.</p>
-          </div>
-          <div class="slide-text">
-            <h4>Google Sheets Synced</h4>
-            <p>Direct sync pipelines push registrations straight to official administrative review grids.</p>
-          </div>
-        </div>
       </div>
-    </div>
 
+    </div>
   </div>
 
   <script>
-    // Segmented slider and tab switching
+    // Jaw-dropping Horizontal Expansion & Tab Logic
     function switchAuthTab(tab) {
+      const authBox = document.getElementById('authBox');
       const tabSlider = document.getElementById('tabSlider');
-      const loginPanel = document.getElementById('loginPanel');
-      const registerPanel = document.getElementById('registerPanel');
+      const loginView = document.getElementById('loginView');
+      const registerView = document.getElementById('registerView');
       const tabBtns = document.querySelectorAll('.tab-btn');
 
       if (tab === 'login') {
+        // Contract horizontally
+        authBox.classList.remove('expanded');
         tabSlider.style.transform = 'translateX(0)';
         tabBtns[0].classList.add('active');
         tabBtns[1].classList.remove('active');
-        loginPanel.classList.add('active');
-        registerPanel.classList.remove('active');
+        
+        // Wait briefly for container to start shrinking before fading in form
+        registerView.classList.remove('active');
+        setTimeout(() => {
+          loginView.classList.add('active');
+        }, 300); // sync with cubic-bezier transition
+
       } else {
+        // Expand horizontally
+        authBox.classList.add('expanded');
         tabSlider.style.transform = 'translateX(100%)';
         tabBtns[0].classList.remove('active');
         tabBtns[1].classList.add('active');
-        loginPanel.classList.remove('active');
-        registerPanel.classList.add('active');
+        
+        // Fade out login, fade in register
+        loginView.classList.remove('active');
+        setTimeout(() => {
+          registerView.classList.add('active');
+        }, 400); // wait for container to expand to reveal stunning grid
       }
     }
 
-    // Chip selection logic for department
+    // Premium Chip Selection logic for department
     const chipSelector = document.getElementById('deptSelector');
     chipSelector.addEventListener('click', (e) => {
-      if (e.target.classList.contains('chip-option')) {
-        document.querySelectorAll('.chip-option').forEach(chip => chip.classList.remove('selected'));
-        e.target.classList.add('selected');
+      if (e.target.classList.contains('filter-chip')) {
+        document.querySelectorAll('#deptSelector .filter-chip').forEach(chip => chip.classList.remove('active'));
+        e.target.classList.add('active');
         document.getElementById('department').value = e.target.getAttribute('data-value');
       }
     });
-
-    // Rotating trust statements
-    let activeSlide = 0;
-    const slides = document.querySelectorAll('.slide-text');
-    setInterval(() => {
-      slides[activeSlide].classList.remove('active');
-      activeSlide = (activeSlide + 1) % slides.length;
-      slides[activeSlide].classList.add('active');
-    }, 4000);
 
     // Form errors / helpers
     function showError(msg) {
@@ -630,7 +629,7 @@
 
         const result = await response.json();
         if (result.success) {
-          // Hide form and show confirmation illustrated success state
+          // Hide form and show stunning confirmation
           document.getElementById('registrationFormContainer').style.display = 'none';
           document.getElementById('registrationSuccessState').style.display = 'flex';
           this.reset();

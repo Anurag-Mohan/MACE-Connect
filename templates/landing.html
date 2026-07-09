@@ -3,14 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>MACE-Connect — Staff Directory & Administration Portal</title>
+  <title>MACE-Connect — Premium Staff Directory</title>
   <meta name="description" content="A premium, futuristic staff directory and administration portal for MACE college. Search, filter, and connect instantly.">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <link href="/static/css/design-system.css" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="/static/js/firebase-client.js"></script>
-  <script src="/static/js/mesh-background.js"></script>
   <style>
     /* Page-specific overrides for landing */
     .hero-section {
@@ -20,50 +19,53 @@
       padding: 120px 2rem 60px;
       position: relative;
       z-index: 10;
+      background: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(245,158,11,0.03) 100%);
     }
 
     .hero-container {
       max-width: 1300px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 1.2fr 1fr;
-      gap: 4rem;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
       align-items: center;
       width: 100%;
     }
 
     .hero-left {
       display: flex;
-      flex-direction: flex-column;
+      flex-direction: column;
       align-items: flex-start;
       gap: 1.5rem;
     }
 
     .eyebrow {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 0.85rem;
-      font-weight: 600;
+      font-size: 0.9rem;
+      font-weight: 700;
       color: var(--accent-amber);
       text-transform: uppercase;
-      letter-spacing: 0.15em;
+      letter-spacing: 0.2em;
     }
 
     .hero-title {
-      font-size: 3.5rem;
+      font-size: 4rem;
       line-height: 1.1;
-      color: #FFFFFF;
+      color: var(--graphite-900);
+      letter-spacing: -0.03em;
     }
 
     .hero-subhead {
-      font-size: 1.1rem;
-      color: var(--graphite-400);
+      font-size: 1.2rem;
+      color: var(--graphite-600);
       max-width: 540px;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
+      line-height: 1.6;
     }
 
     .hero-ctas {
       display: flex;
-      gap: 1rem;
+      gap: 1.2rem;
     }
 
     .hero-right {
@@ -72,20 +74,27 @@
       position: relative;
     }
 
-    /* Inline SVG animations */
-    .animated-svg {
-      width: 100%;
-      max-width: 500px;
-      height: auto;
+    .animated-hero-img {
+      max-width: 100%;
+      border-radius: 24px;
+      box-shadow: var(--shadow-xl);
+      transform: perspective(1000px) rotateY(-8deg) rotateX(2deg);
+      transition: var(--transition-jaw-drop);
+      border: 4px solid var(--surface-raised-light);
+    }
+    .animated-hero-img:hover {
+      transform: perspective(1000px) rotateY(0deg) rotateX(0deg) scale(1.03);
+      box-shadow: 0 30px 60px -12px rgba(245, 158, 11, 0.2), 0 18px 36px -18px rgba(0,0,0,0.1);
     }
 
     /* Live stats strip */
     .stats-strip {
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      padding: 3rem 2rem;
+      border-top: 1px solid var(--line-hairline);
+      border-bottom: 1px solid var(--line-hairline);
+      padding: 4rem 2rem;
       position: relative;
       z-index: 10;
+      background: var(--surface-raised-light);
     }
     
     .stats-container {
@@ -93,88 +102,36 @@
       margin: 0 auto;
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 2rem;
+      gap: 2.5rem;
     }
 
-    /* Department bento grid */
-    .dept-section {
-      padding: 6rem 2rem;
+    /* How it works section */
+    .workflow-section {
+      padding: 8rem 2rem;
       position: relative;
       z-index: 10;
     }
 
     .section-header {
       max-width: 1200px;
-      margin: 0 auto 3.5rem;
+      margin: 0 auto 4rem;
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
+      text-align: center;
+      flex-direction: column;
+      align-items: center;
     }
 
     .section-title-group h2 {
-      font-size: 2.25rem;
-      color: #FFFFFF;
-      margin-bottom: 0.5rem;
+      font-size: 2.8rem;
+      color: var(--graphite-900);
+      margin-bottom: 1rem;
     }
 
     .section-title-group p {
-      color: var(--graphite-400);
-      font-size: 1.05rem;
-    }
-
-    .dept-grid {
-      max-width: 1200px;
-      margin: 0 auto;
-      grid-template-columns: repeat(3, 1fr);
-    }
-
-    .dept-card {
-      display: flex;
-      flex-direction: column;
-      height: 100%;
-      min-height: 180px;
-      justify-content: space-between;
-    }
-
-    .dept-icon {
-      width: 40px;
-      height: 40px;
-      margin-bottom: 1.5rem;
-      stroke: var(--accent-amber);
-      fill: none;
-      stroke-width: 1.5;
-    }
-
-    .dept-info h3 {
-      font-size: 1.25rem;
-      color: #FFFFFF;
-      margin-bottom: 0.25rem;
-    }
-
-    .dept-info p {
-      font-size: 0.85rem;
-      color: var(--graphite-400);
-    }
-
-    .dept-arrow {
-      margin-top: auto;
-      align-self: flex-end;
-      color: var(--accent-amber);
-      font-size: 1rem;
-      transition: var(--transition-fast);
-    }
-
-    .dept-card:hover .dept-arrow {
-      transform: translateX(5px);
-    }
-
-    /* How it works section */
-    .workflow-section {
-      padding: 6rem 2rem;
-      position: relative;
-      z-index: 10;
-      background: rgba(28,32,36,0.02);
-      border-top: 1px solid rgba(255, 255, 255, 0.03);
+      color: var(--graphite-600);
+      font-size: 1.15rem;
     }
 
     .timeline-container {
@@ -182,125 +139,150 @@
       margin: 0 auto;
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 3rem;
+      gap: 4rem;
       position: relative;
     }
 
     .timeline-step {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
+      gap: 1.25rem;
+      background: var(--surface-raised-light);
+      padding: 2.5rem;
+      border-radius: 20px;
+      border: 1px solid var(--line-hairline);
+      box-shadow: var(--shadow-md);
+      transition: var(--transition-smooth);
+    }
+    .timeline-step:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-xl);
+      border-color: rgba(245, 158, 11, 0.3);
     }
 
     .step-number {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 3rem;
+      font-size: 4rem;
       font-weight: 700;
-      color: rgba(232, 162, 61, 0.15);
+      color: var(--accent-amber-light);
       line-height: 1;
+      position: absolute;
+      top: 1rem;
+      right: 1.5rem;
+      z-index: 0;
     }
 
     .step-doodle {
-      width: 48px;
-      height: 48px;
+      width: 56px;
+      height: 56px;
       stroke: var(--accent-amber);
       fill: none;
       stroke-width: 1.5;
       margin-bottom: 0.5rem;
+      position: relative;
+      z-index: 1;
     }
 
     .timeline-step h3 {
-      font-size: 1.25rem;
-      color: #FFFFFF;
+      font-size: 1.4rem;
+      color: var(--graphite-900);
+      position: relative;
+      z-index: 1;
     }
 
     .timeline-step p {
-      color: var(--graphite-400);
-      font-size: 0.95rem;
+      color: var(--graphite-600);
+      font-size: 1rem;
+      line-height: 1.6;
+      position: relative;
+      z-index: 1;
     }
 
     /* Admin Capability Callout */
     .admin-callout-section {
-      padding: 6rem 2rem;
+      padding: 8rem 2rem;
       position: relative;
       z-index: 10;
-      border-top: 1px solid rgba(255, 255, 255, 0.03);
+      background: linear-gradient(135deg, rgba(245,158,11,0.03) 0%, rgba(255,255,255,0) 100%);
+      border-top: 1px solid var(--line-hairline);
     }
 
     .callout-container {
       max-width: 1200px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 1fr 1.2fr;
-      gap: 4rem;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
       align-items: center;
     }
 
     .callout-left h2 {
-      font-size: 2.25rem;
-      color: #FFFFFF;
-      margin-bottom: 1.25rem;
+      font-size: 2.8rem;
+      color: var(--graphite-900);
+      margin-bottom: 1.5rem;
+      line-height: 1.2;
     }
 
     .callout-left p {
-      color: var(--graphite-400);
-      font-size: 1.05rem;
-      margin-bottom: 2rem;
+      color: var(--graphite-600);
+      font-size: 1.15rem;
+      margin-bottom: 2.5rem;
       line-height: 1.7;
     }
 
     /* Footer styling */
     .college-footer {
-      border-top: 1px solid rgba(255, 255, 255, 0.05);
-      background-color: #080A0C;
-      padding: 4rem 2rem 2rem;
+      border-top: 1px solid var(--line-hairline);
+      background-color: var(--surface-raised-light);
+      padding: 5rem 2rem 2rem;
       position: relative;
       z-index: 10;
-      color: var(--graphite-400);
+      color: var(--graphite-600);
     }
 
     .footer-container {
       max-width: 1200px;
       margin: 0 auto;
       display: grid;
-      grid-template-columns: 1.5fr 1fr 1fr;
-      gap: 3rem;
-      margin-bottom: 3rem;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 4rem;
+      margin-bottom: 4rem;
     }
 
     .footer-brand h4 {
       font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.2rem;
-      color: #FFFFFF;
-      margin-bottom: 1rem;
+      font-size: 1.4rem;
+      color: var(--graphite-900);
+      margin-bottom: 1.25rem;
     }
 
     .footer-brand p {
-      font-size: 0.9rem;
-      max-width: 300px;
-      line-height: 1.6;
+      font-size: 0.95rem;
+      max-width: 320px;
+      line-height: 1.7;
     }
 
     .footer-links h5 {
-      color: #FFFFFF;
-      font-size: 0.95rem;
-      margin-bottom: 1.25rem;
+      color: var(--graphite-900);
+      font-size: 1rem;
+      margin-bottom: 1.5rem;
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
     }
 
     .footer-links ul {
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 0.75rem;
+      gap: 1rem;
     }
 
     .footer-links a {
-      color: var(--graphite-400);
+      color: var(--graphite-600);
       text-decoration: none;
-      font-size: 0.9rem;
+      font-size: 0.95rem;
       transition: var(--transition-fast);
+      font-weight: 500;
     }
 
     .footer-links a:hover {
@@ -310,40 +292,44 @@
     .footer-bottom {
       max-width: 1200px;
       margin: 0 auto;
-      border-top: 1px solid rgba(255,255,255,0.05);
+      border-top: 1px solid var(--line-hairline);
       padding-top: 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 0.85rem;
+      font-size: 0.9rem;
     }
 
     .social-icons {
       display: flex;
-      gap: 1rem;
+      gap: 1.25rem;
     }
 
     .social-icon {
-      width: 32px;
-      height: 32px;
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
-      border: 1px solid rgba(255,255,255,0.1);
+      border: 1px solid var(--line-hairline);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--graphite-400);
+      color: var(--graphite-600);
       transition: var(--transition-fast);
+      background: var(--surface-raised-light);
     }
 
     .social-icon:hover {
-      color: var(--accent-amber);
+      color: #FFFFFF;
       border-color: var(--accent-amber);
+      background: var(--accent-amber);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 10px var(--glow-amber);
     }
 
     @media (max-width: 1024px) {
       .hero-container, .callout-container {
         grid-template-columns: 1fr;
-        gap: 3rem;
+        gap: 4rem;
         text-align: center;
       }
       .hero-left {
@@ -355,9 +341,6 @@
       .stats-container {
         grid-template-columns: repeat(2, 1fr);
       }
-      .dept-grid {
-        grid-template-columns: repeat(2, 1fr);
-      }
       .timeline-container {
         grid-template-columns: 1fr;
         gap: 2rem;
@@ -366,13 +349,13 @@
 
     @media (max-width: 768px) {
       .hero-title {
-        font-size: 2.5rem;
+        font-size: 2.8rem;
       }
-      .stats-container, .dept-grid, .footer-container {
+      .stats-container, .footer-container {
         grid-template-columns: 1fr;
       }
       .glass-navbar {
-        padding: 0 1rem;
+        padding: 0 1.5rem;
       }
       .nav-links {
         display: none;
@@ -380,7 +363,7 @@
     }
   </style>
 </head>
-<body class="dark-canvas">
+<body class="light-canvas">
 
   <!-- Primary Navigation -->
   <nav class="glass-navbar">
@@ -389,7 +372,7 @@
     </a>
     <ul class="nav-links">
       <li><a href="/" class="nav-link-custom active">Home</a></li>
-      <li><a href="/directory" class="nav-link-custom">Directory Preview</a></li>
+      <li><a href="/login" class="nav-link-custom">Directory Login</a></li>
       <li><a href="#about" class="nav-link-custom">About</a></li>
     </ul>
     <a href="/login" class="btn-cta btn-cta-primary"><i class="fa-solid fa-right-to-bracket"></i> Sign In</a>
@@ -400,61 +383,14 @@
     <div class="hero-container">
       <div class="hero-left scroll-reveal">
         <div class="eyebrow">Staff Directory · MACE</div>
-        <h1 class="hero-title">One directory. Every department, instantly searchable.</h1>
-        <p class="hero-subhead">Access profiles, search by skills or designations, and connect with university administration through a sleek, modernized interface.</p>
+        <h1 class="hero-title">One directory. Instant connections.</h1>
+        <p class="hero-subhead">Access profiles, search by skills or designations, and connect with university administration through a breathtaking, modernized interface.</p>
         <div class="hero-ctas">
-          <a href="/login" class="btn-cta btn-cta-primary"><i class="fa-solid fa-right-to-bracket"></i> Sign In</a>
-          <a href="/directory" class="btn-cta btn-cta-secondary"><i class="fa-solid fa-compass"></i> Explore Directory</a>
+          <a href="/login" class="btn-cta btn-cta-primary"><i class="fa-solid fa-right-to-bracket"></i> Sign In to Access</a>
         </div>
       </div>
       <div class="hero-right scroll-reveal" style="transition-delay: 200ms;">
-        <!-- hero-network.svg inline -->
-        <svg class="animated-svg" viewBox="0 0 500 400" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Connector paths -->
-          <path class="line-draw-path" d="M100 120 C 180 80, 240 180, 250 200" stroke="#6B7178" stroke-width="1.5" stroke-dasharray="6 6" opacity="0.4" />
-          <path class="line-draw-path" d="M400 100 C 350 150, 280 180, 250 200" stroke="#6B7178" stroke-width="1.5" stroke-dasharray="6 6" opacity="0.4" />
-          <path class="line-draw-path" d="M120 320 C 180 300, 220 250, 250 200" stroke="#6B7178" stroke-width="1.5" stroke-dasharray="6 6" opacity="0.4" />
-          <path class="line-draw-path" d="M380 300 C 320 280, 280 230, 250 200" stroke="#6B7178" stroke-width="1.5" stroke-dasharray="6 6" opacity="0.4" />
-          <path class="line-draw-path" d="M50 200 H 200" stroke="#6B7178" stroke-width="1.5" opacity="0.4" />
-          <path class="line-draw-path" d="M450 200 H 300" stroke="#6B7178" stroke-width="1.5" opacity="0.4" />
-
-          <!-- Network connections -->
-          <circle cx="100" cy="120" r="6" fill="var(--accent-amber)" />
-          <circle cx="400" cy="100" r="6" fill="var(--accent-emerald)" />
-          <circle cx="120" cy="320" r="6" fill="var(--accent-amber)" />
-          <circle cx="380" cy="300" r="6" fill="var(--accent-emerald)" />
-          <circle cx="50" cy="200" r="4" fill="#6B7178" />
-          <circle cx="450" cy="200" r="4" fill="#6B7178" />
-
-          <!-- Center Hub -->
-          <g transform="translate(200, 150)">
-            <rect width="100" height="100" rx="50" fill="#15181B" stroke="var(--accent-amber)" stroke-width="2" />
-            <path d="M40 35 H60 V45 H40 V35 Z M35 55 H65 V65 H35 V55 Z M45 45 H55 V55 H45 V45 Z" fill="var(--accent-amber)" opacity="0.8"/>
-            <circle cx="50" cy="50" r="30" stroke="var(--accent-amber)" stroke-width="1.5" stroke-dasharray="4 4" />
-          </g>
-
-          <!-- Floating Badges / ID Cards (Isometric Motifs) -->
-          <g transform="translate(70, 70)">
-            <rect width="60" height="40" rx="6" fill="#1C2024" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
-            <circle cx="15" cy="20" r="6" fill="var(--accent-amber)" />
-            <line x1="28" y1="16" x2="50" y2="16" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.8" />
-            <line x1="28" y1="24" x2="42" y2="24" stroke="#6B7178" stroke-width="1.5" stroke-linecap="round" />
-          </g>
-
-          <g transform="translate(350, 60)">
-            <rect width="60" height="40" rx="6" fill="#1C2024" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
-            <circle cx="15" cy="20" r="6" fill="var(--accent-emerald)" />
-            <line x1="28" y1="16" x2="50" y2="16" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.8" />
-            <line x1="28" y1="24" x2="42" y2="24" stroke="#6B7178" stroke-width="1.5" stroke-linecap="round" />
-          </g>
-
-          <g transform="translate(330, 240)">
-            <rect width="60" height="40" rx="6" fill="#1C2024" stroke="rgba(255,255,255,0.08)" stroke-width="1" />
-            <circle cx="15" cy="20" r="6" fill="var(--accent-amber)" />
-            <line x1="28" y1="16" x2="50" y2="16" stroke="white" stroke-width="2" stroke-linecap="round" opacity="0.8" />
-            <line x1="28" y1="24" x2="42" y2="24" stroke="#6B7178" stroke-width="1.5" stroke-linecap="round" />
-          </g>
-        </svg>
+        <img src="/static/images/hero.png" alt="Premium Staff Directory Dashboard" class="animated-hero-img">
       </div>
     </div>
   </section>
@@ -485,100 +421,12 @@
     </div>
   </section>
 
-  <!-- Department Showcase -->
-  <section class="dept-section" id="about">
-    <div class="section-header scroll-reveal">
-      <div class="section-title-group">
-        <h2>Department Showcase</h2>
-        <p>Direct connectivity to key academic divisions</p>
-      </div>
-    </div>
-
-    <div class="dept-grid bento-grid scroll-reveal" id="deptShowcaseGrid">
-      <div class="card-raised dept-card">
-        <!-- CSE Circuit Doodle -->
-        <svg class="dept-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <rect x="2" y="2" width="20" height="20" rx="4" />
-          <circle cx="8" cy="8" r="2" fill="var(--accent-amber)" />
-          <circle cx="16" cy="16" r="2" fill="var(--accent-amber)" />
-          <path d="M10 8H14M8 10V14M16 10V14" />
-        </svg>
-        <div class="dept-info">
-          <h3>CSE</h3>
-          <p>Computer Science & Engineering</p>
-        </div>
-        <i class="fa-solid fa-arrow-right-long dept-arrow"></i>
-      </div>
-
-      <div class="card-raised dept-card">
-        <!-- ECE Microchip Doodle -->
-        <svg class="dept-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <rect x="5" y="5" width="14" height="14" rx="2" />
-          <path d="M9 1V5M15 1V5M9 19V23M15 19V23M1 9H5M1 15H5M19 9H23M19 15H23" stroke-linecap="round" />
-        </svg>
-        <div class="dept-info">
-          <h3>ECE</h3>
-          <p>Electronics & Communication</p>
-        </div>
-        <i class="fa-solid fa-arrow-right-long dept-arrow"></i>
-      </div>
-
-      <div class="card-raised dept-card">
-        <!-- EEE Voltage Doodle -->
-        <svg class="dept-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" stroke-linecap="round" stroke-linejoin="round" />
-        </svg>
-        <div class="dept-info">
-          <h3>EEE</h3>
-          <p>Electrical & Electronics</p>
-        </div>
-        <i class="fa-solid fa-arrow-right-long dept-arrow"></i>
-      </div>
-
-      <div class="card-raised dept-card">
-        <!-- ME Gear Doodle -->
-        <svg class="dept-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <circle cx="12" cy="12" r="3" />
-          <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
-        </svg>
-        <div class="dept-info">
-          <h3>ME</h3>
-          <p>Mechanical Engineering</p>
-        </div>
-        <i class="fa-solid fa-arrow-right-long dept-arrow"></i>
-      </div>
-
-      <div class="card-raised dept-card">
-        <!-- CE Architectural Structure Doodle -->
-        <svg class="dept-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path d="M3 21h18M5 21V7l7-4 7 4v14M9 21v-6h6v6" stroke-linecap="round" />
-        </svg>
-        <div class="dept-info">
-          <h3>CE</h3>
-          <p>Civil Engineering</p>
-        </div>
-        <i class="fa-solid fa-arrow-right-long dept-arrow"></i>
-      </div>
-
-      <div class="card-raised dept-card" style="border: 1px dashed var(--accent-amber); background: transparent;">
-        <svg class="dept-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-          <path d="M12 5v14M5 12h14" stroke-linecap="round" />
-        </svg>
-        <div class="dept-info">
-          <h3>View All</h3>
-          <p>Explore other disciplines</p>
-        </div>
-        <i class="fa-solid fa-arrow-right-long dept-arrow" style="color: var(--accent-emerald);"></i>
-      </div>
-    </div>
-  </section>
-
   <!-- How It Works Section -->
-  <section class="workflow-section">
+  <section class="workflow-section" id="about">
     <div class="section-header scroll-reveal">
       <div class="section-title-group">
         <h2>How It Works</h2>
-        <p>Simple processes connecting users and staff</p>
+        <p>Simple processes connecting users and staff securely</p>
       </div>
     </div>
 
@@ -593,16 +441,16 @@
         <p>Look up staff by name, department designation, or skill keywords instantly using the central database search.</p>
       </div>
 
-      <div class="timeline-step">
+      <div class="timeline-step" style="position: relative;">
         <span class="step-number">02</span>
         <svg class="step-doodle" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3Z" />
         </svg>
-        <h3>Filter Departments</h3>
-        <p>Narrow down lists using quick-scroll chips representing CSE, ECE, EEE, and administrative categories.</p>
+        <h3>Secure Login</h3>
+        <p>Access department listings and sensitive contact information securely via authenticated portal access.</p>
       </div>
 
-      <div class="timeline-step">
+      <div class="timeline-step" style="position: relative;">
         <span class="step-number">03</span>
         <svg class="step-doodle" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
@@ -620,39 +468,24 @@
       <div class="callout-left scroll-reveal">
         <div class="eyebrow">Enterprise Ready</div>
         <h2>Administrative Tools with Power & Simplicity</h2>
-        <p>Simplify staff roster updates with bulk imports. Upload spreadsheet profiles directly into Firestore database instantly. Manage role approvals and staff types inside a consolidated dashboard shell.</p>
+        <p>Simplify staff roster updates with bulk imports. Upload spreadsheet profiles directly into Firestore database instantly. Manage role approvals and staff types inside a consolidated, breathtaking dashboard.</p>
         <a href="/admin" class="btn-cta btn-cta-primary"><i class="fa-solid fa-screwdriver-wrench"></i> Access Admin Portal</a>
       </div>
       <div class="callout-right scroll-reveal" style="transition-delay: 150ms;">
-        <!-- spreadsheet-morph.svg inline -->
-        <svg class="animated-svg" viewBox="0 0 500 350" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- Excel Sheet Outline -->
-          <rect x="50" y="80" width="160" height="200" rx="8" fill="#15181B" stroke="#6B7178" stroke-width="1.5" />
-          <rect x="62" y="100" width="136" height="20" rx="3" fill="rgba(232, 162, 61, 0.1)" stroke="var(--accent-amber)" stroke-width="1" />
-          <line x1="62" y1="140" x2="198" y2="140" stroke="#1C2024" stroke-width="6" stroke-linecap="round" />
-          <line x1="62" y1="165" x2="180" y2="165" stroke="#1C2024" stroke-width="6" stroke-linecap="round" />
-          <line x1="62" y1="190" x2="198" y2="190" stroke="#1C2024" stroke-width="6" stroke-linecap="round" />
-          <line x1="62" y1="215" x2="160" y2="215" stroke="#1C2024" stroke-width="6" stroke-linecap="round" />
-          <line x1="62" y1="240" x2="198" y2="240" stroke="#1C2024" stroke-width="6" stroke-linecap="round" />
-
-          <!-- Connector arrows/lines -->
-          <path class="line-draw-path" d="M225 180 H 275" stroke="var(--accent-amber)" stroke-width="2" stroke-linecap="round" marker-end="url(#arrow)" />
-
-          <!-- Staff Card Outline -->
-          <rect x="290" y="80" width="160" height="200" rx="8" fill="#15181B" stroke="#6B7178" stroke-width="1.5" />
-          <circle cx="370" cy="135" r="24" fill="#1C2024" stroke="var(--accent-amber)" stroke-width="1.5" />
-          <line x1="330" y1="190" x2="410" y2="190" stroke="white" stroke-width="4" stroke-linecap="round" />
-          <line x1="345" y1="210" x2="395" y2="210" stroke="#6B7178" stroke-width="3" stroke-linecap="round" />
-          
-          <rect x="310" y="235" width="120" height="28" rx="4" fill="rgba(46, 158, 116, 0.15)" stroke="var(--accent-emerald)" stroke-width="1" />
-          <text x="370" y="252" fill="var(--accent-emerald)" font-size="9" font-family="'Space Grotesk', sans-serif" font-weight="600" text-anchor="middle">APPROVED</text>
-
-          <defs>
-            <marker id="arrow" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-              <path d="M 0 1 L 10 5 L 0 9 z" fill="var(--accent-amber)" />
-            </marker>
-          </defs>
-        </svg>
+        <div style="background: var(--surface-raised-light); border-radius: 20px; box-shadow: var(--shadow-xl); padding: 2rem; border: 1px solid var(--line-hairline);">
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(16, 185, 129, 0.1); color: var(--accent-emerald); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                    <i class="fa-solid fa-file-excel"></i>
+                </div>
+                <div>
+                    <h4 style="margin:0; color: var(--graphite-900);">Bulk Upload Matrix</h4>
+                    <p style="margin:0; font-size: 0.85rem; color: var(--graphite-600);">Seamless spreadsheet integration</p>
+                </div>
+            </div>
+            <div style="height: 120px; background: var(--bg-canvas-light); border-radius: 12px; border: 2px dashed var(--line-hairline); display: flex; align-items: center; justify-content: center; color: var(--graphite-400);">
+                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; margin-right: 0.5rem;"></i> Drop files here
+            </div>
+        </div>
       </div>
     </div>
   </section>
@@ -662,12 +495,11 @@
     <div class="footer-container">
       <div class="footer-brand">
         <h4>MACE-Connect</h4>
-        <p>A professional administration directory for Mar Athanasius College of Engineering. Built for seamless academic roster connectivity.</p>
+        <p>A professional administration directory for Mar Athanasius College of Engineering. Built for seamless academic roster connectivity in a stunning modern interface.</p>
       </div>
       <div class="footer-links">
         <h5>Quick Links</h5>
         <ul>
-          <li><a href="/directory">Directory Lookup</a></li>
           <li><a href="/login">Portal Authentication</a></li>
           <li><a href="/admin">Dashboard Portal</a></li>
         </ul>
