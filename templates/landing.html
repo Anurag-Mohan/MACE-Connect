@@ -20,6 +20,7 @@
       position: relative;
       z-index: 10;
       background: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(245,158,11,0.03) 100%);
+      overflow: hidden;
     }
 
     .hero-container {
@@ -87,6 +88,84 @@
       box-shadow: 0 30px 60px -12px rgba(245, 158, 11, 0.2), 0 18px 36px -18px rgba(0,0,0,0.1);
     }
 
+    /* ---- Hero gradient orb blobs ---- */
+    .hero-blob-1 {
+      position: absolute;
+      width: 500px;
+      height: 500px;
+      background: rgba(245, 158, 11, 0.08);
+      top: 10%;
+      left: -5%;
+    }
+    .hero-blob-2 {
+      position: absolute;
+      width: 400px;
+      height: 400px;
+      background: rgba(16, 185, 129, 0.06);
+      bottom: 5%;
+      right: -5%;
+      animation-delay: -10s;
+    }
+
+    /* ---- Floating badge chips ---- */
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.65rem;
+      margin-top: 0.5rem;
+    }
+    .badge-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      border: 1px solid var(--line-hairline);
+      color: var(--graphite-700, #374151);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      white-space: nowrap;
+    }
+
+    /* ---- Feature Marquee Strip ---- */
+    .feature-marquee {
+      border-top: 1px solid var(--line-hairline);
+      border-bottom: 1px solid var(--line-hairline);
+      background: var(--bg-canvas-light, #fafafa);
+      padding: 1.1rem 0;
+      overflow: hidden;
+      position: relative;
+      z-index: 10;
+    }
+    .marquee-track {
+      display: flex;
+      gap: 3rem;
+      width: max-content;
+      animation: marquee-scroll 30s linear infinite;
+    }
+    .marquee-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--graphite-600);
+      white-space: nowrap;
+      letter-spacing: 0.02em;
+    }
+    .marquee-item i {
+      color: var(--accent-amber);
+      font-size: 1rem;
+    }
+    @keyframes marquee-scroll {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-50%); }
+    }
+
     /* Live stats strip */
     .stats-strip {
       border-top: 1px solid var(--line-hairline);
@@ -143,6 +222,22 @@
       position: relative;
     }
 
+    /* Connecting dashed line between step cards */
+    .timeline-connector {
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .timeline-connector line {
+      stroke: var(--accent-amber, #f59e0b);
+      stroke-width: 2;
+      stroke-dasharray: 8 6;
+      opacity: 0.35;
+    }
+
     .timeline-step {
       display: flex;
       flex-direction: column;
@@ -153,6 +248,8 @@
       border: 1px solid var(--line-hairline);
       box-shadow: var(--shadow-md);
       transition: var(--transition-smooth);
+      position: relative;
+      z-index: 1;
     }
     .timeline-step:hover {
       transform: translateY(-5px);
@@ -181,6 +278,14 @@
       margin-bottom: 0.5rem;
       position: relative;
       z-index: 1;
+      transition: transform 0.3s ease, stroke 0.3s ease;
+    }
+
+    /* Step doodle hover enhancement */
+    .timeline-step:hover .step-doodle {
+      transform: scale(1.15) rotate(5deg);
+      stroke: var(--accent-amber);
+      transition: transform 0.3s ease, stroke 0.3s ease;
     }
 
     .timeline-step h3 {
@@ -228,6 +333,48 @@
       font-size: 1.15rem;
       margin-bottom: 2.5rem;
       line-height: 1.7;
+    }
+
+    /* ---- Animated file drop for admin callout ---- */
+    .file-slide-in {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1rem;
+      background: var(--surface-raised-light);
+      border: 1px solid var(--line-hairline);
+      border-radius: 10px;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+      color: var(--graphite-600);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: file-drop 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    .file-slide-in:nth-child(1) { animation-delay: 0.5s; }
+    .file-slide-in:nth-child(2) { animation-delay: 1.2s; }
+    .file-slide-in:nth-child(3) { animation-delay: 1.9s; }
+    .file-slide-in i { color: var(--accent-emerald); }
+    @keyframes file-drop {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---- Wave divider for footer ---- */
+    .wave-divider {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+      line-height: 0;
+      margin-top: -1px;
+    }
+    .wave-divider svg {
+      display: block;
+      width: 100%;
+      height: 60px;
+    }
+    .wave-divider .shape-fill {
+      fill: var(--surface-raised-light);
     }
 
     /* Footer styling */
@@ -338,12 +485,18 @@
       .hero-ctas {
         justify-content: center;
       }
+      .hero-badges {
+        justify-content: center;
+      }
       .stats-container {
         grid-template-columns: repeat(2, 1fr);
       }
       .timeline-container {
         grid-template-columns: 1fr;
         gap: 2rem;
+      }
+      .timeline-connector {
+        display: none;
       }
     }
 
@@ -380,16 +533,25 @@
 
   <!-- Hero Section -->
   <section class="hero-section">
+    <!-- Morphing gradient blobs -->
+    <div class="hero-blob-1 bg-blob"></div>
+    <div class="hero-blob-2 bg-blob"></div>
+
     <div class="hero-container">
-      <div class="hero-left scroll-reveal">
+      <div class="hero-left scroll-reveal-left">
         <div class="eyebrow">Staff Directory · MACE</div>
-        <h1 class="hero-title">One directory. Instant connections.</h1>
+        <h1 class="hero-title text-shimmer">One directory. Instant connections.</h1>
         <p class="hero-subhead">Access profiles, search by skills or designations, and connect with university administration through a breathtaking, modernized interface.</p>
+        <div class="hero-badges">
+          <span class="badge-chip float-anim-1">🔍 Instant Search</span>
+          <span class="badge-chip float-anim-2">📱 Mobile Ready</span>
+          <span class="badge-chip float-anim-3">🔒 Secure Access</span>
+        </div>
         <div class="hero-ctas">
-          <a href="/login" class="btn-cta btn-cta-primary"><i class="fa-solid fa-right-to-bracket"></i> Sign In to Access</a>
+          <a href="/login" class="btn-cta btn-cta-primary btn-shimmer"><i class="fa-solid fa-right-to-bracket"></i> Sign In to Access</a>
         </div>
       </div>
-      <div class="hero-right scroll-reveal" style="transition-delay: 200ms;">
+      <div class="hero-right scroll-reveal-right" style="transition-delay: 200ms;">
         <img src="/static/images/hero.png" alt="Premium Staff Directory Dashboard" class="animated-hero-img">
       </div>
     </div>
@@ -398,26 +560,49 @@
   <!-- Live Stats Strip -->
   <section class="stats-strip">
     <div class="stats-container">
-      <div class="stat-tile scroll-reveal">
-        <svg class="stat-doodle" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke-width="2"/></svg>
+      <div class="stat-tile border-animated scroll-reveal">
+        <svg class="stat-doodle pulse-glow" viewBox="0 0 24 24" fill="none"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" stroke-width="2" stroke-linecap="round"/><circle cx="9" cy="7" r="4" stroke-width="2"/></svg>
         <span class="stat-number" data-target="120">0</span>
         <span class="stat-label">Total Staff</span>
       </div>
-      <div class="stat-tile scroll-reveal" style="transition-delay: 80ms;">
-        <svg class="stat-doodle" viewBox="0 0 24 24" fill="none"><path d="M2 22s1-8 10-8 10 8 10 8" stroke-width="2"/><circle cx="12" cy="7" r="5" stroke-width="2"/></svg>
+      <div class="stat-tile border-animated scroll-reveal" style="transition-delay: 80ms;">
+        <svg class="stat-doodle pulse-glow" viewBox="0 0 24 24" fill="none"><path d="M2 22s1-8 10-8 10 8 10 8" stroke-width="2"/><circle cx="12" cy="7" r="5" stroke-width="2"/></svg>
         <span class="stat-number" data-target="8">0</span>
         <span class="stat-label">Departments</span>
       </div>
-      <div class="stat-tile scroll-reveal" style="transition-delay: 160ms;">
-        <svg class="stat-doodle" viewBox="0 0 24 24" fill="none"><path d="M22 10v6M2 10v6M12 4v16" stroke-width="2" stroke-linecap="round"/><rect x="6" y="8" width="12" height="8" rx="2" stroke-width="2"/></svg>
+      <div class="stat-tile border-animated scroll-reveal" style="transition-delay: 160ms;">
+        <svg class="stat-doodle pulse-glow" viewBox="0 0 24 24" fill="none"><path d="M22 10v6M2 10v6M12 4v16" stroke-width="2" stroke-linecap="round"/><rect x="6" y="8" width="12" height="8" rx="2" stroke-width="2"/></svg>
         <span class="stat-number" data-target="70">0</span>
         <span class="stat-label">Teaching Split %</span>
       </div>
-      <div class="stat-tile scroll-reveal" style="transition-delay: 240ms;">
-        <svg class="stat-doodle" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M12 6v6l4 2" stroke-width="2" stroke-linecap="round"/></svg>
+      <div class="stat-tile border-animated scroll-reveal" style="transition-delay: 240ms;">
+        <svg class="stat-doodle pulse-glow" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="10" stroke-width="2"/><path d="M12 6v6l4 2" stroke-width="2" stroke-linecap="round"/></svg>
         <span class="stat-number" data-target="15">0</span>
         <span class="stat-label">Years Active</span>
       </div>
+    </div>
+  </section>
+
+  <!-- Feature Marquee Strip -->
+  <section class="feature-marquee">
+    <div class="marquee-track">
+      <span class="marquee-item"><i class="fa-solid fa-bolt"></i> Real-time Search</span>
+      <span class="marquee-item"><i class="fa-solid fa-qrcode"></i> QR Contact Cards</span>
+      <span class="marquee-item"><i class="fa-solid fa-cloud-arrow-up"></i> Bulk Upload</span>
+      <span class="marquee-item"><i class="fa-solid fa-shield-halved"></i> Firebase Auth</span>
+      <span class="marquee-item"><i class="fa-solid fa-filter"></i> Department Filters</span>
+      <span class="marquee-item"><i class="fa-solid fa-lock"></i> Secure Portal</span>
+      <span class="marquee-item"><i class="fa-solid fa-id-badge"></i> Staff Profiles</span>
+      <span class="marquee-item"><i class="fa-solid fa-gauge-high"></i> Admin Dashboard</span>
+      <!-- Duplicate for seamless loop -->
+      <span class="marquee-item"><i class="fa-solid fa-bolt"></i> Real-time Search</span>
+      <span class="marquee-item"><i class="fa-solid fa-qrcode"></i> QR Contact Cards</span>
+      <span class="marquee-item"><i class="fa-solid fa-cloud-arrow-up"></i> Bulk Upload</span>
+      <span class="marquee-item"><i class="fa-solid fa-shield-halved"></i> Firebase Auth</span>
+      <span class="marquee-item"><i class="fa-solid fa-filter"></i> Department Filters</span>
+      <span class="marquee-item"><i class="fa-solid fa-lock"></i> Secure Portal</span>
+      <span class="marquee-item"><i class="fa-solid fa-id-badge"></i> Staff Profiles</span>
+      <span class="marquee-item"><i class="fa-solid fa-gauge-high"></i> Admin Dashboard</span>
     </div>
   </section>
 
@@ -430,8 +615,13 @@
       </div>
     </div>
 
-    <div class="timeline-container scroll-reveal">
-      <div class="timeline-step">
+    <div class="timeline-container">
+      <!-- Connecting dashed line SVG -->
+      <svg class="timeline-connector line-draw" viewBox="0 0 1200 4" preserveAspectRatio="none">
+        <line x1="100" y1="2" x2="1100" y2="2" />
+      </svg>
+
+      <div class="timeline-step scroll-reveal" style="transition-delay: 0ms;">
         <span class="step-number">01</span>
         <svg class="step-doodle" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <circle cx="11" cy="11" r="8" />
@@ -441,7 +631,7 @@
         <p>Look up staff by name, department designation, or skill keywords instantly using the central database search.</p>
       </div>
 
-      <div class="timeline-step" style="position: relative;">
+      <div class="timeline-step scroll-reveal" style="transition-delay: 150ms;">
         <span class="step-number">02</span>
         <svg class="step-doodle" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path d="M22 3H2l8 9.46V19l4 2v-8.54L22 3Z" />
@@ -450,7 +640,7 @@
         <p>Access department listings and sensitive contact information securely via authenticated portal access.</p>
       </div>
 
-      <div class="timeline-step" style="position: relative;">
+      <div class="timeline-step scroll-reveal" style="transition-delay: 300ms;">
         <span class="step-number">03</span>
         <svg class="step-doodle" viewBox="0 0 24 24" fill="none" stroke="currentColor">
           <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
@@ -463,15 +653,15 @@
   </section>
 
   <!-- Admin Capability Callout -->
-  <section class="admin-callout-section">
+  <section class="admin-callout-section" data-parallax="0.05">
     <div class="callout-container">
-      <div class="callout-left scroll-reveal">
+      <div class="callout-left scroll-reveal-left">
         <div class="eyebrow">Enterprise Ready</div>
-        <h2>Administrative Tools with Power & Simplicity</h2>
+        <h2 class="text-gradient-amber">Administrative Tools with Power &amp; Simplicity</h2>
         <p>Simplify staff roster updates with bulk imports. Upload spreadsheet profiles directly into Firestore database instantly. Manage role approvals and staff types inside a consolidated, breathtaking dashboard.</p>
         <a href="/admin" class="btn-cta btn-cta-primary"><i class="fa-solid fa-screwdriver-wrench"></i> Access Admin Portal</a>
       </div>
-      <div class="callout-right scroll-reveal" style="transition-delay: 150ms;">
+      <div class="callout-right scroll-reveal-right" style="transition-delay: 150ms;">
         <div style="background: var(--surface-raised-light); border-radius: 20px; box-shadow: var(--shadow-xl); padding: 2rem; border: 1px solid var(--line-hairline);">
             <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
                 <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(16, 185, 129, 0.1); color: var(--accent-emerald); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
@@ -482,13 +672,26 @@
                     <p style="margin:0; font-size: 0.85rem; color: var(--graphite-600);">Seamless spreadsheet integration</p>
                 </div>
             </div>
-            <div style="height: 120px; background: var(--bg-canvas-light); border-radius: 12px; border: 2px dashed var(--line-hairline); display: flex; align-items: center; justify-content: center; color: var(--graphite-400);">
-                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; margin-right: 0.5rem;"></i> Drop files here
+            <div style="height: 120px; background: var(--bg-canvas-light); border-radius: 12px; border: 2px dashed var(--line-hairline); display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--graphite-400); position: relative; overflow: hidden;">
+                <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; margin-bottom: 0.5rem;"></i> Drop files here
+                <!-- Animated mock files sliding in -->
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 0.5rem;">
+                  <div class="file-slide-in"><i class="fa-solid fa-file-csv"></i> staff_roster_2026.csv</div>
+                  <div class="file-slide-in"><i class="fa-solid fa-file-excel"></i> faculty_data.xlsx</div>
+                  <div class="file-slide-in"><i class="fa-solid fa-file-lines"></i> dept_updates.csv</div>
+                </div>
             </div>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- Wave Divider -->
+  <div class="wave-divider">
+    <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none">
+      <path d="M321.39,56.44c58-10.79,114.16-30.13,172-41.86,82.39-16.72,168.19-17.73,250.45-.39C823.78,31,906.67,72,985.66,92.83c70.05,18.48,146.53,26.09,214.34,3V0H0V27.35A600.21,600.21,0,0,0,321.39,56.44Z" class="shape-fill"></path>
+    </svg>
+  </div>
 
   <!-- College Footer -->
   <footer class="college-footer">
@@ -505,7 +708,7 @@
         </ul>
       </div>
       <div class="footer-links">
-        <h5>Support & Campus</h5>
+        <h5>Support &amp; Campus</h5>
         <ul>
           <li><a href="mailto:support@mace.ac.in">Campus Helpdesk</a></li>
           <li><a href="https://www.mace.ac.in" target="_blank" rel="noopener noreferrer">Main Website</a></li>
@@ -516,17 +719,18 @@
     <div class="footer-bottom">
       <p>&copy; 2026 Mar Athanasius College of Engineering. All rights reserved.</p>
       <div class="social-icons">
-        <a href="#" class="social-icon" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
-        <a href="#" class="social-icon" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
-        <a href="#" class="social-icon" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
+        <a href="#" class="social-icon ripple-effect" aria-label="LinkedIn"><i class="fa-brands fa-linkedin-in"></i></a>
+        <a href="#" class="social-icon ripple-effect" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="#" class="social-icon ripple-effect" aria-label="GitHub"><i class="fa-brands fa-github"></i></a>
       </div>
     </div>
   </footer>
 
+  <script src="/static/js/premium-interactions.js"></script>
   <script>
     // Scroll Reveal Stagger Logic
     document.addEventListener('DOMContentLoaded', () => {
-      const scrollElements = document.querySelectorAll('.scroll-reveal');
+      const scrollElements = document.querySelectorAll('.scroll-reveal, .scroll-reveal-left, .scroll-reveal-right');
       
       const elementInView = (el, dividend = 1) => {
         const elementTop = el.getBoundingClientRect().top;
