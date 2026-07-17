@@ -176,35 +176,11 @@
       font-weight: 500;
     }
 
-    .header-pills {
-      display: flex;
-      gap: 4px;
-      background: #E5E7EB;
-      padding: 4px;
-      border-radius: 50px;
-    }
-
-    .pill-btn {
-      border: none;
-      background: transparent;
-      padding: 8px 18px;
-      border-radius: 50px;
-      font-size: 0.85rem;
-      font-weight: 700;
-      cursor: pointer;
-      color: #4B5563;
-      transition: all var(--transition-fast);
-    }
-
-    .pill-btn.active {
-      background: var(--color-blue);
-      color: #ffffff;
-    }
-
     .header-right {
       display: flex;
       align-items: center;
       gap: 16px;
+      margin-left: auto;
     }
 
     .header-icon-btn {
@@ -325,7 +301,7 @@
       margin-top: 4px;
     }
 
-    /* ── Statistics Grid ── */
+    /* ── Statistics Grid (Spacious redesign) ── */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -336,11 +312,12 @@
     .stat-card {
       background: var(--bg-card);
       border-radius: 20px;
-      padding: 20px 24px;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.01);
+      padding: 26px 28px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.015);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      min-height: 145px;
     }
 
     .stat-card-header {
@@ -352,6 +329,7 @@
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.03em;
+      margin-bottom: 12px;
     }
 
     .stat-card-icon {
@@ -363,11 +341,11 @@
       display: flex;
       align-items: baseline;
       justify-content: space-between;
-      margin-top: 10px;
+      margin-top: auto;
     }
 
     .stat-card-number {
-      font-size: 2.1rem;
+      font-size: 2.5rem;
       font-weight: 800;
       color: #111827;
       font-family: 'Syne', sans-serif;
@@ -1092,6 +1070,29 @@
       margin-bottom: 4px;
     }
 
+    /* ── Warning Modal (Fixed positioning & transition bug) ── */
+    .modal-confirm {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      width: 440px;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+      z-index: 1070;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .modal-confirm.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
     /* ── Toast Container ── */
     .toast-container-custom {
       position: fixed;
@@ -1126,16 +1127,19 @@
     .toast-custom.success { border-left: 4px solid var(--color-green); }
     .toast-custom.error { border-left: 4px solid var(--color-red); }
 
-    /* ── Hide Admin Panels for Regular Staff ── */
+    /* ── Admin-Only Selector Fix ── */
     .admin-only {
       display: none !important;
     }
+    
     body.is-admin .admin-only {
       display: flex !important;
     }
-    table.is-admin .admin-only, tr.is-admin .admin-only, th.admin-only, td.admin-only {
+    
+    body.is-admin td.admin-only, body.is-admin th.admin-only {
       display: table-cell !important;
     }
+    
     body.is-admin .sidebar-btn.admin-only {
       display: flex !important;
     }
@@ -1198,14 +1202,6 @@
         <div class="header-left">
           <h1 class="header-greeting" id="userGreeting">Good morning, Staff</h1>
           <p class="header-sub">long time no see</p>
-        </div>
-        
-        <div class="header-pills">
-          <button class="pill-btn">Schedule</button>
-          <button class="pill-btn active">Analytics</button>
-          <button class="pill-btn">Candidates</button>
-          <button class="pill-btn">KPI</button>
-          <button class="pill-btn">Leads</button>
         </div>
         
         <div class="header-right">
@@ -1302,8 +1298,8 @@
                 <div class="card-header">
                   <span class="card-title">Roster Growth Trends</span>
                   <div class="chart-legend">
-                    <span class="legend-item"><span class="legend-dot blue"></span> Active Staff</span>
-                    <span class="legend-item"><span class="legend-dot red"></span> Pending Registrations</span>
+                    <span class="legend-item"><span class="legend-dot blue"></span> Teaching Staff</span>
+                    <span class="legend-item"><span class="legend-dot red"></span> Non-Teaching Staff</span>
                   </div>
                 </div>
                 <div style="position: relative; height: 260px; width: 100%;">
@@ -1631,9 +1627,9 @@
     </div>
   </div>
 
-  <!-- REUSABLE CONFIRMATION MODAL -->
+  <!-- REUSABLE CONFIRMATION MODAL (Fixed modal transition & default visibility) -->
   <div class="drawer-backdrop" id="warningBackdrop" onclick="closeWarningDrawer()" style="z-index: 1060;"></div>
-  <div class="drawer-custom" id="warningDrawer" style="z-index: 1070; max-width: 440px; padding: 24px; height: auto; top: 50%; left: 50%; right: auto; transform: translate(-50%, -50%); border-radius: 20px; box-shadow: 0 20px 40px rgba(0,0,0,0.15);">
+  <div class="modal-confirm" id="warningDrawer">
     <div class="drawer-header" style="border-bottom: none; padding: 0 0 15px 0;">
       <h3 class="drawer-title" id="warningTitle" style="color: var(--color-red); display: flex; align-items: center; gap: 8px;"><i class="fa-solid fa-triangle-exclamation"></i> Action Required</h3>
       <button class="drawer-close" onclick="closeWarningDrawer()">&times;</button>
@@ -1697,7 +1693,6 @@
     firebase.auth().onAuthStateChanged(async (user) => {
       if (user) {
         document.getElementById('adminEmail').textContent = user.email;
-        // Set avatar initials
         const nameInitials = user.email.substring(0, 2).toUpperCase();
         document.getElementById('userAvatar').textContent = nameInitials;
         
@@ -1714,7 +1709,6 @@
             document.getElementById('statRightLabel').textContent = "Pending Queue";
             document.getElementById('miniQueueTitle').textContent = "Pending Queue";
             
-            // Load both datasets for admins
             await Promise.all([loadStaffData(token), loadPendingRegistrations(token)]);
           } else {
             isAdmin = false;
@@ -1723,7 +1717,6 @@
             document.getElementById('statRightLabel').textContent = "Departments";
             document.getElementById('miniQueueTitle').textContent = "Roster Status";
             
-            // Only load roster directory for regular staff
             await loadStaffData(token);
           }
           
@@ -1808,7 +1801,6 @@
         document.getElementById('statRightCount').textContent = pendingData.length;
         document.getElementById('notificationBadge').textContent = pendingData.length;
       } else {
-        // Aggregate departments count for normal users
         const depts = new Set(allStaffData.map(s => s.department || 'Other'));
         document.getElementById('statRightCount').textContent = depts.size;
         document.getElementById('notificationBadge').textContent = "0";
@@ -1832,8 +1824,6 @@
         sortedDepts.forEach(dept => {
           const count = deptCounts[dept];
           const pct = Math.round((count / allStaffData.length) * 100) || 0;
-          
-          // Get short code (first letters)
           const shortCode = dept.split(' ').map(w => w[0]).join('').substring(0, 4);
 
           const row = document.createElement('div');
@@ -1850,13 +1840,11 @@
       }
     }
 
-    // ── Spotlight Widget Rendering (Mockup Upcoming Interview Slot) ──
+    // ── Spotlight Widget Rendering ──
     function renderPendingSpotlight() {
-      const card = document.getElementById('latestRequestCard');
       const body = document.getElementById('spotlightBody');
 
       if (!isAdmin) {
-        // Display a greeting spotlight card for standard employees
         const user = firebase.auth().currentUser;
         const email = user ? user.email : 'colleague';
         body.innerHTML = `
@@ -1922,13 +1910,12 @@
       `;
     }
 
-    // ── Mini Queue List (Mockup Vacancies List) ──
+    // ── Mini Queue List ──
     function renderPendingQueueMiniList() {
       const list = document.getElementById('pendingQueueMiniList');
       list.innerHTML = '';
 
       if (!isAdmin) {
-        // Render system info instead of pending queue
         list.innerHTML = `
           <div class="vacancy-row">
             <div class="vacancy-logo-name">
@@ -1963,7 +1950,6 @@
         return;
       }
 
-      // Display up to 3 pending requests
       pendingData.slice(0, 3).forEach(req => {
         const shortDept = req.department || 'CSE';
         list.innerHTML += `
@@ -1999,7 +1985,6 @@
         return;
       }
 
-      // Slice first 5 records for home analytics preview
       filtered.slice(0, 5).forEach(staff => {
         const initials = (staff.name || 'S').substring(0, 2).toUpperCase();
         const staffId = staff.id || staff.email;
@@ -2033,7 +2018,6 @@
       const grid = document.getElementById('deptCardGrid');
       grid.innerHTML = '';
 
-      // Count occurrences
       const deptCounts = {};
       allStaffData.forEach(s => {
         const dept = s.department || 'Other';
@@ -2101,7 +2085,6 @@
         return matchSearch && matchDept && matchType;
       });
 
-      // Pagination
       const start = directoryPage * directoryPageSize;
       const end = start + directoryPageSize;
       const paginated = filtered.slice(start, end);
@@ -2159,7 +2142,6 @@
       });
     }
 
-    // Filters event listeners
     document.getElementById('directorySearchInput').addEventListener('input', () => { directoryPage = 0; renderDirectoryTable(); });
     document.getElementById('directoryDeptFilter').addEventListener('change', () => { directoryPage = 0; renderDirectoryTable(); });
     document.getElementById('directoryTypeFilter').addEventListener('change', () => { directoryPage = 0; renderDirectoryTable(); });
@@ -2348,25 +2330,21 @@
 
       [step1, step2, step3, step4].forEach(s => s.className = 'pipeline-step');
 
-      // Step 1: Uploading
       step1.classList.add('active');
       await new Promise(r => setTimeout(r, 600));
       step1.classList.remove('active');
       step1.classList.add('complete');
 
-      // Step 2: Parsing
       step2.classList.add('active');
       await new Promise(r => setTimeout(r, 600));
       step2.classList.remove('active');
       step2.classList.add('complete');
 
-      // Step 3: Validating
       step3.classList.add('active');
       await new Promise(r => setTimeout(r, 500));
       step3.classList.remove('active');
       step3.classList.add('complete');
 
-      // Step 4: Complete
       step4.classList.add('complete');
 
       await uploadSpreadsheetFile(file);
@@ -2419,7 +2397,6 @@
       }
     }
 
-    // Dropzone setup
     const dropArea = document.getElementById('uploadArea');
     dropArea.addEventListener('dragover', (e) => { e.preventDefault(); dropArea.classList.add('dragover'); });
     dropArea.addEventListener('dragleave', () => dropArea.classList.remove('dragover'));
@@ -2432,7 +2409,7 @@
     });
     dropArea.addEventListener('click', () => document.getElementById('excelFileInput').click());
 
-    // ── Roster Updates (Edit / Type segment clicks / Deletes) ──
+    // ── Roster Updates ──
     async function updateStaffRosterStatus(staffId, newType) {
       const token = await firebase.auth().currentUser.getIdToken();
       try {
@@ -2483,7 +2460,7 @@
       }
     }
 
-    // ── Reusable Form Drawer (Add / Edit) ──
+    // ── Drawer (Add / Edit) ──
     function openFormDrawerForAdd() {
       document.getElementById('drawerTitle').textContent = 'Add New Staff';
       document.getElementById('formStaffId').value = '';
@@ -2503,7 +2480,7 @@
       
       document.getElementById('formName').value = staff.name || '';
       document.getElementById('formEmail').value = staff.email || '';
-      document.getElementById('formEmail').disabled = true; // Email is key ID, disable
+      document.getElementById('formEmail').disabled = true;
       document.getElementById('formPhone').value = staff.mobileNo || staff.Phone || '';
       document.getElementById('formDept').value = staff.department || 'Computer Science & Engineering';
       document.getElementById('formDesignation').value = staff.designation || '';
@@ -2522,7 +2499,6 @@
       document.getElementById('formDrawer').classList.remove('active');
     }
 
-    // Submit form (Handles both edit updates and manual creations)
     document.getElementById('staffForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const token = await firebase.auth().currentUser.getIdToken();
@@ -2586,7 +2562,7 @@
       }
     });
 
-    // ── Reusable Confirmation Warning Drawer ──
+    // ── Confirmation Warning Drawer ──
     function openWarningDrawer(title, message, confirmCallback) {
       document.getElementById('warningTitle').innerHTML = `<i class="fa-solid fa-triangle-exclamation"></i> ${title}`;
       document.getElementById('warningMessage').textContent = message;
@@ -2627,20 +2603,16 @@
       }, 4000);
     }
 
-    // ── Log operations locally ──
     function addOperationLog(message) {
       const log = { msg: message, time: new Date().toISOString() };
       activityLog.unshift(log);
       if (activityLog.length > 5) activityLog.pop();
       localStorage.setItem('adminActivityLog', JSON.stringify(activityLog));
-      renderActivityLog();
     }
 
-    function renderActivityLog() {
-      // Stub if you want to render logs in settings/etc.
-    }
+    function renderActivityLog() {}
 
-    // ── Chart Rendering ──
+    // ── Exact Database Chart Rendering ──
     function renderTrendsChart() {
       const canvas = document.getElementById('trendsChart');
       if (!canvas) return;
@@ -2651,35 +2623,59 @@
         trendsChartInstance.destroy();
       }
 
-      // Generate visual match details
+      // Aggregate counts from actual database
+      const depts = ['CSE', 'ECE', 'EEE', 'ME', 'CE', 'ADMIN'];
+      const teachingData = [0, 0, 0, 0, 0, 0];
+      const nonTeachingData = [0, 0, 0, 0, 0, 0];
+
+      allStaffData.forEach(s => {
+        const dept = (s.department || '').toUpperCase();
+        let idx = -1;
+        if (dept.includes('COMPUTER') || dept.includes('CSE')) idx = 0;
+        else if (dept.includes('ELECTRONICS') || dept.includes('ECE')) idx = 1;
+        else if (dept.includes('ELECTRICAL') || dept.includes('EEE')) idx = 2;
+        else if (dept.includes('MECHANICAL') || dept.includes('ME')) idx = 3;
+        else if (dept.includes('CIVIL') || dept.includes('CE')) idx = 4;
+        else if (dept.includes('ADMIN') || dept.includes('OFFICE')) idx = 5;
+
+        if (idx !== -1) {
+          const type = s.type || 'Teaching Staff';
+          if (type.includes('Non')) {
+            nonTeachingData[idx]++;
+          } else {
+            teachingData[idx]++;
+          }
+        }
+      });
+
       trendsChartInstance = new Chart(ctx, {
         type: 'line',
         data: {
-          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+          labels: depts,
           datasets: [
             {
-              label: 'Active Staff',
-              data: [15, 22, 28, 26, 38, 48, 45, 43, 52, 49],
+              label: 'Teaching Staff',
+              data: teachingData,
               borderColor: '#3B82F6',
               backgroundColor: 'rgba(59, 130, 246, 0.08)',
               borderWidth: 3.5,
               tension: 0.4,
               fill: true,
-              pointRadius: 0,
+              pointRadius: 4,
               pointHoverRadius: 6,
               pointHoverBackgroundColor: '#3B82F6',
               pointHoverBorderColor: '#ffffff',
               pointHoverBorderWidth: 2
             },
             {
-              label: 'Pending Registrations',
-              data: [8, 12, 10, 15, 14, 13, 12, 11, 14, 12],
+              label: 'Non-Teaching Staff',
+              data: nonTeachingData,
               borderColor: '#EF4444',
               backgroundColor: 'transparent',
               borderWidth: 3.5,
               tension: 0.4,
               fill: false,
-              pointRadius: 0,
+              pointRadius: 4,
               pointHoverRadius: 6,
               pointHoverBackgroundColor: '#EF4444',
               pointHoverBorderColor: '#ffffff',
@@ -2698,12 +2694,7 @@
               bodyColor: '#ffffff',
               cornerRadius: 8,
               padding: 10,
-              displayColors: false,
-              callbacks: {
-                label: function(context) {
-                  return context.parsed.y;
-                }
-              }
+              displayColors: true
             }
           },
           scales: {
@@ -2713,9 +2704,8 @@
             },
             y: {
               grid: { color: '#E5E7EB', borderDash: [4, 4] },
-              ticks: { color: '#9CA3AF', font: { family: 'DM Sans', weight: 'bold' } },
-              min: 0,
-              max: 60
+              ticks: { color: '#9CA3AF', font: { family: 'DM Sans', weight: 'bold' }, stepSize: 1 },
+              beginAtZero: true
             }
           }
         }
