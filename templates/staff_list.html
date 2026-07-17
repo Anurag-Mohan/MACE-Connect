@@ -244,6 +244,34 @@
       display: flex;
       justify-content: center;
     }
+
+    /* Search bar focus glow */
+    .sticky-search-bar:focus-within {
+      border-color: rgba(245, 158, 11, 0.4);
+      box-shadow: 0 10px 30px rgba(245, 158, 11, 0.1), 0 0 0 3px rgba(245, 158, 11, 0.08);
+      transform: translateX(-50%) scale(1.01);
+    }
+
+    /* Staff card amber hover glow */
+    .staff-card:hover {
+      box-shadow: 0 15px 35px -5px rgba(245, 158, 11, 0.12), 0 5px 15px -3px rgba(0, 0, 0, 0.05);
+    }
+
+    /* Spring drawer entrance */
+    .drawer-custom.active {
+      right: 0;
+      animation: drawer-spring 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    @keyframes drawer-spring {
+      0% { right: -520px; }
+      70% { right: 10px; }
+      100% { right: 0; }
+    }
+
+    /* Results pill counter animation */
+    .results-pill-counter {
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
   </style>
 </head>
 <body class="light-canvas">
@@ -648,6 +676,9 @@
         if (current >= target) {
           current = target;
           clearInterval(timer);
+          // Pulse effect on completion
+          el.style.transform = 'scale(1.15)';
+          setTimeout(() => { el.style.transform = 'scale(1)'; }, 200);
         }
         el.textContent = `${current} Staff Found`;
       }, 15);
@@ -729,5 +760,6 @@
       document.getElementById('qrModalDrawer').classList.remove('active');
     }
   </script>
+  <script src="/static/js/premium-interactions.js"></script>
 </body>
 </html>
