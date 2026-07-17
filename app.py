@@ -276,7 +276,7 @@ def allowed_file(filename):
 
 @app.route('/')
 def index():
-    return render_template('landing.html')
+    return redirect(url_for('login_page'))
 
 
 @app.route('/login')
