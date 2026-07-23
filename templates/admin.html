@@ -1685,13 +1685,13 @@
               <!-- Upcoming request spotlight -->
               <div class="card" id="latestRequestCard">
                 <div class="card-header">
-                  <span class="card-title" id="spotlightTitle">Registration Request Spotlight</span>
+                  <span class="card-title" id="spotlightTitle">Quick Overview</span>
                   <div class="card-actions"><i class="fa-solid fa-ellipsis"></i></div>
                 </div>
                 <div class="interview-body" id="spotlightBody">
                   <!-- Dynamically populated or default fallback -->
                   <div class="empty-state">
-                    <p>No pending registration requests to spotlight.</p>
+                    <p>Loading data...</p>
                   </div>
                 </div>
               </div>
@@ -1724,10 +1724,10 @@
                 </div>
               </div>
 
-              <!-- Pending Approvals Queue (Mini) -->
+              <!-- Queue / Status Mini Card -->
               <div class="card">
                 <div class="card-header">
-                  <span class="card-title" id="miniQueueTitle">Registrations Queue</span>
+                  <span class="card-title" id="miniQueueTitle">System Status</span>
                   <div class="card-actions"><i class="fa-solid fa-ellipsis"></i></div>
                 </div>
                 <div class="vacancies-list" id="pendingQueueMiniList">
@@ -1798,12 +1798,7 @@
               <input type="text" id="directorySearchInput" class="filter-input" placeholder="Search by name, email, designation..." style="flex: 1; min-width: 250px;">
               <select id="directoryDeptFilter" class="filter-input" style="width: 200px;">
                 <option value="">All Departments</option>
-                <option value="Computer Science & Engineering">CSE</option>
-                <option value="Electronics & Communication Engineering">ECE</option>
-                <option value="Electrical & Electronics Engineering">EEE</option>
-                <option value="Mechanical Engineering">ME</option>
-                <option value="Civil Engineering">CE</option>
-                <option value="Administration">ADMIN</option>
+                <!-- Dynamically populated from database -->
               </select>
               <select id="directoryTypeFilter" class="filter-input" style="width: 180px;">
                 <option value="">All Staff Types</option>
@@ -1969,12 +1964,8 @@
         <div class="form-group-custom">
           <label class="form-label-custom" for="formDept">Department</label>
           <select id="formDept" class="form-control-custom" required style="cursor: pointer;">
-            <option value="Computer Science & Engineering">Computer Science & Engineering</option>
-            <option value="Electronics & Communication Engineering">Electronics & Communication Engineering</option>
-            <option value="Electrical & Electronics Engineering">Electrical & Electronics Engineering</option>
-            <option value="Mechanical Engineering">Mechanical Engineering</option>
-            <option value="Civil Engineering">Civil Engineering</option>
-            <option value="Administration">Administration</option>
+            <option value="">Select Department</option>
+            <!-- Dynamically populated from database -->
           </select>
         </div>
 
@@ -2129,6 +2120,12 @@
         document.getElementById('adminEmail').textContent = user.email;
         const nameInitials = user.email.substring(0, 2).toUpperCase();
         document.getElementById('userAvatar').textContent = nameInitials;
+
+        // Time-based greeting
+        const hour = new Date().getHours();
+        let timeGreeting = 'Good morning';
+        if (hour >= 12 && hour < 17) timeGreeting = 'Good afternoon';
+        else if (hour >= 17) timeGreeting = 'Good evening';
         
         try {
           const token = await user.getIdToken();
@@ -2139,17 +2136,19 @@
           if (checkRes.ok) {
             isAdmin = true;
             document.body.classList.add('is-admin');
-            document.getElementById('userGreeting').textContent = "Good morning, Admin";
+            document.getElementById('userGreeting').textContent = `${timeGreeting}, Admin`;
             document.getElementById('statRightLabel').textContent = "Pending Queue";
+            document.getElementById('spotlightTitle').textContent = "Registration Request Spotlight";
             document.getElementById('miniQueueTitle').textContent = "Pending Queue";
             
             await Promise.all([loadStaffData(token), loadPendingRegistrations(token)]);
           } else {
             isAdmin = false;
             document.body.classList.remove('is-admin');
-            document.getElementById('userGreeting').textContent = "Good morning, Colleague";
+            document.getElementById('userGreeting').textContent = `${timeGreeting}, Colleague`;
             document.getElementById('statRightLabel').textContent = "Departments";
-            document.getElementById('miniQueueTitle').textContent = "Roster Status";
+            document.getElementById('spotlightTitle').textContent = "Your Access Info";
+            document.getElementById('miniQueueTitle').textContent = "System Status";
             
             await loadStaffData(token);
           }
@@ -2184,6 +2183,7 @@
           renderDashboardTable();
           renderDirectoryTable();
           renderDepartmentsGrid();
+          populateDeptFilter();
           renderTrendsChart();
         }
       } catch (error) {
@@ -2461,40 +2461,66 @@
 
     document.getElementById('employeeSearchInput').addEventListener('input', renderDashboardTable);
 
-    // ── Dynamic Departments Grid ──
     function renderDepartmentsGrid() {
       const grid = document.getElementById('deptCardGrid');
       grid.innerHTML = '';
 
+      // Dynamically count departments from actual database data
       const deptCounts = {};
       allStaffData.forEach(s => {
         const dept = s.department || 'Other';
-        deptCounts[dept] = (deptCounts[dept] || 0) + 1;
+        if (dept.trim()) {
+          deptCounts[dept] = (deptCounts[dept] || 0) + 1;
+        }
       });
 
-      const depts = ["Computer Science & Engineering", "Electronics & Communication Engineering", "Electrical & Electronics Engineering", "Mechanical Engineering", "Civil Engineering", "Administration"];
-      const shortCodes = {
-        "Computer Science & Engineering": "CSE",
-        "Electronics & Communication Engineering": "ECE",
-        "Electrical & Electronics Engineering": "EEE",
-        "Mechanical Engineering": "ME",
-        "Civil Engineering": "CE",
-        "Administration": "ADMIN"
-      };
-      
-      const icons = {
-        "Computer Science & Engineering": "fa-laptop-code",
-        "Electronics & Communication Engineering": "fa-microchip",
-        "Electrical & Electronics Engineering": "fa-bolt",
-        "Mechanical Engineering": "fa-gears",
-        "Civil Engineering": "fa-building",
-        "Administration": "fa-briefcase"
-      };
+      // Sort by count (highest first)
+      const sortedDepts = Object.entries(deptCounts)
+        .sort((a, b) => b[1] - a[1]);
 
-      depts.forEach(dept => {
-        const count = deptCounts[dept] || 0;
-        const icon = icons[dept] || 'fa-users';
-        const code = shortCodes[dept] || dept;
+      // Icons mapping - try to match known keywords, fallback to generic
+      const iconMap = [
+        { keywords: ['computer', 'cse', 'cs', 'software', 'it', 'information'], icon: 'fa-laptop-code' },
+        { keywords: ['electronics', 'ece', 'ec', 'communication'], icon: 'fa-microchip' },
+        { keywords: ['electrical', 'eee', 'ee'], icon: 'fa-bolt' },
+        { keywords: ['mechanical', 'me', 'mech'], icon: 'fa-gears' },
+        { keywords: ['civil', 'ce'], icon: 'fa-building' },
+        { keywords: ['admin', 'office', 'management'], icon: 'fa-briefcase' },
+        { keywords: ['math', 'science', 'physics', 'chemistry'], icon: 'fa-flask' },
+        { keywords: ['library'], icon: 'fa-book' },
+        { keywords: ['human', 'hr'], icon: 'fa-people-group' },
+        { keywords: ['exam', 'examination'], icon: 'fa-file-lines' },
+        { keywords: ['account', 'finance'], icon: 'fa-indian-rupee-sign' },
+      ];
+
+      function getIcon(deptName) {
+        const lower = deptName.toLowerCase();
+        for (const entry of iconMap) {
+          if (entry.keywords.some(k => lower.includes(k))) return entry.icon;
+        }
+        return 'fa-users';
+      }
+
+      // Generate a short code from department name
+      function getShortCode(deptName) {
+        // If it's already short (<=5 chars), use as-is
+        if (deptName.length <= 5) return deptName.toUpperCase();
+        // Take first letters of significant words
+        const words = deptName.split(/[\s&,]+/).filter(w => w.length > 1 && !['and', 'of', 'the', 'in'].includes(w.toLowerCase()));
+        if (words.length >= 2) {
+          return words.map(w => w[0]).join('').toUpperCase().substring(0, 4);
+        }
+        return deptName.substring(0, 4).toUpperCase();
+      }
+
+      if (sortedDepts.length === 0) {
+        grid.innerHTML = '<div class="empty-state"><i class="fa-solid fa-building-columns"></i><p>No department data available yet.</p></div>';
+        return;
+      }
+
+      sortedDepts.forEach(([dept, count]) => {
+        const icon = getIcon(dept);
+        const code = getShortCode(dept);
 
         const card = document.createElement('div');
         card.className = 'dept-card-new';
@@ -2503,9 +2529,48 @@
           <div class="dept-icon-new"><i class="fa-solid ${icon}"></i></div>
           <h3 class="dept-title-new">${code}</h3>
           <p class="dept-count-new">${count} Staff Member${count !== 1 ? 's' : ''}</p>
+          <p style="font-size: 0.7rem; color: var(--text-muted); margin-top: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;" title="${dept}">${dept}</p>
         `;
         grid.appendChild(card);
       });
+    }
+
+    // ── Dynamically populate department dropdowns from actual data ──
+    function populateDeptFilter() {
+      // Collect unique departments from data
+      const deptSet = new Set();
+      allStaffData.forEach(s => {
+        if (s.department && s.department.trim()) {
+          deptSet.add(s.department.trim());
+        }
+      });
+      const sortedDepts = Array.from(deptSet).sort();
+
+      // 1) Directory filter dropdown
+      const filterSelect = document.getElementById('directoryDeptFilter');
+      const filterVal = filterSelect.value;
+      while (filterSelect.options.length > 1) filterSelect.remove(1);
+      sortedDepts.forEach(dept => {
+        const option = document.createElement('option');
+        option.value = dept;
+        option.textContent = dept;
+        filterSelect.appendChild(option);
+      });
+      if (filterVal) filterSelect.value = filterVal;
+
+      // 2) Add/Edit Staff form dropdown
+      const formSelect = document.getElementById('formDept');
+      if (formSelect) {
+        const formVal = formSelect.value;
+        while (formSelect.options.length > 1) formSelect.remove(1);
+        sortedDepts.forEach(dept => {
+          const option = document.createElement('option');
+          option.value = dept;
+          option.textContent = dept;
+          formSelect.appendChild(option);
+        });
+        if (formVal) formSelect.value = formVal;
+      }
     }
 
     function filterDirectoryByDepartment(deptName) {
@@ -2930,7 +2995,7 @@
       document.getElementById('formEmail').value = staff.email || '';
       document.getElementById('formEmail').disabled = true;
       document.getElementById('formPhone').value = staff.mobileNo || staff.Phone || '';
-      document.getElementById('formDept').value = staff.department || 'Computer Science & Engineering';
+      document.getElementById('formDept').value = staff.department || '';
       document.getElementById('formDesignation').value = staff.designation || '';
       document.getElementById('formType').value = staff.type || 'Teaching Staff';
       document.getElementById('formContract').value = staff.contractType || 'Permanent';
@@ -3071,30 +3136,33 @@
         trendsChartInstance.destroy();
       }
 
-      // Aggregate counts from actual database
-      const depts = ['CSE', 'ECE', 'EEE', 'ME', 'CE', 'ADMIN'];
-      const teachingData = [0, 0, 0, 0, 0, 0];
-      const nonTeachingData = [0, 0, 0, 0, 0, 0];
-
+      // Dynamically build department data from actual database
+      const deptCounts = {};
       allStaffData.forEach(s => {
-        const dept = (s.department || '').toUpperCase();
-        let idx = -1;
-        if (dept.includes('COMPUTER') || dept.includes('CSE')) idx = 0;
-        else if (dept.includes('ELECTRONICS') || dept.includes('ECE')) idx = 1;
-        else if (dept.includes('ELECTRICAL') || dept.includes('EEE')) idx = 2;
-        else if (dept.includes('MECHANICAL') || dept.includes('ME')) idx = 3;
-        else if (dept.includes('CIVIL') || dept.includes('CE')) idx = 4;
-        else if (dept.includes('ADMIN') || dept.includes('OFFICE')) idx = 5;
-
-        if (idx !== -1) {
-          const type = s.type || 'Teaching Staff';
-          if (type.includes('Non')) {
-            nonTeachingData[idx]++;
-          } else {
-            teachingData[idx]++;
-          }
+        const dept = s.department || 'Other';
+        if (!dept.trim()) return;
+        if (!deptCounts[dept]) deptCounts[dept] = { teaching: 0, nonTeaching: 0 };
+        const type = s.type || 'Teaching Staff';
+        if (type.includes('Non')) {
+          deptCounts[dept].nonTeaching++;
+        } else {
+          deptCounts[dept].teaching++;
         }
       });
+
+      // Sort departments by total count
+      const sortedEntries = Object.entries(deptCounts)
+        .sort((a, b) => (b[1].teaching + b[1].nonTeaching) - (a[1].teaching + a[1].nonTeaching))
+        .slice(0, 8); // Max 8 for readability
+
+      const depts = sortedEntries.map(([name]) => {
+        // Create a short label for the chart axis
+        const words = name.split(/[\s&,]+/).filter(w => w.length > 1 && !['and', 'of', 'the', 'in'].includes(w.toLowerCase()));
+        if (words.length >= 2) return words.map(w => w[0]).join('').toUpperCase().substring(0, 4);
+        return name.substring(0, 5).toUpperCase();
+      });
+      const teachingData = sortedEntries.map(([, v]) => v.teaching);
+      const nonTeachingData = sortedEntries.map(([, v]) => v.nonTeaching);
 
       // Create gradient fills for chart lines
       const blueGradient = ctx.createLinearGradient(0, 0, 0, 260);
