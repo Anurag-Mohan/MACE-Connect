@@ -2260,6 +2260,8 @@
             document.getElementById('miniQueueTitle').textContent = "System Status";
             
             await loadStaffData(token);
+            renderPendingSpotlight();
+            renderPendingQueueMiniList();
           }
           
           renderActivityLog();
