@@ -408,6 +408,115 @@
         display: flex;
       }
     }
+
+    /* ── App Download Banner ── */
+    .app-download-float {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(16px) saturate(150%);
+      -webkit-backdrop-filter: blur(16px) saturate(150%);
+      padding: 12px 24px 12px 18px;
+      border-radius: 50px;
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+      z-index: 100;
+      animation: float-up 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      animation-delay: 1.5s;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    @keyframes float-up {
+      from { opacity: 0; transform: translateX(-50%) translateY(30px); }
+      to { opacity: 1; transform: translateX(-50%) translateY(0); }
+    }
+
+    .app-download-float .app-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--color-purple), #6366F1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+
+    .app-download-float .app-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .app-download-float .app-text span:first-child {
+      font-size: 0.72rem;
+      color: rgba(255, 255, 255, 0.5);
+      font-weight: 500;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .app-download-float .app-text span:last-child {
+      font-size: 0.88rem;
+      color: #ffffff;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+    }
+
+    .app-download-float .download-btn {
+      background: linear-gradient(135deg, var(--color-purple), #6366F1);
+      color: #ffffff;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 50px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+      text-decoration: none;
+      box-shadow: 0 2px 10px rgba(124, 58, 237, 0.3);
+    }
+
+    .app-download-float .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(124, 58, 237, 0.4);
+    }
+
+    .app-download-float .dismiss-btn {
+      background: none;
+      border: none;
+      color: rgba(255, 255, 255, 0.35);
+      font-size: 1.1rem;
+      cursor: pointer;
+      padding: 4px;
+      transition: color 0.2s;
+      line-height: 1;
+    }
+
+    .app-download-float .dismiss-btn:hover {
+      color: rgba(255, 255, 255, 0.7);
+    }
+
+    @media (max-width: 600px) {
+      .app-download-float {
+        left: 16px;
+        right: 16px;
+        transform: none;
+        bottom: 16px;
+      }
+      @keyframes float-up {
+        from { opacity: 0; transform: translateY(30px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    }
   </style>
 </head>
 <body>
@@ -595,6 +704,19 @@
       </div>
     </div>
 
+  </div>
+
+  <!-- App Download Banner -->
+  <div class="app-download-float" id="appDownloadBanner">
+    <div class="app-icon"><i class="fa-solid fa-mobile-screen-button"></i></div>
+    <div class="app-text">
+      <span>Available now</span>
+      <span>MACE-Connect App</span>
+    </div>
+    <a href="/static/downloads/MACE-Connect.apk" download class="download-btn">
+      <i class="fa-solid fa-download"></i> Get APK
+    </a>
+    <button class="dismiss-btn" onclick="document.getElementById('appDownloadBanner').style.display='none'">&times;</button>
   </div>
 
   <script>

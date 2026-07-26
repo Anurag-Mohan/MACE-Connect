@@ -1482,6 +1482,63 @@
     body.is-admin .header-tab.admin-only { display: inline-flex !important; }
     body.is-admin button.admin-only { display: inline-flex !important; }
     
+    /* ── Activity Log ── */
+    .activity-log-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .activity-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      padding: 11px 6px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.035);
+      border-radius: var(--radius-sm);
+      margin: 0 -6px;
+      transition: all 0.2s ease;
+    }
+
+    .activity-item:last-child { border-bottom: none; }
+    .activity-item:hover { background: rgba(124, 58, 237, 0.015); }
+
+    .activity-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.78rem;
+      flex-shrink: 0;
+      transition: transform var(--transition-spring);
+    }
+
+    .activity-item:hover .activity-icon { transform: scale(1.08); }
+
+    .activity-content {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .activity-msg {
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      line-height: 1.35;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .activity-time {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+      display: block;
+    }
+
     /* ── Empty/Pending elements ── */
     .empty-state {
       padding: 44px 20px;
@@ -1615,6 +1672,9 @@
         <button class="sidebar-btn" onclick="showToast('Settings panel integration coming soon!', 'info')" data-tooltip="Settings">
           <i class="fa-solid fa-gear"></i>
         </button>
+        <a href="/static/downloads/MACE-Connect.apk" download class="sidebar-btn" data-tooltip="Download App" style="text-decoration: none;">
+          <i class="fa-solid fa-mobile-screen-button"></i>
+        </a>
         <button class="sidebar-btn logout-btn" id="signoutBtn" data-tooltip="Sign Out">
           <i class="fa-solid fa-right-from-bracket"></i>
         </button>
@@ -1769,6 +1829,17 @@
                   <div class="card-actions"><i class="fa-solid fa-ellipsis"></i></div>
                 </div>
                 <div class="vacancies-list" id="pendingQueueMiniList">
+                  <!-- Dynamically populated -->
+                </div>
+              </div>
+
+              <!-- Recent Activity Log -->
+              <div class="card">
+                <div class="card-header">
+                  <span class="card-title">Recent Activity</span>
+                  <div class="card-actions"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                </div>
+                <div id="activityLogList" class="activity-log-list">
                   <!-- Dynamically populated -->
                 </div>
               </div>
@@ -3161,7 +3232,73 @@
       localStorage.setItem('adminActivityLog', JSON.stringify(activityLog));
     }
 
-    function renderActivityLog() {}
+    function renderActivityLog() {
+      const container = document.getElementById('activityLogList');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (!isAdmin) {
+        // Non-admin: show general info
+        container.innerHTML = `
+          <div class="activity-item">
+            <div class="activity-icon" style="background: rgba(16,185,129,0.1); color: #10B981;"><i class="fa-solid fa-circle-check"></i></div>
+            <div class="activity-content">
+              <p class="activity-msg">Portal access verified</p>
+              <span class="activity-time">Your session is active</span>
+            </div>
+          </div>
+          <div class="activity-item">
+            <div class="activity-icon" style="background: rgba(59,130,246,0.1); color: #3B82F6;"><i class="fa-solid fa-shield-halved"></i></div>
+            <div class="activity-content">
+              <p class="activity-msg">Read-only access enabled</p>
+              <span class="activity-time">Standard permissions</span>
+            </div>
+          </div>
+        `;
+        return;
+      }
+
+      if (activityLog.length === 0) {
+        container.innerHTML = '<div class="empty-state" style="padding: 24px 10px;"><i class="fa-solid fa-clock-rotate-left"></i><p style="font-size: 0.82rem;">No recent activity yet.</p></div>';
+        return;
+      }
+
+      activityLog.forEach(log => {
+        const timeAgo = getTimeAgo(log.time);
+        let icon = 'fa-circle-info';
+        let iconBg = 'rgba(59,130,246,0.1)';
+        let iconColor = '#3B82F6';
+        const msg = log.msg.toLowerCase();
+
+        if (msg.includes('approved')) { icon = 'fa-circle-check'; iconBg = 'rgba(16,185,129,0.1)'; iconColor = '#10B981'; }
+        else if (msg.includes('rejected')) { icon = 'fa-circle-xmark'; iconBg = 'rgba(239,68,68,0.1)'; iconColor = '#EF4444'; }
+        else if (msg.includes('deleted')) { icon = 'fa-trash'; iconBg = 'rgba(239,68,68,0.1)'; iconColor = '#EF4444'; }
+        else if (msg.includes('import') || msg.includes('excel')) { icon = 'fa-file-excel'; iconBg = 'rgba(16,185,129,0.1)'; iconColor = '#10B981'; }
+        else if (msg.includes('updated') || msg.includes('created')) { icon = 'fa-pen-to-square'; iconBg = 'rgba(124,58,237,0.1)'; iconColor = '#7C3AED'; }
+
+        const item = document.createElement('div');
+        item.className = 'activity-item';
+        item.innerHTML = `
+          <div class="activity-icon" style="background: ${iconBg}; color: ${iconColor};"><i class="fa-solid ${icon}"></i></div>
+          <div class="activity-content">
+            <p class="activity-msg">${log.msg}</p>
+            <span class="activity-time">${timeAgo}</span>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function getTimeAgo(isoTime) {
+      const diff = Date.now() - new Date(isoTime).getTime();
+      const mins = Math.floor(diff / 60000);
+      if (mins < 1) return 'Just now';
+      if (mins < 60) return `${mins}m ago`;
+      const hours = Math.floor(mins / 60);
+      if (hours < 24) return `${hours}h ago`;
+      const days = Math.floor(hours / 24);
+      return `${days}d ago`;
+    }
 
     // ── Exact Database Chart Rendering ──
     function renderTrendsChart() {
