@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MACE-Connect — App Manual & Installation Guide</title>
+  <meta name="description" content="Complete user manual, feature guide, and APK download for MACE-Connect mobile application and platform.">
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <!-- FontAwesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+  <style>
+    :root {
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-heading: 'Plus Jakarta Sans', sans-serif;
+      --font-display: 'Syne', sans-serif;
+
+      --bg-dark: #0B0F17;
+      --bg-card: rgba(18, 24, 38, 0.75);
+      --bg-card-hover: rgba(28, 36, 56, 0.85);
+
+      --color-purple: #7C3AED;
+      --color-purple-glow: rgba(124, 58, 237, 0.4);
+      --color-indigo: #6366F1;
+      --color-orange: #F97316;
+      --color-emerald: #10B981;
+      --color-blue: #3B82F6;
+
+      --text-main: #F3F4F6;
+      --text-secondary: #9CA3AF;
+      --text-muted: #6B7280;
+
+      --border-light: rgba(255, 255, 255, 0.08);
+      --border-glow: rgba(124, 58, 237, 0.3);
+
+      --radius-sm: 10px;
+      --radius-md: 16px;
+      --radius-lg: 24px;
+
+      --transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-dark);
+      font-family: var(--font-body);
+      color: var(--text-main);
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    /* Ambient Glow Orbs */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(90px);
+      opacity: 0.45;
+    }
+    .orb-1 {
+      top: -100px;
+      right: -100px;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, var(--color-purple), transparent 70%);
+    }
+    .orb-2 {
+      bottom: -100px;
+      left: -100px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, var(--color-indigo), transparent 70%);
+    }
+
+    /* Layout Container */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Header / Navbar */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      background: rgba(11, 15, 23, 0.8);
+      border-bottom: 1px solid var(--border-light);
+      padding: 16px 0;
+    }
+    .nav-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--color-purple), var(--color-indigo));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 16px var(--color-purple-glow);
+    }
+    .brand-name {
+      font-family: var(--font-display);
+      font-size: 1.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 30%, var(--text-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.02em;
+    }
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .btn-nav-download {
+      background: linear-gradient(135deg, var(--color-purple), var(--color-indigo));
+      color: #fff;
+      padding: 10px 22px;
+      border-radius: 50px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 16px var(--color-purple-glow);
+      transition: var(--transition);
+    }
+    .btn-nav-download:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px var(--color-purple-glow);
+    }
+    .btn-nav-login {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--text-main);
+      border: 1px solid var(--border-light);
+      padding: 10px 20px;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 0.88rem;
+      text-decoration: none;
+      transition: var(--transition);
+    }
+    .btn-nav-login:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    /* Hero Section */
+    .hero {
+      padding: 80px 0 60px;
+      text-align: center;
+    }
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      background: rgba(124, 58, 237, 0.12);
+      border: 1px solid rgba(124, 58, 237, 0.3);
+      border-radius: 50px;
+      color: #A78BFA;
+      font-size: 0.82rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .hero-title {
+      font-family: var(--font-heading);
+      font-size: 3.2rem;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 20px;
+      background: linear-gradient(135deg, #FFFFFF 40%, #A5B4FC);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.03em;
+    }
+    .hero-subtitle {
+      max-width: 680px;
+      margin: 0 auto 36px;
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      font-weight: 400;
+    }
+    .hero-cta-group {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .btn-hero-primary {
+      background: linear-gradient(135deg, var(--color-purple), var(--color-indigo));
+      color: #fff;
+      padding: 16px 36px;
+      border-radius: 50px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 10px 30px var(--color-purple-glow);
+      transition: var(--transition);
+    }
+    .btn-hero-primary:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 16px 40px var(--color-purple-glow);
+    }
+    .btn-hero-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-light);
+      color: var(--text-main);
+      padding: 16px 32px;
+      border-radius: 50px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: var(--transition);
+    }
+    .btn-hero-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .apk-meta-bar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 24px;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+    .apk-meta-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Section Cards Grid */
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      color: #fff;
+      text-align: center;
+    }
+    .section-subtitle {
+      text-align: center;
+      color: var(--text-secondary);
+      max-width: 600px;
+      margin: 0 auto 48px;
+      font-size: 0.95rem;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+      margin-bottom: 80px;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 32px;
+      backdrop-filter: blur(12px);
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, var(--color-purple), transparent);
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .feature-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-glow);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    }
+    .feature-card:hover::before {
+      opacity: 1;
+    }
+    .feature-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+    }
+    .icon-purple { background: rgba(124, 58, 237, 0.15); color: #A78BFA; }
+    .icon-emerald { background: rgba(16, 185, 129, 0.15); color: #34D399; }
+    .icon-blue { background: rgba(59, 130, 246, 0.15); color: #60A5FA; }
+    .icon-orange { background: rgba(249, 115, 22, 0.15); color: #FB923C; }
+    
+    .feature-h3 {
+      font-family: var(--font-heading);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    .feature-p {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Installation Steps Section */
+    .install-section {
+      background: rgba(18, 24, 38, 0.5);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      padding: 48px;
+      margin-bottom: 80px;
+      backdrop-filter: blur(10px);
+    }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+      margin-top: 36px;
+    }
+    .step-card {
+      background: rgba(11, 15, 23, 0.6);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      padding: 28px;
+      position: relative;
+    }
+    .step-number {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: rgba(124, 58, 237, 0.4);
+      margin-bottom: 12px;
+      line-height: 1;
+    }
+    .step-title {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+    }
+    .step-desc {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+
+    /* System Architecture & Parts Table */
+    .parts-section {
+      margin-bottom: 80px;
+    }
+    .parts-table-wrap {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+    }
+    .parts-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+    .parts-table th, .parts-table td {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border-light);
+    }
+    .parts-table th {
+      background: rgba(255, 255, 255, 0.02);
+      font-family: var(--font-heading);
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .parts-table tr:last-child td {
+      border-bottom: none;
+    }
+    .parts-table td {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+    }
+    .module-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: 50px;
+      font-size: 0.78rem;
+      font-weight: 700;
+    }
+    .mb-purple { background: rgba(124, 58, 237, 0.15); color: #C4B5FD; }
+    .mb-emerald { background: rgba(16, 185, 129, 0.15); color: #6EE7B7; }
+    .mb-blue { background: rgba(59, 130, 246, 0.15); color: #93C5FD; }
+
+    /* FAQ Section */
+    .faq-section {
+      margin-bottom: 80px;
+    }
+    .faq-item {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-md);
+      margin-bottom: 16px;
+      padding: 24px;
+      transition: var(--transition);
+    }
+    .faq-item:hover {
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+    .faq-question {
+      font-family: var(--font-heading);
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .faq-answer {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--border-light);
+      padding: 40px 0;
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.88rem;
+    }
+    .footer a {
+      color: var(--color-purple);
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-title { font-size: 2.2rem; }
+      .install-section { padding: 24px; }
+      .nav-actions { gap: 8px; }
+      .btn-nav-download span { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Ambient Glow Orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="container nav-wrapper">
+      <a href="/login" class="brand-logo">
+        <div class="brand-icon"><i class="fa-solid fa-mobile-screen-button"></i></div>
+        <span class="brand-name">MACE-Connect</span>
+      </a>
+      <div class="nav-actions">
+        <a href="/download/apk" download class="btn-nav-download">
+          <i class="fa-solid fa-download"></i> <span>Download APK</span>
+        </a>
+        <a href="/login" class="btn-nav-login">
+          <i class="fa-solid fa-right-to-bracket"></i> Login
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="hero container">
+    <div class="badge-pill">
+      <i class="fa-solid fa-book-open"></i> Official User Manual & APK Guide
+    </div>
+    <h1 class="hero-title">MACE-Connect Mobile & Web Manual</h1>
+    <p class="hero-subtitle">
+      Comprehensive documentation covering installation, department directories, staff roster management, registration request approvals, and administrative tools.
+    </p>
+
+    <div class="hero-cta-group">
+      <a href="/download/apk" download class="btn-hero-primary">
+        <i class="fa-solid fa-circle-down" style="font-size: 1.2rem;"></i> Download APK (Android v1.0)
+      </a>
+      <a href="#installation" class="btn-hero-secondary">
+        <i class="fa-solid fa-list-check"></i> Installation Guide
+      </a>
+    </div>
+
+    <div class="apk-meta-bar">
+      <div class="apk-meta-item"><i class="fa-solid fa-file-code"></i> APK File: MACE-Connect.apk</div>
+      <div class="apk-meta-item"><i class="fa-solid fa-shield-halved"></i> Verified Build</div>
+      <div class="apk-meta-item"><i class="fa-brands fa-android"></i> Android 8.0+</div>
+    </div>
+  </header>
+
+  <main class="container">
+    
+    <!-- ═══════ APP FEATURES & FUNCTIONALITIES ═══════ -->
+    <section style="margin-top: 40px;">
+      <h2 class="section-title">Core Platform Functionalities</h2>
+      <p class="section-subtitle">Discover everything MACE-Connect offers to staff members and administration.</p>
+
+      <div class="features-grid">
+        
+        <div class="feature-card">
+          <div class="feature-icon icon-purple">
+            <i class="fa-solid fa-users-gear"></i>
+          </div>
+          <h3 class="feature-h3">Roster Management</h3>
+          <p class="feature-p">
+            Centralized directory containing verified profiles of teaching, non-teaching, and contract staff. Access designations, blood group, contact numbers, and employment details instantly.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon icon-blue">
+            <i class="fa-solid fa-sitemap"></i>
+          </div>
+          <h3 class="feature-h3">Departmental Categorization</h3>
+          <p class="feature-p">
+            Filtered views for all major departments including Computer Science (CSE), Electronics (ECE), Electrical (EEE), Mechanical (ME), Civil (CE), and Administrative staff.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon icon-emerald">
+            <i class="fa-solid fa-user-check"></i>
+          </div>
+          <h3 class="feature-h3">Registration Approval Workflow</h3>
+          <p class="feature-p">
+            Seamless self-registration system for new staff. Requests are queued for administrator verification with single-click or bulk approval/rejection capabilities.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon icon-orange">
+            <i class="fa-solid fa-chart-line"></i>
+          </div>
+          <h3 class="feature-h3">Realtime Growth & Analytics</h3>
+          <p class="feature-p">
+            Dynamic distribution charts and trend analysis tracking teaching vs. non-teaching ratios, departmental breakdown, and pending queue metrics.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon icon-purple">
+            <i class="fa-solid fa-file-excel"></i>
+          </div>
+          <h3 class="feature-h3">Bulk Import & Data Processing</h3>
+          <p class="feature-p">
+            Administrators can upload batch staff records via Excel/CSV spreadsheets to automatically populate and sync database entries.
+          </p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon icon-blue">
+            <i class="fa-solid fa-mobile-screen-button"></i>
+          </div>
+          <h3 class="feature-h3">Native Mobile Experience</h3>
+          <p class="feature-p">
+            Optimized mobile UI/UX designed for rapid lookup on smartphones, offline caching support, and quick touch actions for phone numbers and email links.
+          </p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════ APK INSTALLATION GUIDE ═══════ -->
+    <section id="installation" class="install-section">
+      <h2 class="section-title" style="text-align: left;">Android APK Installation Guide</h2>
+      <p style="color: var(--text-secondary); max-width: 600px;">Follow these simple steps to install the MACE-Connect Android application on your smartphone.</p>
+
+      <div class="steps-grid">
+        
+        <div class="step-card">
+          <div class="step-number">01</div>
+          <h3 class="step-title">Download File</h3>
+          <p class="step-desc">Click the "Download APK" button to save <code>MACE-Connect.apk</code> to your device downloads folder.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">02</div>
+          <h3 class="step-title">Open Package</h3>
+          <p class="step-desc">Locate the downloaded <code>.apk</code> file in your browser downloads or Files app and tap to open.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">03</div>
+          <h3 class="step-title">Allow Unknown Sources</h3>
+          <p class="step-desc">If prompted by Android, enable "Allow installation from this source" in system settings to proceed.</p>
+        </div>
+
+        <div class="step-card">
+          <div class="step-number">04</div>
+          <h3 class="step-title">Launch & Sign In</h3>
+          <p class="step-desc">Complete installation, launch MACE-Connect, and sign in with your verified staff email and password.</p>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ═══════ APP PARTS & SYSTEM ARCHITECTURE ═══════ -->
+    <section class="parts-section">
+      <h2 class="section-title">System Parts & Modules Breakdown</h2>
+      <p class="section-subtitle">Overview of the core architectural components that power MACE-Connect.</p>
+
+      <div class="parts-table-wrap">
+        <table class="parts-table">
+          <thead>
+            <tr>
+              <th>System Module</th>
+              <th>Type</th>
+              <th>Primary Purpose & Description</th>
+              <th>Access Level</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Authentication Guard</strong></td>
+              <td><span class="module-badge mb-purple">Security</span></td>
+              <td>Firebase Auth backend verifying user tokens, session state, and password resets.</td>
+              <td>All Users</td>
+            </tr>
+            <tr>
+              <td><strong>Roster Directory</strong></td>
+              <td><span class="module-badge mb-blue">Data View</span></td>
+              <td>Interactive table displaying full staff roster with real-time search and filters.</td>
+              <td>Staff & Admin</td>
+            </tr>
+            <tr>
+              <td><strong>Registration Queue</strong></td>
+              <td><span class="module-badge mb-emerald">Workflow</span></td>
+              <td>Review portal for pending user applications before granting directory access.</td>
+              <td>Admin Only</td>
+            </tr>
+            <tr>
+              <td><strong>Activity Audit Log</strong></td>
+              <td><span class="module-badge mb-purple">Monitoring</span></td>
+              <td>Tracks operation logs such as approvals, profile edits, deletions, and spreadsheet imports.</td>
+              <td>Admin Only</td>
+            </tr>
+            <tr>
+              <td><strong>Departments Grid</strong></td>
+              <td><span class="module-badge mb-blue">Navigation</span></td>
+              <td>Dynamic card grid listing departments (CSE, ECE, EEE, ME, CE, ADMIN) with member count.</td>
+              <td>All Users</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ═══════ FREQUENTLY ASKED QUESTIONS ═══════ -->
+    <section class="faq-section">
+      <h2 class="section-title">Frequently Asked Questions</h2>
+      <p class="section-subtitle">Common queries regarding registration, access rights, and app usage.</p>
+
+      <div class="faq-item">
+        <h3 class="faq-question"><i class="fa-solid fa-circle-question" style="color: var(--color-purple);"></i> How do I request a new staff account?</h3>
+        <p class="faq-answer">On the login screen, click "Sign up" to access the registration form. Fill in your full name, employee ID, department, email, mobile number, and designation. Once submitted, your request will be reviewed by the administrator.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="faq-question"><i class="fa-solid fa-circle-question" style="color: var(--color-purple);"></i> What permissions do regular staff accounts have?</h3>
+        <p class="faq-answer">Regular staff accounts have read-only access to browse the roster, view departmental directories, search staff members, and download the mobile app. Administrative controls like approvals, data editing, and bulk imports are restricted to verified admins.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="faq-question"><i class="fa-solid fa-circle-question" style="color: var(--color-purple);"></i> How do I reset my password if forgotten?</h3>
+        <p class="faq-answer">On the login screen, enter your registered email address and click "Forgot password?". A password reset link will be dispatched immediately to your email inbox.</p>
+      </div>
+
+      <div class="faq-item">
+        <h3 class="faq-question"><i class="fa-solid fa-circle-question" style="color: var(--color-purple);"></i> Can I install the APK on iOS devices?</h3>
+        <p class="faq-answer">The <code>.apk</code> build is specifically for Android smartphones and tablets. iOS users can access the full feature set via Safari or Chrome on the web portal.</p>
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>© 2026 MACE-Connect — Mar Athanasius College of Engineering. All rights reserved.</p>
+      <p style="margin-top: 8px;">
+        <a href="/login">Return to Portal Login</a> • <a href="/download/apk" download>Direct APK Download</a>
+      </p>
+    </div>
+  </footer>
+
+</body>
+</html>

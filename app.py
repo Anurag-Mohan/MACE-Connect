@@ -65,6 +65,25 @@ PENDING_SHEET_ID = os.environ.get("PENDING_SHEET_ID")  # Replace with your actua
 
 # Add these new routes to your app.py
 
+@app.route('/download/apk')
+def download_apk():
+    apk_directory = os.path.join(app.root_path, 'static', 'downloads')
+    apk_filename = 'MACE-Connect.apk'
+    file_path = os.path.join(apk_directory, apk_filename)
+    if not os.path.exists(file_path):
+        return jsonify({'error': 'APK file not uploaded yet on server'}), 404
+    return send_from_directory(
+        apk_directory,
+        apk_filename,
+        as_attachment=True,
+        mimetype='application/vnd.android.package-archive'
+    )
+
+@app.route('/app-manual')
+@app.route('/manual')
+def app_manual():
+    return render_template('app_manual.html')
+
 @app.route('/staff-registration')
 def staff_registration():
     return render_template('staff_registration.html')
