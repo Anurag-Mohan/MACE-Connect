@@ -149,7 +149,7 @@
     }
 
     .overlay {
-      background: linear-gradient(135deg, rgba(11, 15, 23, 0.45) 0%, rgba(18, 24, 38, 0.65) 100%), url('/static/images/dark_login_bg.png') no-repeat center center;
+      background: linear-gradient(135deg, rgba(11, 15, 23, 0.3) 0%, rgba(18, 24, 38, 0.5) 100%), url('/static/images/login_doodle_bg.jpg') no-repeat center center;
       background-size: cover;
       width: 100%;
       height: 100%;
@@ -314,8 +314,11 @@
     }
 
     .register-form-scroll::-webkit-scrollbar-thumb {
-      background: #D1D5DB;
+      background: rgba(124, 58, 237, 0.4);
       border-radius: 4px;
+    }
+    .register-form-scroll::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.03);
     }
 
     .form-grid-2 {
@@ -334,8 +337,8 @@
       font-size: 0.95rem;
       font-weight: 700;
       cursor: pointer;
-      box-shadow: 0 10px 20px rgba(124, 58, 237, 0.15);
-      transition: all 0.3s ease;
+      box-shadow: 0 10px 20px rgba(124, 58, 237, 0.25);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
       align-self: flex-start;
       text-transform: uppercase;
       letter-spacing: 0.05em;
@@ -384,15 +387,17 @@
     }
 
     .alert-box.error {
-      background: #FEE2E2;
+      background: rgba(239, 68, 68, 0.12);
       border-left: 4px solid #EF4444;
-      color: #B91C1C;
+      color: #FCA5A5;
+      backdrop-filter: blur(8px);
     }
 
     .alert-box.success {
-      background: #D1FAE5;
+      background: rgba(16, 185, 129, 0.12);
       border-left: 4px solid #10B981;
-      color: #065F46;
+      color: #6EE7B7;
+      backdrop-filter: blur(8px);
     }
 
     /* ── Success State ── */
@@ -563,9 +568,115 @@
         to { opacity: 1; transform: translateY(0); }
       }
     }
+
+    /* ── Entrance Animations ── */
+    @keyframes login-fade-up {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes login-scale-in {
+      from { opacity: 0; transform: scale(0.88); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes shimmer-glow {
+      0%, 100% { box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(124, 58, 237, 0.15); }
+      50% { box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 60px rgba(124, 58, 237, 0.3); }
+    }
+
+    @keyframes dot-pulse {
+      0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(124, 58, 237, 0.4); }
+      50% { transform: scale(1.15); box-shadow: 0 0 25px rgba(124, 58, 237, 0.6); }
+    }
+
+    @keyframes particle-float {
+      0% { transform: translateY(0) translateX(0) scale(1); opacity: 0.6; }
+      25% { transform: translateY(-40px) translateX(15px) scale(1.2); opacity: 0.8; }
+      50% { transform: translateY(-80px) translateX(-10px) scale(0.9); opacity: 0.4; }
+      75% { transform: translateY(-40px) translateX(20px) scale(1.1); opacity: 0.7; }
+      100% { transform: translateY(0) translateX(0) scale(1); opacity: 0.6; }
+    }
+
+    .auth-container {
+      animation: login-scale-in 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) both, shimmer-glow 4s ease-in-out infinite 1.5s;
+    }
+
+    .brand-dot {
+      animation: dot-pulse 2.5s ease-in-out infinite;
+    }
+
+    .auth-heading-wrap {
+      animation: login-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-delay: 0.2s;
+    }
+
+    .input-group {
+      animation: login-fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+    }
+
+    .login-panel .input-group:nth-child(1) { animation-delay: 0.35s; }
+    .login-panel .input-group:nth-child(2) { animation-delay: 0.45s; }
+    .login-panel .input-group:nth-child(3) { animation-delay: 0.55s; }
+
+    .btn-login-pill {
+      animation: login-fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-delay: 0.65s;
+    }
+
+    .toggle-link-wrap {
+      animation: login-fade-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-delay: 0.75s;
+    }
+
+    /* ── Floating Doodle Particles ── */
+    .login-particles {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      overflow: hidden;
+    }
+
+    .login-particle {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.3), transparent 70%);
+      animation: particle-float ease-in-out infinite;
+    }
+
+    .login-particle:nth-child(1) { width: 8px; height: 8px; top: 15%; left: 10%; animation-duration: 8s; }
+    .login-particle:nth-child(2) { width: 5px; height: 5px; top: 70%; left: 80%; animation-duration: 12s; animation-delay: -3s; background: radial-gradient(circle, rgba(99, 102, 241, 0.35), transparent 70%); }
+    .login-particle:nth-child(3) { width: 10px; height: 10px; top: 40%; left: 90%; animation-duration: 10s; animation-delay: -5s; }
+    .login-particle:nth-child(4) { width: 6px; height: 6px; top: 80%; left: 20%; animation-duration: 9s; animation-delay: -2s; background: radial-gradient(circle, rgba(99, 102, 241, 0.3), transparent 70%); }
+    .login-particle:nth-child(5) { width: 4px; height: 4px; top: 25%; left: 75%; animation-duration: 11s; animation-delay: -7s; }
+    .login-particle:nth-child(6) { width: 7px; height: 7px; top: 60%; left: 5%; animation-duration: 14s; animation-delay: -4s; background: radial-gradient(circle, rgba(124, 58, 237, 0.25), transparent 70%); }
+
+    /* ── Input Focus Glow Enhancement ── */
+    .input-field:focus {
+      border-bottom-color: var(--color-purple);
+      box-shadow: 0 2px 15px rgba(124, 58, 237, 0.25);
+    }
+
+    /* ── Overlay Content Animations ── */
+    .overlay-content {
+      animation: login-fade-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+      animation-delay: 0.5s;
+    }
   </style>
 </head>
 <body>
+
+  <!-- Floating Particles -->
+  <div class="login-particles">
+    <div class="login-particle"></div>
+    <div class="login-particle"></div>
+    <div class="login-particle"></div>
+    <div class="login-particle"></div>
+    <div class="login-particle"></div>
+    <div class="login-particle"></div>
+  </div>
 
   <!-- Card Container -->
   <div class="auth-container" id="authBox">

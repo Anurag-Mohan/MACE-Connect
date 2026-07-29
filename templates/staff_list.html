@@ -67,7 +67,7 @@
       transform: translateY(-50%);
       width: 20px;
       height: 20px;
-      stroke: var(--accent-amber);
+      stroke: #F59E0B;
       fill: none;
       stroke-width: 2.5;
     }
@@ -77,13 +77,13 @@
       padding: 0.6rem 0 0.6rem 36px;
       background: transparent;
       border: none;
-      color: var(--graphite-900);
+      color: #F3F4F6;
       font-size: 1.1rem;
       font-weight: 500;
       outline: none;
     }
     .search-input-field::placeholder {
-      color: var(--graphite-400);
+      color: #6B7280;
       font-weight: 400;
     }
 
@@ -92,7 +92,7 @@
       font-size: 0.9rem;
       font-weight: 700;
       background: rgba(245, 158, 11, 0.1);
-      color: var(--accent-amber);
+      color: #F59E0B;
       padding: 0.5rem 1.2rem;
       border-radius: 100px;
       white-space: nowrap;
@@ -108,10 +108,10 @@
     .department-header {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 1.8rem;
-      color: var(--graphite-900);
+      color: #F3F4F6;
       margin-bottom: 1.5rem;
       padding-bottom: 0.5rem;
-      border-bottom: 2px solid var(--line-hairline);
+      border-bottom: 2px solid rgba(255, 255, 255, 0.08);
       display: flex;
       align-items: center;
       gap: 1rem;
@@ -122,7 +122,7 @@
       width: 12px;
       height: 12px;
       border-radius: 50%;
-      background: var(--accent-amber);
+      background: #F59E0B;
     }
 
     .directory-content-wrapper {
@@ -147,10 +147,10 @@
       height: 160px;
       border-radius: 50%;
       object-fit: cover;
-      border: 6px solid var(--surface-raised-light);
-      background: var(--surface-raised-light);
+      border: 6px solid rgba(18, 24, 38, 0.78);
+      background: rgba(18, 24, 38, 0.78);
       margin-bottom: 1.5rem;
-      box-shadow: 0 0 0 2px var(--accent-amber), var(--shadow-xl);
+      box-shadow: 0 0 0 2px #F59E0B, var(--shadow-xl);
     }
 
     .drawer-profile-title {
@@ -161,11 +161,11 @@
     .drawer-profile-title h3 {
       font-size: 1.8rem;
       margin-bottom: 0.25rem;
-      color: var(--graphite-900);
+      color: #F3F4F6;
     }
 
     .drawer-profile-title p {
-      color: var(--graphite-600);
+      color: #9CA3AF;
       font-size: 1.1rem;
       font-weight: 500;
     }
@@ -180,13 +180,13 @@
       display: flex;
       flex-direction: column;
       gap: 0.4rem;
-      border-bottom: 1px solid var(--line-hairline);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
       padding-bottom: 1rem;
     }
 
     .drawer-detail-item span.label {
       font-size: 0.85rem;
-      color: var(--graphite-400);
+      color: #6B7280;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       font-weight: 700;
@@ -194,7 +194,7 @@
 
     .drawer-detail-item span.value {
       font-size: 1.05rem;
-      color: var(--graphite-900);
+      color: #F3F4F6;
       font-weight: 500;
     }
 
@@ -213,10 +213,10 @@
       justify-content: center;
       gap: 0.75rem;
       padding: 1.25rem 1rem;
-      border: 1px solid var(--line-hairline);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 16px;
-      background: var(--surface-raised-light);
-      color: var(--graphite-900);
+      background: rgba(18, 24, 38, 0.78);
+      color: #F3F4F6;
       text-decoration: none;
       cursor: pointer;
       font-weight: 600;
@@ -227,11 +227,11 @@
 
     .drawer-action-tile i {
       font-size: 1.5rem;
-      color: var(--accent-amber);
+      color: #F59E0B;
     }
 
     .drawer-action-tile:hover {
-      border-color: var(--accent-amber);
+      border-color: #F59E0B;
       background: rgba(245, 158, 11, 0.05);
       transform: translateY(-2px);
       box-shadow: var(--shadow-md);
@@ -268,20 +268,37 @@
       100% { right: 0; }
     }
 
+    /* Dark mode classes for drawer, modals, & cards */
+    .drawer-backdrop {
+      background: rgba(0, 0, 0, 0.7) !important;
+      backdrop-filter: blur(8px);
+    }
+    .drawer-custom {
+      background: rgba(18, 24, 38, 0.85) !important;
+      backdrop-filter: blur(24px) saturate(1.5);
+      border-left: 1px solid rgba(255, 255, 255, 0.08);
+      color: #F3F4F6;
+    }
+    .staff-card {
+      background: rgba(18, 24, 38, 0.78) !important;
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
     /* Results pill counter animation */
     .results-pill-counter {
       transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
   </style>
 </head>
-<body class="light-canvas">
+<body>
 
   <div class="directory-hero"></div>
 
   <!-- Primary Navigation -->
   <nav class="glass-navbar">
     <a href="/" class="navbar-brand-custom">
-      <i class="fa-solid fa-network-wired" style="color: var(--accent-amber);"></i> MACE-Connect
+      <i class="fa-solid fa-network-wired" style="color: #F59E0B;"></i> MACE-Connect
     </a>
     <ul class="nav-links">
       <li><a href="/" class="nav-link-custom">Home</a></li>
@@ -290,7 +307,7 @@
       <li id="adminNavBtn" style="display: none;"><a href="/admin" class="nav-link-custom">Admin Portal</a></li>
     </ul>
     <div style="display: flex; align-items: center; gap: 1rem;">
-      <span id="userSpan" class="results-pill-counter d-none" style="background: rgba(17,24,39,0.05); color: var(--graphite-900);"></span>
+      <span id="userSpan" class="results-pill-counter d-none" style="background: rgba(18, 24, 38, 0.78); color: #F3F4F6;"></span>
       <button id="signoutBtn" class="btn-cta btn-cta-secondary"><i class="fa-solid fa-right-from-bracket"></i> Sign Out</button>
     </div>
   </nav>
@@ -328,12 +345,12 @@
   <!-- Main Directory Body content -->
   <div class="directory-content-wrapper" style="margin-top: 6rem;">
     <div id="loadingDiv" style="text-align: center; padding: 4rem 0;">
-      <i class="fa-solid fa-spinner fa-spin fa-2xl" style="color: var(--accent-amber);"></i>
-      <p style="margin-top: 1rem; color: var(--graphite-600); font-weight: 500;">Securely accessing staff rosters...</p>
+      <i class="fa-solid fa-spinner fa-spin fa-2xl" style="color: #F59E0B;"></i>
+      <p style="margin-top: 1rem; color: #9CA3AF; font-weight: 500;">Securely accessing staff rosters...</p>
     </div>
 
     <div id="errorContainer" style="display: none; text-align: center; padding: 4rem 0;">
-      <p id="errorText" class="text-danger" style="font-weight: 600; color: var(--accent-rust);"></p>
+      <p id="errorText" class="text-danger" style="font-weight: 600; color: #EF4444;"></p>
     </div>
 
     <!-- Distinct Department Wrapper inside this container will be generated by JS -->
@@ -414,16 +431,16 @@
   <div class="drawer-backdrop" id="modalBackdrop" onclick="closeQrModal()" style="z-index: 1060;"></div>
   <div class="drawer-custom" id="qrModalDrawer" style="z-index: 1070; max-width: 440px;">
     <div class="drawer-header">
-      <span class="drawer-title"><i class="fa-solid fa-qrcode" style="color: var(--accent-amber); margin-right: 0.5rem;"></i>Contact QR Code</span>
+      <span class="drawer-title"><i class="fa-solid fa-qrcode" style="color: #F59E0B; margin-right: 0.5rem;"></i>Contact QR Code</span>
       <button class="drawer-close" onclick="closeQrModal()">&times;</button>
     </div>
     <div class="drawer-body" style="text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem;">
-      <img id="qrImage" style="max-width: 240px; border-radius: 16px; border: 1px solid var(--line-hairline); background: white; padding: 12px; box-shadow: var(--shadow-lg);" alt="Contact QR Code">
+      <img id="qrImage" style="max-width: 240px; border-radius: 16px; border: 1px solid rgba(255, 255, 255, 0.08); background: white; padding: 12px; box-shadow: var(--shadow-lg);" alt="Contact QR Code">
       <div>
         <h4 id="qrName" style="font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.4rem; margin-bottom: 0.3rem;"></h4>
         <p id="qrDept" style="color: var(--accent-blue); font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; background: rgba(59, 130, 246, 0.1); padding: 0.3rem 0.8rem; border-radius: 100px; display: inline-block;"></p>
       </div>
-      <p style="color: var(--graphite-600); font-size: 0.95rem; font-weight: 500;"><i class="fa-solid fa-camera"></i> Scan with your phone camera to import</p>
+      <p style="color: #9CA3AF; font-size: 0.95rem; font-weight: 500;"><i class="fa-solid fa-camera"></i> Scan with your phone camera to import</p>
     </div>
   </div>
 
@@ -489,8 +506,8 @@
             // Set huge hero title
             document.querySelector('.directory-hero').innerHTML = `
               <div style="position:absolute; top: 55%; left: 50%; transform: translate(-50%, -50%); text-align: center; width: 100%;">
-                <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 3.5rem; color: var(--graphite-900);">${deptParam}</h1>
-                <p style="color: var(--graphite-600); font-size: 1.2rem;">Viewing staff directory for this department</p>
+                <h1 style="font-family: 'Space Grotesk', sans-serif; font-size: 3.5rem; color: #F3F4F6;">${deptParam}</h1>
+                <p style="color: #9CA3AF; font-size: 1.2rem;">Viewing staff directory for this department</p>
                 <a href="/departments" class="btn-cta btn-cta-secondary" style="margin-top: 1.5rem;"><i class="fa-solid fa-arrow-left"></i> Change Department</a>
               </div>
             `;
@@ -582,12 +599,12 @@
         container.innerHTML = `
           <div style="text-align: center; padding: 6rem 2rem;" class="scroll-reveal revealed">
             <svg width="140" height="140" viewBox="0 0 120 120" fill="none" style="margin-bottom: 2rem;" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="60" cy="60" r="50" fill="var(--surface-raised-light)" stroke="var(--line-hairline)" stroke-width="2" />
-              <circle cx="50" cy="50" r="16" stroke="var(--accent-amber)" stroke-width="3" />
-              <line x1="61" y1="61" x2="80" y2="80" stroke="var(--accent-amber)" stroke-width="4" stroke-linecap="round" />
+              <circle cx="60" cy="60" r="50" fill="rgba(18, 24, 38, 0.78)" stroke="rgba(255, 255, 255, 0.08)" stroke-width="2" />
+              <circle cx="50" cy="50" r="16" stroke="#F59E0B" stroke-width="3" />
+              <line x1="61" y1="61" x2="80" y2="80" stroke="#F59E0B" stroke-width="4" stroke-linecap="round" />
             </svg>
-            <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; margin-bottom: 0.5rem; color: var(--graphite-900);">No results found</h4>
-            <p style="color: var(--graphite-600); font-size: 1.05rem; margin-bottom: 2rem;">Try adjusting your search keywords or switching filters.</p>
+            <h4 style="font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; margin-bottom: 0.5rem; color: #F3F4F6;">No results found</h4>
+            <p style="color: #9CA3AF; font-size: 1.05rem; margin-bottom: 2rem;">Try adjusting your search keywords or switching filters.</p>
             <button class="btn-cta btn-cta-secondary" onclick="clearFilters()">Reset Filters</button>
           </div>
         `;
@@ -633,8 +650,8 @@
 
           const photoHtml = staff.photoUrl ? 
             `<img src="${staff.photoUrl}" class="staff-avatar" alt="${name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-             <div class="staff-avatar" style="display: none; align-items: center; justify-content: center; background: var(--accent-amber); color: #FFFFFF; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2rem;">${initials}</div>` : 
-            `<div class="staff-avatar" style="display: flex; align-items: center; justify-content: center; background: var(--accent-amber); color: #FFFFFF; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2rem;">${initials}</div>`;
+             <div class="staff-avatar" style="display: none; align-items: center; justify-content: center; background: #F59E0B; color: #FFFFFF; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2rem;">${initials}</div>` : 
+            `<div class="staff-avatar" style="display: flex; align-items: center; justify-content: center; background: #F59E0B; color: #FFFFFF; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2rem;">${initials}</div>`;
 
           card.innerHTML = `
             <div class="staff-avatar-container">
@@ -695,11 +712,11 @@
       if (staff.photoUrl) {
         avatarContainer.innerHTML = `
           <img src="${staff.photoUrl}" class="drawer-profile-image" alt="${staff.name}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-          <div class="drawer-profile-image" style="display: none; align-items: center; justify-content: center; background: var(--accent-amber); color: #FFFFFF; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2.5rem;">${initials}</div>
+          <div class="drawer-profile-image" style="display: none; align-items: center; justify-content: center; background: #F59E0B; color: #FFFFFF; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2.5rem;">${initials}</div>
         `;
       } else {
         avatarContainer.innerHTML = `
-          <div class="drawer-profile-image" style="display: flex; align-items: center; justify-content: center; background: var(--accent-amber); color: #FFFFFF; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2.5rem;">${initials}</div>
+          <div class="drawer-profile-image" style="display: flex; align-items: center; justify-content: center; background: #F59E0B; color: #FFFFFF; font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 2.5rem;">${initials}</div>
         `;
       }
 

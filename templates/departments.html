@@ -51,11 +51,11 @@
     }
 
     .dept-card {
-      background: var(--surface-raised-light);
+      background: rgba(18, 24, 38, 0.78); backdrop-filter: blur(16px);
       border-radius: 24px;
       padding: 3rem 2rem;
       text-align: center;
-      border: 1px solid var(--line-hairline);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       box-shadow: var(--shadow-sm);
       transition: var(--transition-jaw-drop);
       cursor: pointer;
@@ -94,7 +94,7 @@
       background: linear-gradient(135deg, rgba(245, 158, 11, 0.1), rgba(251, 191, 36, 0.15));
       background-size: 200% 200%;
       animation: gradient-icon 3s ease infinite;
-      color: var(--accent-amber);
+      color: #F59E0B;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -109,23 +109,23 @@
     }
     
     .dept-card:hover .dept-icon {
-      background: var(--accent-amber);
+      background: #F59E0B;
       color: white;
       transform: scale(1.1);
-      box-shadow: 0 10px 20px var(--glow-amber);
+      box-shadow: 0 10px 20px rgba(245, 158, 11, 0.3);
     }
 
     .dept-title {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 1.5rem;
       font-weight: 700;
-      color: var(--graphite-900);
+      color: #F3F4F6;
       margin-bottom: 0.5rem;
     }
 
     .dept-count {
       font-size: 1rem;
-      color: var(--graphite-600);
+      color: #9CA3AF;
       font-weight: 500;
       display: flex;
       align-items: center;
@@ -138,7 +138,7 @@
       width: 8px;
       height: 8px;
       border-radius: 50%;
-      background: var(--accent-emerald);
+      background: #10B981;
       animation: pulse-dot 2s ease-in-out infinite;
     }
 
@@ -166,7 +166,7 @@
   <!-- Floating Navbar -->
   <nav class="glass-navbar">
     <a href="/" class="navbar-brand-custom">
-      <i class="fa-solid fa-network-wired" style="color: var(--accent-amber);"></i> MACE-Connect
+      <i class="fa-solid fa-network-wired" style="color: #F59E0B;"></i> MACE-Connect
     </a>
     <div style="display: flex; gap: 1rem; align-items: center;">
       <a href="#" onclick="logout()" class="btn-cta btn-cta-secondary" style="padding: 0.5rem 1rem; font-size: 0.9rem;">
@@ -181,7 +181,7 @@
   </div>
 
   <div id="loader" class="loader-container">
-    <i class="fa-solid fa-circle-notch fa-spin fa-3x" style="color: var(--accent-amber);"></i>
+    <i class="fa-solid fa-circle-notch fa-spin fa-3x" style="color: #F59E0B;"></i>
   </div>
 
   <div class="dept-grid" id="deptGrid" style="display: none;">
@@ -233,7 +233,7 @@
           const grid = document.getElementById('deptGrid');
           
           if (sortedDepts.length === 0) {
-            grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--graphite-600);">No departments found.</div>';
+            grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #9CA3AF;">No departments found.</div>';
           } else {
             sortedDepts.forEach(dept => {
               const count = deptMap[dept];
@@ -270,7 +270,7 @@
 
         } catch (error) {
           console.error("Error:", error);
-          document.getElementById('loader').innerHTML = `<p style="color: var(--accent-rust);">Failed to load departments. Please try again.</p>`;
+          document.getElementById('loader').innerHTML = `<p style="color: #EF4444;">Failed to load departments. Please try again.</p>`;
         }
       } else {
         window.location.href = '/login';

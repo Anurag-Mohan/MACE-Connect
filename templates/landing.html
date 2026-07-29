@@ -44,7 +44,7 @@
       font-family: 'Space Grotesk', sans-serif;
       font-size: 0.9rem;
       font-weight: 700;
-      color: var(--accent-amber);
+      color: #F59E0B;
       text-transform: uppercase;
       letter-spacing: 0.2em;
     }
@@ -209,12 +209,12 @@
 
     .section-title-group h2 {
       font-size: 2.8rem;
-      color: var(--graphite-900);
+      color: #F3F4F6;
       margin-bottom: 1rem;
     }
 
     .section-title-group p {
-      color: var(--graphite-600);
+      color: #9CA3AF;
       font-size: 1.15rem;
     }
 
@@ -247,12 +247,14 @@
       display: flex;
       flex-direction: column;
       gap: 1.25rem;
-      background: var(--surface-raised-light);
+      background: rgba(18, 24, 38, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       padding: 2.5rem;
       border-radius: 20px;
-      border: 1px solid var(--line-hairline);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       box-shadow: var(--shadow-md);
-      transition: var(--transition-smooth);
+      transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
       z-index: 1;
     }
@@ -266,7 +268,7 @@
       font-family: 'Space Grotesk', sans-serif;
       font-size: 4rem;
       font-weight: 700;
-      color: var(--accent-amber-light);
+      color: rgba(245, 158, 11, 0.15);
       line-height: 1;
       position: absolute;
       top: 1rem;
@@ -277,7 +279,7 @@
     .step-doodle {
       width: 56px;
       height: 56px;
-      stroke: var(--accent-amber);
+      stroke: #F59E0B;
       fill: none;
       stroke-width: 1.5;
       margin-bottom: 0.5rem;
@@ -289,23 +291,34 @@
     /* Step doodle hover enhancement */
     .timeline-step:hover .step-doodle {
       transform: scale(1.15) rotate(5deg);
-      stroke: var(--accent-amber);
+      stroke: #F59E0B;
       transition: transform 0.3s ease, stroke 0.3s ease;
     }
 
     .timeline-step h3 {
       font-size: 1.4rem;
-      color: var(--graphite-900);
+      color: #F3F4F6;
       position: relative;
       z-index: 1;
     }
 
     .timeline-step p {
-      color: var(--graphite-600);
+      color: #9CA3AF;
       font-size: 1rem;
       line-height: 1.6;
       position: relative;
       z-index: 1;
+    }
+
+    
+    .timeline-step.scroll-reveal {
+      opacity: 0;
+      transform: translateY(40px);
+      transition: opacity 0.8s ease, transform 0.8s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+    }
+    .timeline-step.scroll-reveal.revealed {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     /* Admin Capability Callout */
@@ -313,8 +326,8 @@
       padding: 8rem 2rem;
       position: relative;
       z-index: 10;
-      background: linear-gradient(135deg, rgba(245,158,11,0.03) 0%, rgba(255,255,255,0) 100%);
-      border-top: 1px solid var(--line-hairline);
+      background: linear-gradient(135deg, rgba(245,158,11,0.03) 0%, rgba(18,24,38,0) 100%);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
     }
 
     .callout-container {
@@ -328,13 +341,13 @@
 
     .callout-left h2 {
       font-size: 2.8rem;
-      color: var(--graphite-900);
+      color: #F3F4F6;
       margin-bottom: 1.5rem;
       line-height: 1.2;
     }
 
     .callout-left p {
-      color: var(--graphite-600);
+      color: #9CA3AF;
       font-size: 1.15rem;
       margin-bottom: 2.5rem;
       line-height: 1.7;
@@ -346,13 +359,13 @@
       align-items: center;
       gap: 0.75rem;
       padding: 0.75rem 1rem;
-      background: var(--surface-raised-light);
-      border: 1px solid var(--line-hairline);
+      background: rgba(18, 24, 38, 0.78);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 10px;
       margin-bottom: 0.5rem;
       font-size: 0.9rem;
       font-weight: 500;
-      color: var(--graphite-600);
+      color: #9CA3AF;
       opacity: 0;
       transform: translateY(20px);
       animation: file-drop 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
@@ -360,7 +373,7 @@
     .file-slide-in:nth-child(1) { animation-delay: 0.5s; }
     .file-slide-in:nth-child(2) { animation-delay: 1.2s; }
     .file-slide-in:nth-child(3) { animation-delay: 1.9s; }
-    .file-slide-in i { color: var(--accent-emerald); }
+    .file-slide-in i { color: #10B981; }
     @keyframes file-drop {
       to { opacity: 1; transform: translateY(0); }
     }
@@ -379,17 +392,19 @@
       height: 60px;
     }
     .wave-divider .shape-fill {
-      fill: var(--surface-raised-light);
+      fill: #0B0F17;
     }
 
     /* Footer styling */
     .college-footer {
-      border-top: 1px solid var(--line-hairline);
-      background-color: var(--surface-raised-light);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      background-color: rgba(18, 24, 38, 0.78);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
       padding: 5rem 2rem 2rem;
       position: relative;
       z-index: 10;
-      color: var(--graphite-600);
+      color: #9CA3AF;
     }
 
     .footer-container {
@@ -404,7 +419,7 @@
     .footer-brand h4 {
       font-family: 'Space Grotesk', sans-serif;
       font-size: 1.4rem;
-      color: var(--graphite-900);
+      color: #F3F4F6;
       margin-bottom: 1.25rem;
     }
 
@@ -415,7 +430,7 @@
     }
 
     .footer-links h5 {
-      color: var(--graphite-900);
+      color: #F3F4F6;
       font-size: 1rem;
       margin-bottom: 1.5rem;
       text-transform: uppercase;
@@ -430,7 +445,7 @@
     }
 
     .footer-links a {
-      color: var(--graphite-600);
+      color: #9CA3AF;
       text-decoration: none;
       font-size: 0.95rem;
       transition: var(--transition-fast);
@@ -438,13 +453,13 @@
     }
 
     .footer-links a:hover {
-      color: var(--accent-amber);
+      color: #F59E0B;
     }
 
     .footer-bottom {
       max-width: 1200px;
       margin: 0 auto;
-      border-top: 1px solid var(--line-hairline);
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
       padding-top: 2rem;
       display: flex;
       justify-content: space-between;
@@ -461,21 +476,21 @@
       width: 40px;
       height: 40px;
       border-radius: 50%;
-      border: 1px solid var(--line-hairline);
+      border: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--graphite-600);
+      color: #9CA3AF;
       transition: var(--transition-fast);
-      background: var(--surface-raised-light);
+      background: rgba(18, 24, 38, 0.78);
     }
 
     .social-icon:hover {
       color: #FFFFFF;
-      border-color: var(--accent-amber);
-      background: var(--accent-amber);
+      border-color: #F59E0B;
+      background: #F59E0B;
       transform: translateY(-2px);
-      box-shadow: 0 4px 10px var(--glow-amber);
+      box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3);
     }
 
     @media (max-width: 1024px) {
@@ -521,12 +536,12 @@
     }
   </style>
 </head>
-<body class="light-canvas">
+<body>
 
   <!-- Primary Navigation -->
   <nav class="glass-navbar">
     <a href="/" class="navbar-brand-custom">
-      <i class="fa-solid fa-network-wired" style="color: var(--accent-amber);"></i> MACE-Connect
+      <i class="fa-solid fa-network-wired" style="color: #F59E0B;"></i> MACE-Connect
     </a>
     <ul class="nav-links">
       <li><a href="/" class="nav-link-custom active">Home</a></li>
@@ -667,17 +682,17 @@
         <a href="/admin" class="btn-cta btn-cta-primary"><i class="fa-solid fa-screwdriver-wrench"></i> Access Admin Portal</a>
       </div>
       <div class="callout-right scroll-reveal-right" style="transition-delay: 150ms;">
-        <div style="background: var(--surface-raised-light); border-radius: 20px; box-shadow: var(--shadow-xl); padding: 2rem; border: 1px solid var(--line-hairline);">
+        <div style="background: rgba(18, 24, 38, 0.78); border-radius: 20px; box-shadow: var(--shadow-xl); padding: 2rem; border: 1px solid rgba(255, 255, 255, 0.08);">
             <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 2rem;">
-                <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(16, 185, 129, 0.1); color: var(--accent-emerald); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                <div style="width: 48px; height: 48px; border-radius: 12px; background: rgba(16, 185, 129, 0.1); color: #10B981; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
                     <i class="fa-solid fa-file-excel"></i>
                 </div>
                 <div>
-                    <h4 style="margin:0; color: var(--graphite-900);">Bulk Upload Matrix</h4>
-                    <p style="margin:0; font-size: 0.85rem; color: var(--graphite-600);">Seamless spreadsheet integration</p>
+                    <h4 style="margin:0; color: #F3F4F6;">Bulk Upload Matrix</h4>
+                    <p style="margin:0; font-size: 0.85rem; color: #9CA3AF;">Seamless spreadsheet integration</p>
                 </div>
             </div>
-            <div style="height: 120px; background: var(--bg-canvas-light); border-radius: 12px; border: 2px dashed var(--line-hairline); display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--graphite-400); position: relative; overflow: hidden;">
+            <div style="height: 120px; background: rgba(255, 255, 255, 0.03); border-radius: 12px; border: 2px dashed rgba(255, 255, 255, 0.08); display: flex; flex-direction: column; align-items: center; justify-content: center; color: #6B7280; position: relative; overflow: hidden;">
                 <i class="fa-solid fa-cloud-arrow-up" style="font-size: 2rem; margin-bottom: 0.5rem;"></i> Drop files here
                 <!-- Animated mock files sliding in -->
                 <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 0.5rem;">
