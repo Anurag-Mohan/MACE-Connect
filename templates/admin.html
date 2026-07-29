@@ -17,7 +17,7 @@
       --color-purple: #7C3AED;
       --color-purple-hover: #6D28D9;
       --color-purple-soft: rgba(124, 58, 237, 0.08);
-      --color-purple-glow: rgba(124, 58, 237, 0.18);
+      --color-purple-glow: rgba(124, 58, 237, 0.4);
       --color-blue: #3B82F6;
       --color-blue-hover: #2563EB;
       --color-red: #EF4444;
@@ -27,22 +27,22 @@
       --color-orange: #F97316;
       --color-amber: #F59E0B;
       
-      --bg-canvas: #F0F1FA;
-      --bg-card: #FFFFFF;
-      --text-main: #111827;
-      --text-secondary: #374151;
+      --bg-canvas: #0B0F17;
+      --bg-card: rgba(18, 24, 38, 0.78);
+      --text-main: #F3F4F6;
+      --text-secondary: #9CA3AF;
       --text-muted: #6B7280;
-      --border-color: rgba(0, 0, 0, 0.05);
-      --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.03);
-      --shadow-md: 0 4px 16px rgba(0,0,0,0.06);
-      --shadow-lg: 0 12px 40px rgba(0,0,0,0.08);
-      --shadow-glow-purple: 0 4px 20px rgba(124, 58, 237, 0.15);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --shadow-xs: 0 2px 4px rgba(0,0,0,0.3);
+      --shadow-sm: 0 4px 12px rgba(0,0,0,0.4);
+      --shadow-md: 0 8px 24px rgba(0,0,0,0.5);
+      --shadow-lg: 0 16px 48px rgba(0,0,0,0.6);
+      --shadow-glow-purple: 0 0 30px rgba(124, 58, 237, 0.35);
       --transition-fast: 0.25s cubic-bezier(0.25, 1, 0.5, 1);
       --transition-spring: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       --transition-smooth: 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-      --font-body: 'Inter', 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-      --font-heading: 'Plus Jakarta Sans', 'Syne', sans-serif;
+      --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      --font-heading: 'Plus Jakarta Sans', sans-serif;
       --font-display: 'Syne', sans-serif;
       --font-mono: 'Space Mono', monospace;
       --radius-sm: 10px;
@@ -61,10 +61,10 @@
     /* ── Custom Scrollbar ── */
     ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 100px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 100px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--color-purple); }
 
-    ::selection { background: rgba(124, 58, 237, 0.12); color: #111827; }
+    ::selection { background: rgba(124, 58, 237, 0.3); color: #FFFFFF; }
 
     body {
       background-color: var(--bg-canvas);
@@ -89,8 +89,10 @@
     /* ── Sidebar Navigation Rail ── */
     .sidebar {
       width: 82px;
-      background: linear-gradient(180deg, #FFFFFF 0%, #FAFAFF 100%);
-      border-right: 1px solid rgba(0,0,0,0.04);
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-right: 1px solid rgba(255, 255, 255, 0.08);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -100,7 +102,7 @@
       bottom: 0;
       left: 0;
       z-index: 100;
-      box-shadow: 1px 0 24px rgba(0, 0, 0, 0.02);
+      box-shadow: 4px 0 24px rgba(0, 0, 0, 0.4);
     }
 
     .sidebar-logo {

@@ -15,10 +15,12 @@
     :root {
       --color-purple: #7C3AED;
       --color-purple-hover: #6D28D9;
+      --color-indigo: #6366F1;
       --color-orange: #F97316;
-      --text-main: #1F2937;
-      --text-muted: #6B7280;
-      --bg-canvas: #EEF2F6;
+      --text-main: #F3F4F6;
+      --text-muted: #9CA3AF;
+      --bg-canvas: #0B0F17;
+      --bg-card: rgba(18, 24, 38, 0.88);
       --transition-duration: 0.8s;
       --transition-curve: cubic-bezier(0.25, 1, 0.5, 1);
     }
@@ -39,6 +41,35 @@
       justify-content: center;
       padding: 20px;
       overflow-x: hidden;
+      position: relative;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: -150px;
+      right: -100px;
+      width: 550px;
+      height: 550px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(124, 58, 237, 0.2) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(80px);
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      bottom: -150px;
+      left: -100px;
+      width: 550px;
+      height: 550px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(99, 102, 241, 0.18) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(80px);
     }
 
     /* ── Outer Card Wrapper ── */
@@ -46,12 +77,16 @@
       position: relative;
       width: 1024px;
       height: 640px;
-      background: #ffffff;
+      background: var(--bg-card);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 30px;
-      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6), 0 0 40px rgba(124, 58, 237, 0.15);
       display: flex;
       overflow: hidden;
       transition: all var(--transition-duration) var(--transition-curve);
+      z-index: 1;
     }
 
     /* ── Form Panels ── */
@@ -128,7 +163,7 @@
       top: 0;
       height: 100%;
       width: 90px;
-      fill: #ffffff;
+      fill: rgba(18, 24, 38, 0.95);
       z-index: 15;
       pointer-events: none;
       transition: opacity 0.5s ease;
@@ -157,9 +192,10 @@
     .brand-dot {
       width: 26px;
       height: 26px;
-      background: var(--color-orange);
+      background: linear-gradient(135deg, var(--color-purple), var(--color-indigo));
       border-radius: 50%;
       margin-bottom: 20px;
+      box-shadow: 0 0 15px rgba(124, 58, 237, 0.4);
     }
 
     .auth-heading-wrap {
@@ -178,12 +214,14 @@
       font-family: 'Syne', sans-serif;
       font-size: 2.6rem;
       font-weight: 800;
-      color: var(--color-purple);
+      background: linear-gradient(135deg, #FFFFFF 40%, #A5B4FC);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
       letter-spacing: -0.03em;
       margin-top: 4px;
     }
 
-    /* ── Input Styling (Thin Bottom Borders) ── */
+    /* ── Input Styling ── */
     .input-group {
       position: relative;
       margin-bottom: 25px;
@@ -201,7 +239,7 @@
     .input-field {
       width: 100%;
       border: none;
-      border-bottom: 1px solid #D1D5DB;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
       background: transparent;
       padding: 6px 0;
       font-size: 0.95rem;
@@ -212,11 +250,16 @@
 
     .input-field:focus {
       border-bottom-color: var(--color-purple);
+      box-shadow: 0 2px 10px rgba(124, 58, 237, 0.2);
     }
 
     select.input-field {
       padding: 6px 0;
       cursor: pointer;
+    }
+    select.input-field option {
+      background: #0F172A;
+      color: #F3F4F6;
     }
 
     /* ── Chip Select Roster ── */
@@ -237,8 +280,9 @@
 
     .filter-chip {
       padding: 5px 14px;
-      background: #F3F4F6;
-      border: 1px solid #E5E7EB;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text-muted);
       border-radius: 50px;
       font-size: 0.82rem;
       cursor: pointer;
@@ -247,13 +291,15 @@
     }
 
     .filter-chip:hover {
-      background: #E5E7EB;
+      background: rgba(255, 255, 255, 0.1);
+      color: #FFFFFF;
     }
 
     .filter-chip.active {
-      background: var(--color-purple);
+      background: linear-gradient(135deg, var(--color-purple), var(--color-indigo));
       color: #ffffff;
-      border-color: var(--color-purple);
+      border-color: transparent;
+      box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
     }
 
     /* ── Registration Form Grid ── */
