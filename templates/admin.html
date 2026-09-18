@@ -2105,7 +2105,8 @@
               <h2 class="view-title">Add Staff & Excel Import</h2>
               <p class="view-desc">Add staff members manually or perform bulk roster creations via spreadsheet.</p>
             </div>
-            <div class="view-actions">
+            <div class="view-actions" style="display: flex; gap: 10px; flex-wrap: wrap;">
+              <a href="/download/excel_template" download class="btn-cta-secondary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; padding: 10px 16px; border-color: rgba(245, 158, 11, 0.4); color: #F59E0B;"><i class="fa-solid fa-file-arrow-down"></i> Download Excel Template</a>
               <button class="btn-primary admin-only" onclick="openFormDrawerForAdd()"><i class="fa-solid fa-user-plus"></i> Add Staff Manually</button>
             </div>
           </div>
@@ -2116,7 +2117,8 @@
               <div class="upload-dropzone" id="uploadArea" style="flex: 2; min-width: 280px;">
                 <i class="fa-regular fa-file-excel" style="font-size: 3.5rem; color: var(--color-purple); margin-bottom: 15px; display: block;"></i>
                 <h3 style="font-family: 'Syne', sans-serif; font-weight: 700;">Drag & Drop Excel Document Here</h3>
-                <p style="color: var(--text-muted); margin-top: 5px;">or click to browse spreadsheet file</p>
+                <p style="color: var(--text-muted); margin-top: 5px; margin-bottom: 15px;">or click to browse spreadsheet file</p>
+                <a href="/download/excel_template" download onclick="event.stopPropagation();" class="btn-cta-secondary" style="text-decoration: none; display: inline-flex; align-items: center; gap: 8px; font-size: 0.85rem; padding: 8px 16px; border-color: rgba(245, 158, 11, 0.4); color: #F59E0B; background: rgba(245, 158, 11, 0.08);"><i class="fa-solid fa-file-arrow-down"></i> Download Format Template (.xlsx)</a>
                 <input type="file" id="excelFileInput" style="display: none;" accept=".xlsx, .xls" onchange="handleFileSelected(this)">
               </div>
 

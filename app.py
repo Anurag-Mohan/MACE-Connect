@@ -79,6 +79,26 @@ def download_apk():
         mimetype='application/vnd.android.package-archive'
     )
 
+@app.route('/download/excel_template')
+def download_excel_template():
+    template_dir = os.path.join(app.root_path, 'static', 'downloads')
+    template_filename = 'MACE_Staff_Upload_Template.xlsx'
+    file_path = os.path.join(template_dir, template_filename)
+    if not os.path.exists(file_path):
+        return jsonify({'error': 'Excel template file not found'}), 404
+    return send_from_directory(
+        template_dir,
+        template_filename,
+        as_attachment=True,
+        mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    )
+
+@app.route('/signup')
+@app.route('/register')
+@app.route('/staff-signup')
+def signup_page():
+    return render_template('signup.html')
+
 @app.route('/app-manual')
 @app.route('/manual')
 def app_manual():
@@ -86,7 +106,7 @@ def app_manual():
 
 @app.route('/staff-registration')
 def staff_registration():
-    return render_template('staff_registration.html')
+    return render_template('signup.html')
 
 @app.route('/api/submit_registration', methods=['POST'])
 def submit_registration():

@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Staff Sign Up - MACE-Connect</title>
+  
+  <!-- Fonts & Icons -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <style>
+    :root {
+      --bg-dark: #0B0F19;
+      --card-bg: rgba(18, 24, 38, 0.78);
+      --card-border: rgba(255, 255, 255, 0.08);
+      --text-main: #F3F4F6;
+      --text-sub: #9CA3AF;
+      --accent-gold: #F59E0B;
+      --accent-gold-glow: rgba(245, 158, 11, 0.25);
+      --accent-blue: #3B82F6;
+      --accent-green: #10B981;
+      --shadow-xl: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+      --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Outfit', sans-serif;
+      background-color: var(--bg-dark);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem 1rem;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Ambient Background Blobs */
+    .bg-blob {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(90px);
+      z-index: 0;
+      pointer-events: none;
+      animation: float 20s infinite alternate cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .blob-1 {
+      width: 500px;
+      height: 500px;
+      background: rgba(245, 158, 11, 0.08);
+      top: -100px;
+      left: -100px;
+    }
+
+    .blob-2 {
+      width: 450px;
+      height: 450px;
+      background: rgba(59, 130, 246, 0.08);
+      bottom: -100px;
+      right: -100px;
+      animation-delay: -10s;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) scale(1); }
+      100% { transform: translate(50px, 50px) scale(1.1); }
+    }
+
+    /* Top Brand Nav */
+    .top-nav {
+      position: absolute;
+      top: 1.5rem;
+      left: 2rem;
+      right: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .brand-logo {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--text-main);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .btn-login-link {
+      color: var(--text-sub);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 600;
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--card-border);
+      border-radius: 100px;
+      transition: var(--transition);
+      background: rgba(255, 255, 255, 0.03);
+    }
+
+    .btn-login-link:hover {
+      color: var(--accent-gold);
+      border-color: var(--accent-gold);
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    /* Signup Container Card */
+    .signup-card {
+      width: 100%;
+      max-width: 780px;
+      background: var(--card-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 2.5rem 2rem;
+      box-shadow: var(--shadow-xl);
+      position: relative;
+      z-index: 10;
+      margin-top: 3rem;
+      margin-bottom: 2rem;
+    }
+
+    .header-title-group {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 1rem;
+      border-radius: 100px;
+      background: rgba(245, 158, 11, 0.1);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      color: var(--accent-gold);
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 0.8rem;
+    }
+
+    .signup-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: #FFFFFF;
+      margin-bottom: 0.4rem;
+    }
+
+    .signup-subtitle {
+      color: var(--text-sub);
+      font-size: 1rem;
+    }
+
+    /* Form Layout */
+    .form-grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+    }
+
+    .input-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-sub);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .input-field, .select-field {
+      width: 100%;
+      background: rgba(11, 15, 25, 0.7);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 0.8rem 1rem;
+      color: var(--text-main);
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .input-field:focus, .select-field:focus {
+      border-color: var(--accent-gold);
+      box-shadow: 0 0 0 3px var(--accent-gold-glow);
+    }
+
+    .select-field option {
+      background: var(--bg-dark);
+      color: var(--text-main);
+    }
+
+    /* Department Selector Chips */
+    .dept-chip-wrapper {
+      margin-bottom: 1.25rem;
+    }
+
+    .chip-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+    }
+
+    .filter-chip {
+      padding: 0.5rem 1rem;
+      border-radius: 100px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--text-sub);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      user-select: none;
+    }
+
+    .filter-chip.active, .filter-chip:hover {
+      background: rgba(245, 158, 11, 0.15);
+      border-color: var(--accent-gold);
+      color: var(--accent-gold);
+    }
+
+    /* Submit CTA Button */
+    .btn-submit {
+      width: 100%;
+      padding: 1rem;
+      border-radius: 14px;
+      border: none;
+      background: linear-gradient(135deg, #F59E0B, #D97706);
+      color: #000000;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      margin-top: 1rem;
+    }
+
+    .btn-submit:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(245, 158, 11, 0.45);
+    }
+
+    /* Alerts & States */
+    .alert-banner {
+      padding: 0.8rem 1rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      margin-bottom: 1.25rem;
+      display: none;
+    }
+
+    .alert-error {
+      background: rgba(239, 68, 68, 0.12);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+      color: #F87171;
+    }
+
+    .success-card {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 2rem 1rem;
+    }
+
+    .success-icon {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.15);
+      border: 2px solid var(--accent-green);
+      color: var(--accent-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .footer-links {
+      text-align: center;
+      color: var(--text-sub);
+      font-size: 0.85rem;
+      z-index: 10;
+    }
+
+    .footer-links a {
+      color: var(--accent-gold);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    @media (max-width: 640px) {
+      .form-grid-2 { grid-template-columns: 1fr; }
+      .signup-card { padding: 1.8rem 1.2rem; }
+      .signup-title { font-size: 1.8rem; }
+      .top-nav { position: relative; top: auto; left: auto; right: auto; width: 100%; margin-bottom: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+
+  <!-- Top Navigation Header -->
+  <nav class="top-nav">
+    <a href="/" class="brand-logo">
+      <i class="fa-solid fa-network-wired" style="color: var(--accent-gold);"></i> MACE-Connect
+    </a>
+    <a href="/login" class="btn-login-link"><i class="fa-solid fa-right-to-bracket"></i> Login to Portal</a>
+  </nav>
+
+  <!-- Dedicated Signup Container Card -->
+  <main class="signup-card">
+    
+    <!-- Form Header -->
+    <div class="header-title-group">
+      <div class="badge-pill"><i class="fa-solid fa-user-plus"></i> Staff Sign Up</div>
+      <h1 class="signup-title">Faculty & Staff Registration</h1>
+      <p class="signup-subtitle">Submit your details to request official college roster verification & portal access.</p>
+    </div>
+
+    <!-- Alert Container -->
+    <div id="regAlert" class="alert-banner alert-error"></div>
+
+    <!-- Registration Form -->
+    <form id="signupForm">
+      
+      <div class="form-grid-2">
+        <div class="input-group">
+          <label class="input-label" for="name">Full Name *</label>
+          <input type="text" id="name" class="input-field" placeholder="Dr. Jane Doe" required>
+        </div>
+        <div class="input-group">
+          <label class="input-label" for="emp_no">Employee / Staff ID (Optional)</label>
+          <input type="text" id="emp_no" class="input-field" placeholder="#102">
+        </div>
+      </div>
+
+      <!-- Department Selector Chips -->
+      <div class="dept-chip-wrapper">
+        <span class="input-label">Primary Department *</span>
+        <div class="chip-group" id="deptSelector">
+          <div class="filter-chip active" data-value="Computer Science">Computer Science</div>
+          <div class="filter-chip" data-value="Electronics">Electronics</div>
+          <div class="filter-chip" data-value="Electrical">Electrical</div>
+          <div class="filter-chip" data-value="Mechanical">Mechanical</div>
+          <div class="filter-chip" data-value="Civil">Civil</div>
+          <div class="filter-chip" data-value="Administration">Administration</div>
+        </div>
+        <input type="hidden" id="department" value="Computer Science">
+      </div>
+
+      <div class="form-grid-2">
+        <div class="input-group">
+          <label class="input-label" for="reg_email">Email Address *</label>
+          <input type="email" id="reg_email" class="input-field" placeholder="jane@mace.in" required>
+        </div>
+        <div class="input-group">
+          <label class="input-label" for="mobile_no">Phone / Mobile No *</label>
+          <input type="tel" id="mobile_no" class="input-field" placeholder="9876543210" required>
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="input-group">
+          <label class="input-label" for="designation">Designation / Role *</label>
+          <input type="text" id="designation" class="input-field" placeholder="Assistant Professor" required>
+        </div>
+        <div class="input-group">
+          <label class="input-label" for="type">Staff Classification *</label>
+          <select id="type" class="select-field" required>
+            <option value="Teaching Staff">Teaching Staff</option>
+            <option value="Non Teaching Staff">Non Teaching Staff</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="input-group">
+          <label class="input-label" for="contract_type">Contract Status *</label>
+          <select id="contract_type" class="select-field" required>
+            <option value="Permanent">Permanent</option>
+            <option value="Guest">Guest</option>
+            <option value="Ad-hoc">Ad-hoc</option>
+            <option value="Contract">Contract</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label class="input-label" for="category">Category</label>
+          <input type="text" id="category" class="input-field" placeholder="General / OBC / SC / ST">
+        </div>
+      </div>
+
+      <div class="form-grid-2">
+        <div class="input-group">
+          <label class="input-label" for="gender">Gender</label>
+          <select id="gender" class="select-field">
+            <option value="Female">Female</option>
+            <option value="Male">Male</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label class="input-label" for="blood_group">Blood Group</label>
+          <select id="blood_group" class="select-field">
+            <option value="A+">A+</option>
+            <option value="B+">B+</option>
+            <option value="O+">O+</option>
+            <option value="AB+">AB+</option>
+            <option value="A-">A-</option>
+            <option value="B-">B-</option>
+            <option value="O-">O-</option>
+            <option value="AB-">AB-</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="input-group" style="margin-bottom: 1.5rem;">
+        <label class="input-label" for="permanent_address">Permanent Address</label>
+        <input type="text" id="permanent_address" class="input-field" placeholder="House Name, Street, City, Pincode">
+      </div>
+
+      <button type="submit" class="btn-submit" id="submitBtn">
+        <i class="fa-solid fa-paper-plane"></i> Submit Registration Request
+      </button>
+
+    </form>
+
+    <!-- Success Container -->
+    <div id="successState" class="success-card">
+      <div class="success-icon">
+        <i class="fa-solid fa-circle-check"></i>
+      </div>
+      <h2 style="font-family: 'Syne', sans-serif; font-size: 1.8rem; margin-bottom: 0.5rem; color: #FFFFFF;">Registration Submitted!</h2>
+      <p style="color: var(--text-sub); font-size: 1rem; margin-bottom: 1.8rem; max-width: 500px;">Your registration details have been submitted for admin approval. Once verified, your account will be activated for portal access.</p>
+      <a href="/login" class="btn-submit" style="text-decoration: none; width: auto; padding: 0.8rem 2rem;">
+        <i class="fa-solid fa-right-to-bracket"></i> Return to Portal Login
+      </a>
+    </div>
+
+  </main>
+
+  <footer class="footer-links">
+    <p><a href="/login">Portal Login</a> • <a href="/download/apk">Download Android App</a> • <a href="/app-manual">User Manual</a></p>
+  </footer>
+
+  <script>
+    // Fetch Dynamic Departments from Database
+    async function loadDynamicDepartments() {
+      try {
+        const res = await fetch('/api/departments');
+        const data = await res.json();
+        if (data.success && data.departments && data.departments.length > 0) {
+          const container = document.getElementById('deptSelector');
+          container.innerHTML = '';
+          data.departments.forEach((dept, idx) => {
+            const chip = document.createElement('div');
+            chip.className = `filter-chip ${idx === 0 ? 'active' : ''}`;
+            chip.setAttribute('data-value', dept);
+            chip.textContent = dept;
+            container.appendChild(chip);
+          });
+          document.getElementById('department').value = data.departments[0];
+        }
+      } catch (err) {
+        console.log('Error loading dynamic departments:', err);
+      }
+    }
+    loadDynamicDepartments();
+
+    // Department Chip Handler
+    document.getElementById('deptSelector').addEventListener('click', (e) => {
+      if (e.target.classList.contains('filter-chip')) {
+        document.querySelectorAll('#deptSelector .filter-chip').forEach(c => c.classList.remove('active'));
+        e.target.classList.add('active');
+        document.getElementById('department').value = e.target.getAttribute('data-value');
+      }
+    });
+
+    // Form Submission Handler
+    document.getElementById('signupForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const alert = document.getElementById('regAlert');
+      const submitBtn = document.getElementById('submitBtn');
+      alert.style.display = 'none';
+
+      const origText = submitBtn.innerHTML;
+      submitBtn.disabled = true;
+      submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Submitting...';
+
+      const payload = {
+        name: document.getElementById('name').value.trim(),
+        emp_no: document.getElementById('emp_no').value.trim(),
+        email: document.getElementById('reg_email').value.trim(),
+        mobile_no: document.getElementById('mobile_no').value.trim(),
+        department: document.getElementById('department').value,
+        designation: document.getElementById('designation').value.trim(),
+        type: document.getElementById('type').value,
+        contract_type: document.getElementById('contract_type').value,
+        category: document.getElementById('category').value.trim(),
+        gender: document.getElementById('gender').value,
+        blood_group: document.getElementById('blood_group').value,
+        permanent_address: document.getElementById('permanent_address').value.trim()
+      };
+
+      try {
+        const res = await fetch('/api/submit_registration', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('signupForm').style.display = 'none';
+          document.getElementById('successState').style.display = 'flex';
+        } else {
+          alert.textContent = data.error || 'Failed to submit registration.';
+          alert.style.display = 'block';
+          submitBtn.disabled = false;
+          submitBtn.innerHTML = origText;
+        }
+      } catch (err) {
+        alert.textContent = 'A network error occurred. Please verify your connection.';
+        alert.style.display = 'block';
+        submitBtn.disabled = false;
+        submitBtn.innerHTML = origText;
+      }
+    });
+  </script>
+</body>
+</html>
