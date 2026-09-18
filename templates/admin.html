@@ -1498,13 +1498,25 @@
     .toast-custom.error { border-left: 4px solid var(--color-red); }
     .toast-custom.info { border-left: 4px solid var(--color-blue); }
 
-    /* ── Admin-Only Selector Fix ── */
+    /* ── Admin-Only Selector Strict Fix ── */
     .admin-only { display: none !important; }
+    body:not(.is-admin) .admin-only,
+    body:not(.is-admin) td.admin-only,
+    body:not(.is-admin) th.admin-only,
+    body:not(.is-admin) div.admin-only,
+    body:not(.is-admin) button.admin-only,
+    body:not(.is-admin) a.admin-only,
+    body:not(.is-admin) .mob-nav-btn.admin-only,
+    body:not(.is-admin) .table-dashboard tbody tr td.admin-only {
+      display: none !important;
+    }
     body.is-admin .admin-only { display: flex !important; }
-    body.is-admin td.admin-only, body.is-admin th.admin-only { display: table-cell !important; }
+    body.is-admin td.admin-only { display: table-cell !important; }
+    body.is-admin th.admin-only { display: table-cell !important; }
     body.is-admin .sidebar-btn.admin-only { display: flex !important; }
     body.is-admin .header-tab.admin-only { display: inline-flex !important; }
     body.is-admin button.admin-only { display: inline-flex !important; }
+    body.is-admin .mob-nav-btn.admin-only { display: flex !important; }
     
     /* ── Activity Log ── */
     .activity-log-list {
@@ -1672,6 +1684,8 @@
       .table-dashboard tbody tr td { display: flex !important; justify-content: space-between !important; align-items: center !important; padding: 6px 0 !important; border: none !important; border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important; font-size: 0.85rem !important; word-break: break-word !important; text-align: right !important; }
       .table-dashboard tbody tr td:first-child { border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important; padding-bottom: 10px !important; margin-bottom: 6px !important; justify-content: flex-start !important; text-align: left !important; }
       .table-dashboard tbody tr td:last-child { border-bottom: none !important; padding-top: 10px !important; margin-top: 4px !important; border-top: 1px solid rgba(255, 255, 255, 0.08) !important; justify-content: flex-end !important; }
+      body.is-admin .table-dashboard tbody tr td.admin-only { display: flex !important; }
+      body:not(.is-admin) .table-dashboard tbody tr td.admin-only, body:not(.is-admin) .admin-only { display: none !important; }
       .table-dashboard td[data-label]:not(:first-child)::before { content: attr(data-label); font-weight: 700; font-size: 0.7rem; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.05em; margin-right: 12px; flex-shrink: 0; text-align: left; }
       .stat-card-number { font-size: 2rem; }
       .card { padding: 16px 14px; }
@@ -3133,6 +3147,10 @@
 
     // ── Roster Updates ──
     async function updateStaffRosterStatus(staffId, newType) {
+      if (!document.body.classList.contains('is-admin')) {
+        showToast('Unauthorized: Admin privilege required.', 'error');
+        return;
+      }
       const token = await firebase.auth().currentUser.getIdToken();
       try {
         const response = await fetch(`/api/staff/${staffId}/type`, {
@@ -3157,6 +3175,10 @@
     }
 
     function confirmDeleteStaff(staffId, name) {
+      if (!document.body.classList.contains('is-admin')) {
+        showToast('Unauthorized: Admin privilege required.', 'error');
+        return;
+      }
       openWarningDrawer('Remove Staff Record', `Are you sure you want to completely delete ${name} from college rosters? This will remove their profile and credentials.`, () => {
         deleteStaff(staffId);
       });
@@ -3184,6 +3206,10 @@
 
     // ── Drawer (Add / Edit) ──
     function openFormDrawerForAdd() {
+      if (!document.body.classList.contains('is-admin')) {
+        showToast('Unauthorized: Admin privilege required.', 'error');
+        return;
+      }
       document.getElementById('drawerTitle').textContent = 'Add New Staff';
       document.getElementById('formStaffId').value = '';
       document.getElementById('staffForm').reset();
@@ -3194,6 +3220,10 @@
     }
 
     function openFormDrawerForEdit(staffId) {
+      if (!document.body.classList.contains('is-admin')) {
+        showToast('Unauthorized: Admin privilege required.', 'error');
+        return;
+      }
       const staff = allStaffData.find(s => (s.id || s.email) === staffId);
       if (!staff) return;
 
