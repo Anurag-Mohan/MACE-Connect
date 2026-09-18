@@ -293,12 +293,13 @@
 
     /* ── Responsive ── */
     @media (max-width: 1024px) {
-      .nav-links a:not([href*="staff"]) { display: none; }
+      .nav-links { gap: 12px; }
     }
     @media (max-width: 768px) {
       body { padding-top: 100px !important; }
-      .nav-links { display: none !important; }
-      .glass-navbar { padding: 0 1rem; }
+      .nav-links { display: flex !important; gap: 8px; font-size: 0.85rem; }
+      .nav-links a { padding: 4px 8px !important; }
+      .glass-navbar { padding: 0 0.8rem; flex-wrap: wrap; gap: 8px; justify-content: space-between; }
       .sticky-search-bar, .premium-filter-row { position: relative !important; top: auto !important; margin: 10px auto; width: calc(100% - 2rem); }
       .search-flex-row { flex-wrap: wrap; gap: 8px; }
       .search-flex-row input, .search-input-wrapper { width: 100% !important; min-width: 0 !important; }

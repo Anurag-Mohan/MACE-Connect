@@ -1665,7 +1665,14 @@
       .header-greeting { font-size: 1.1rem; }
       .main-content { padding: 12px 10px 70px !important; }
       .drawer-form-grid { grid-template-columns: 1fr !important; }
-      .table-responsive { overflow-x: auto; }
+      .table-responsive { overflow-x: visible !important; }
+      .table-dashboard, .table-dashboard tbody, .table-dashboard tr { display: block !important; width: 100% !important; box-sizing: border-box !important; }
+      .table-dashboard thead { display: none !important; }
+      .table-dashboard tbody tr { background: var(--bg-card, rgba(255, 255, 255, 0.03)) !important; border: 1px solid var(--border-color, rgba(255, 255, 255, 0.08)) !important; border-radius: 12px !important; padding: 12px 14px !important; margin-bottom: 12px !important; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important; }
+      .table-dashboard tbody tr td { display: flex !important; justify-content: space-between !important; align-items: center !important; padding: 6px 0 !important; border: none !important; border-bottom: 1px solid rgba(255, 255, 255, 0.04) !important; font-size: 0.85rem !important; word-break: break-word !important; text-align: right !important; }
+      .table-dashboard tbody tr td:first-child { border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important; padding-bottom: 10px !important; margin-bottom: 6px !important; justify-content: flex-start !important; text-align: left !important; }
+      .table-dashboard tbody tr td:last-child { border-bottom: none !important; padding-top: 10px !important; margin-top: 4px !important; border-top: 1px solid rgba(255, 255, 255, 0.08) !important; justify-content: flex-end !important; }
+      .table-dashboard td[data-label]:not(:first-child)::before { content: attr(data-label); font-weight: 700; font-size: 0.7rem; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.05em; margin-right: 12px; flex-shrink: 0; text-align: left; }
       .stat-card-number { font-size: 2rem; }
       .card { padding: 16px 14px; }
     }
@@ -2126,11 +2133,11 @@
 
       </div>
       <nav class="mobile-bottom-nav">
-        <button class="mob-nav-btn" data-tab="dashboard"><i class="fa-solid fa-gauge-high"></i><span>Home</span></button>
+        <button class="mob-nav-btn active" data-tab="overview"><i class="fa-solid fa-gauge-high"></i><span>Home</span></button>
         <button class="mob-nav-btn" data-tab="directory"><i class="fa-solid fa-address-book"></i><span>Directory</span></button>
         <button class="mob-nav-btn" data-tab="departments"><i class="fa-solid fa-building-columns"></i><span>Depts</span></button>
-        <button class="mob-nav-btn" data-tab="approvals"><i class="fa-solid fa-user-check"></i><span>Approvals</span></button>
         <button class="mob-nav-btn admin-only" data-tab="upload"><i class="fa-solid fa-file-excel"></i><span>Upload</span></button>
+        <button class="mob-nav-btn" id="mobLogoutBtn"><i class="fa-solid fa-right-from-bracket"></i><span>Logout</span></button>
       </nav>
     </main>
   </div>
@@ -2641,7 +2648,7 @@
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>
+          <td data-label="Profile">
             <div class="table-profile">
               <div class="table-avatar">${initials}</div>
               <div>
@@ -2650,10 +2657,10 @@
               </div>
             </div>
           </td>
-          <td style="font-weight: 700;">${staff['Sl No'] || staff.slNo || staff.empNo || '#N/A'}</td>
-          <td>${staff.email}</td>
-          <td>${staff.designation || 'N/A'}</td>
-          <td class="admin-only" style="text-align: right;">
+          <td data-label="Emp ID" style="font-weight: 700;">${staff['Sl No'] || staff.slNo || staff.empNo || '#N/A'}</td>
+          <td data-label="Email">${staff.email}</td>
+          <td data-label="Designation">${staff.designation || 'N/A'}</td>
+          <td class="admin-only" data-label="Actions" style="text-align: right;">
             <button class="btn-cta-secondary" onclick="openFormDrawerForEdit('${staffId}')"><i class="fa-solid fa-edit"></i> Edit</button>
           </td>
         `;
@@ -2827,7 +2834,7 @@
 
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td>
+          <td data-label="Profile">
             <div class="table-profile">
               <div class="table-avatar">${initials}</div>
               <div>
@@ -2836,13 +2843,13 @@
               </div>
             </div>
           </td>
-          <td>${empNo}</td>
-          <td>${dept.split(' ').map(w => w[0]).join('').substring(0,4)}</td>
-          <td>${designation}</td>
-          <td>${email}</td>
-          <td>${phone}</td>
-          <td class="admin-only" style="text-align: right;">
-            <div style="display: flex; gap: 6px; justify-content: flex-end; align-items: center;">
+          <td data-label="Emp ID">${empNo}</td>
+          <td data-label="Dept">${dept.split(' ').map(w => w[0]).join('').substring(0,4)}</td>
+          <td data-label="Designation">${designation}</td>
+          <td data-label="Email">${email}</td>
+          <td data-label="Phone">${phone}</td>
+          <td class="admin-only" data-label="Actions" style="text-align: right;">
+            <div style="display: flex; gap: 6px; justify-content: flex-end; align-items: center; flex-wrap: wrap;">
               <div class="status-segment-control">
                 <button class="status-segment-btn ${sType === 'Teaching Staff' ? 'active' : ''}" onclick="updateStaffRosterStatus('${staffId}', 'Teaching Staff')">T</button>
                 <button class="status-segment-btn ${sType === 'Non Teaching Staff' ? 'active' : ''}" onclick="updateStaffRosterStatus('${staffId}', 'Non Teaching Staff')">N</button>
@@ -2896,13 +2903,13 @@
       pendingData.forEach(req => {
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td style="text-align: center;"><input type="checkbox" class="pending-check" data-email="${req.email}" onclick="handlePendingRowCheck()"></td>
-          <td style="font-weight: 700; color: #F3F4F6;">${req.name || 'N/A'}</td>
-          <td>${req.emp_no || 'N/A'}</td>
-          <td>${req.department || 'N/A'}</td>
-          <td>${req.designation || 'N/A'}</td>
-          <td>${req.email || 'N/A'}</td>
-          <td style="text-align: right;">
+          <td data-label="Select" style="text-align: center;"><input type="checkbox" class="pending-check" data-email="${req.email}" onclick="handlePendingRowCheck()"></td>
+          <td data-label="Name" style="font-weight: 700; color: #F3F4F6;">${req.name || 'N/A'}</td>
+          <td data-label="Emp No">${req.emp_no || 'N/A'}</td>
+          <td data-label="Dept">${req.department || 'N/A'}</td>
+          <td data-label="Designation">${req.designation || 'N/A'}</td>
+          <td data-label="Email">${req.email || 'N/A'}</td>
+          <td data-label="Actions" style="text-align: right;">
             <div style="display: inline-flex; gap: 6px;">
               <button class="btn-icon-green" style="width: 32px; height: 32px; font-size: 0.85rem;" onclick="approveRegistration('${req.email}')"><i class="fa-solid fa-check"></i></button>
               <button class="btn-icon-green" style="width: 32px; height: 32px; font-size: 0.85rem; background: var(--color-red);" onclick="rejectRegistration('${req.email}')"><i class="fa-solid fa-xmark"></i></button>
@@ -3536,7 +3543,7 @@
     }
 
     // Mobile bottom nav
-    document.querySelectorAll('.mob-nav-btn').forEach(btn => {
+    document.querySelectorAll('.mob-nav-btn[data-tab]').forEach(btn => {
       btn.addEventListener('click', () => {
         const tab = btn.dataset.tab;
         document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
@@ -3545,6 +3552,11 @@
         const sidebarBtn = document.querySelector(`.sidebar-btn[data-tab="${tab}"]`);
         if (sidebarBtn) sidebarBtn.click();
       });
+    });
+
+    document.getElementById('mobLogoutBtn')?.addEventListener('click', async () => {
+      await firebase.auth().signOut();
+      window.location.href = '/login';
     });
   </script>
 </body>
