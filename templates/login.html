@@ -914,6 +914,31 @@
       }
     }
 
+    // Dynamic department loading from database for Sign Up
+    async function loadDynamicDepartments() {
+      try {
+        const res = await fetch('/api/departments');
+        const data = await res.json();
+        if (data.success && data.departments && data.departments.length > 0) {
+          const container = document.getElementById('deptSelector');
+          if (container) {
+            container.innerHTML = '';
+            data.departments.forEach((dept, index) => {
+              const chip = document.createElement('div');
+              chip.className = `filter-chip ${index === 0 ? 'active' : ''}`;
+              chip.setAttribute('data-value', dept);
+              chip.textContent = dept;
+              container.appendChild(chip);
+            });
+            document.getElementById('department').value = data.departments[0];
+          }
+        }
+      } catch (err) {
+        console.log('Error fetching dynamic departments:', err);
+      }
+    }
+    loadDynamicDepartments();
+
     // Chip selection logic for department
     const chipSelector = document.getElementById('deptSelector');
     chipSelector.addEventListener('click', (e) => {

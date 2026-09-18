@@ -91,52 +91,72 @@ def staff_registration():
 @app.route('/api/submit_registration', methods=['POST'])
 def submit_registration():
     try:
-        if not sheets_client:
-            return jsonify({'success': False, 'error': 'Google Sheets not configured'})
+        data = request.get_json() or {}
         
-        data = request.get_json()
-        
-        # Validate required fields - email is now primary identifier
+        # Validate required fields
         required_fields = ['name', 'email', 'department', 'mobile_no', 'designation']
         for field in required_fields:
             if not data.get(field):
-                return jsonify({'success': False, 'error': f'Missing required field gjhgjhg: {field}'})
+                return jsonify({'success': False, 'error': f'Missing required field: {field}'})
         
-        # Open the pending registrations sheet
-        sheet = sheets_client.open_by_key(PENDING_SHEET_ID).sheet1
+        email = data.get('email', '').strip()
+        doc_id = email.replace('@', '_at_').replace('.', '_dot_')
         
-        # Check if email already exists in pending (use email as unique identifier)
-        existing_records = sheet.get_all_records()
-        for record in existing_records:
-            if record.get('Email') == data.get('email'):
-                return jsonify({'success': False, 'error': 'Registration already exists for this email address'})
+        # Check if already in staff database
+        existing_staff = db.collection('staff').document(doc_id).get()
+        if existing_staff.exists:
+            return jsonify({'success': False, 'error': 'A staff member with this email address already exists in the roster'})
         
-        # Also check if employee number exists if provided
-        if data.get('emp_no'):
-            for record in existing_records:
-                if record.get('Employee ID') == data.get('emp_no'):
-                    return jsonify({'success': False, 'error': 'Registration already exists for this Employee ID'})
+        # Check if already pending in Firestore
+        existing_pending = db.collection('pending_registrations').document(doc_id).get()
+        if existing_pending.exists:
+            return jsonify({'success': False, 'error': 'Registration already exists for this email address and is pending approval'})
         
-        # Prepare row data (match your sheet columns)
-        row_data = [
-            datetime.now().strftime('%Y-%m-%d %H:%M:%S'),  # Timestamp
-            data.get('name', ''),
-            data.get('emp_no', ''),  # Can be empty now
-            data.get('email', ''),
-            data.get('department', ''),
-            data.get('designation', ''),
-            data.get('mobile_no', ''),
-            data.get('type', ''),
-            data.get('contract_type', ''),
-            data.get('category', ''),
-            data.get('gender', ''),
-            data.get('blood_group', ''),
-            data.get('permanent_address', ''),
-            'PENDING'  # Status column
-        ]
+        # Prepare pending record
+        pending_record = {
+            'timestamp': datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
+            'name': data.get('name', ''),
+            'emp_no': data.get('emp_no', ''),
+            'email': email,
+            'department': data.get('department', ''),
+            'designation': data.get('designation', ''),
+            'mobile_no': data.get('mobile_no', ''),
+            'type': data.get('type', 'Teaching Staff'),
+            'contract_type': data.get('contract_type', 'Permanent'),
+            'category': data.get('category', ''),
+            'gender': data.get('gender', 'Male'),
+            'blood_group': data.get('blood_group', 'A+'),
+            'permanent_address': data.get('permanent_address', ''),
+            'status': 'PENDING',
+            'Status': 'PENDING'
+        }
         
-        # Add row to sheet
-        sheet.append_row(row_data)
+        # Save to Firestore pending_registrations collection
+        db.collection('pending_registrations').document(doc_id).set(pending_record)
+        
+        # Also write to Google Sheets if configured
+        if sheets_client and PENDING_SHEET_ID:
+            try:
+                sheet = sheets_client.open_by_key(PENDING_SHEET_ID).sheet1
+                row_data = [
+                    pending_record['timestamp'],
+                    pending_record['name'],
+                    pending_record['emp_no'],
+                    pending_record['email'],
+                    pending_record['department'],
+                    pending_record['designation'],
+                    pending_record['mobile_no'],
+                    pending_record['type'],
+                    pending_record['contract_type'],
+                    pending_record['category'],
+                    pending_record['gender'],
+                    pending_record['blood_group'],
+                    pending_record['permanent_address'],
+                    'PENDING'
+                ]
+                sheet.append_row(row_data)
+            except Exception as gs_err:
+                print(f"Warning: Failed to append to Google Sheets: {gs_err}")
         
         return jsonify({'success': True, 'message': 'Registration submitted successfully! Please wait for admin approval.'})
         
@@ -144,97 +164,150 @@ def submit_registration():
         print(f"Registration submission error: {e}")
         return jsonify({'success': False, 'error': str(e)})
 
+
 @app.route('/api/pending_registrations', methods=['GET'])
 @admin_required
 def get_pending_registrations():
     try:
-        if not sheets_client:
-            return jsonify({'success': False, 'error': 'Google Sheets not configured'})
+        combined_records = []
+        emails_seen = set()
         
-        # Open the pending registrations sheet
-        sheet = sheets_client.open_by_key(PENDING_SHEET_ID).sheet1
-        
-        # Get all records
-        records = sheet.get_all_records()
-        
-        # Filter only pending records
-        pending_records = [record for record in records if record.get('Status') == 'PENDING']
-        
-        return jsonify({'success': True, 'registrations': pending_records})
+        # 1. Fetch from Firestore pending_registrations
+        try:
+            fs_pending = db.collection('pending_registrations').get()
+            for doc in fs_pending:
+                rec = doc.to_dict()
+                email = rec.get('email') or rec.get('Email')
+                if email and email not in emails_seen:
+                    emails_seen.add(email)
+                    combined_records.append(rec)
+        except Exception as fs_err:
+            print(f"Error fetching pending from Firestore: {fs_err}")
+            
+        # 2. Fetch from Google Sheets if configured
+        if sheets_client and PENDING_SHEET_ID:
+            try:
+                sheet = sheets_client.open_by_key(PENDING_SHEET_ID).sheet1
+                records = sheet.get_all_records()
+                for rec in records:
+                    status = rec.get('Status') or rec.get('status')
+                    email = rec.get('Email') or rec.get('email')
+                    if status == 'PENDING' and email and email not in emails_seen:
+                        emails_seen.add(email)
+                        combined_records.append({
+                            'timestamp': rec.get('Timestamp', ''),
+                            'name': rec.get('Name', ''),
+                            'emp_no': rec.get('Employee ID', ''),
+                            'email': email,
+                            'department': rec.get('Department', ''),
+                            'designation': rec.get('Designation', ''),
+                            'mobile_no': rec.get('Mobile No', ''),
+                            'type': rec.get('Type', 'Teaching Staff'),
+                            'contract_type': rec.get('Contract Type', 'Permanent'),
+                            'category': rec.get('Category', ''),
+                            'gender': rec.get('Gender', 'Male'),
+                            'blood_group': rec.get('Blood Group', 'A+'),
+                            'permanent_address': rec.get('Permanent Address', ''),
+                            'status': 'PENDING',
+                            'Status': 'PENDING'
+                        })
+            except Exception as gs_err:
+                print(f"Error fetching pending from Google Sheets: {gs_err}")
+                
+        return jsonify({
+            'success': True,
+            'registrations': combined_records,
+            'pending': combined_records
+        })
         
     except Exception as e:
         print(f"Error fetching pending registrations: {e}")
         return jsonify({'success': False, 'error': str(e)})
 
-        
+
 @app.route('/api/approve_registration', methods=['POST'])
 @admin_required
 def approve_registration():
     try:
-        if not sheets_client:
-            return jsonify({'success': False, 'error': 'Google Sheets not configured'})
-        
-        data = request.get_json()
-        # Use email as primary identifier instead of emp_no
-        email = data.get('email')
+        data = request.get_json() or {}
+        email = data.get('email', '').strip()
         
         if not email:
             return jsonify({'success': False, 'error': 'Email address required'})
+            
+        doc_id = email.replace('@', '_at_').replace('.', '_dot_')
         
-        # Open the pending registrations sheet
-        sheet = sheets_client.open_by_key(PENDING_SHEET_ID).sheet1
-        records = sheet.get_all_records()
-        
-        # Find the record to approve using email
-        record_to_approve = None
-        row_index = None
-        
-        for idx, record in enumerate(records, start=2):  # Start from 2 because row 1 is header
-            if record.get('Email') == email and record.get('Status') == 'PENDING':
-                record_to_approve = record
-                row_index = idx
-                break
-        
-        if not record_to_approve:
-            return jsonify({'success': False, 'error': 'Registration not found'})
-        
-        # Add to main database
+        # Check Firestore pending_registrations first
+        record = None
+        pending_doc = db.collection('pending_registrations').document(doc_id).get()
+        if pending_doc.exists:
+            record = pending_doc.to_dict()
+            
+        # Fallback to Google Sheets
+        if not record and sheets_client and PENDING_SHEET_ID:
+            try:
+                sheet = sheets_client.open_by_key(PENDING_SHEET_ID).sheet1
+                records = sheet.get_all_records()
+                for rec in records:
+                    if (rec.get('Email') == email or rec.get('email') == email):
+                        record = {
+                            'name': rec.get('Name') or rec.get('name', ''),
+                            'emp_no': rec.get('Employee ID') or rec.get('emp_no', ''),
+                            'email': email,
+                            'department': rec.get('Department') or rec.get('department', ''),
+                            'designation': rec.get('Designation') or rec.get('designation', ''),
+                            'mobile_no': rec.get('Mobile No') or rec.get('mobile_no', ''),
+                            'type': rec.get('Type') or rec.get('type', 'Teaching Staff'),
+                            'contract_type': rec.get('Contract Type') or rec.get('contract_type', 'Permanent'),
+                            'category': rec.get('Category') or rec.get('category', ''),
+                            'gender': rec.get('Gender') or rec.get('gender', 'Male'),
+                            'blood_group': rec.get('Blood Group') or rec.get('blood_group', 'A+'),
+                            'permanent_address': rec.get('Permanent Address') or rec.get('permanent_address', '')
+                        }
+                        break
+            except Exception as gs_err:
+                print(f"Google Sheets fetch error on approval: {gs_err}")
+                
+        if not record:
+            return jsonify({'success': False, 'error': 'Pending registration record not found'})
+            
+        # Prepare staff data for main roster
         staff_data = {
             'slNo': get_next_sl_no(),
-            'empNo': record_to_approve.get('Employee ID', ''),  # Can be empty
-            'name': record_to_approve.get('Name', ''),
-            'type': record_to_approve.get('Type', ''),
-            'contractType': record_to_approve.get('Contract Type', ''),
-            'department': record_to_approve.get('Department', ''),
-            'category': record_to_approve.get('Category', ''),
-            'gender': record_to_approve.get('Gender', ''),
-            'designation': record_to_approve.get('Designation', ''),
-            'mobileNo': record_to_approve.get('Mobile No', ''),
-            'bloodGroup': record_to_approve.get('Blood Group', ''),
-            'permanentAddress': record_to_approve.get('Permanent Address', ''),
-            'email': record_to_approve.get('Email', ''),
-            'photo': ''  # Empty for now
+            'empNo': record.get('emp_no') or record.get('Employee ID') or '',
+            'name': record.get('name') or record.get('Name') or '',
+            'type': record.get('type') or record.get('Type') or 'Teaching Staff',
+            'contractType': record.get('contract_type') or record.get('Contract Type') or 'Permanent',
+            'department': record.get('department') or record.get('Department') or '',
+            'category': record.get('category') or record.get('Category') or '',
+            'gender': record.get('gender') or record.get('Gender') or 'Male',
+            'designation': record.get('designation') or record.get('Designation') or '',
+            'mobileNo': record.get('mobile_no') or record.get('Mobile No') or '',
+            'bloodGroup': record.get('blood_group') or record.get('Blood Group') or 'A+',
+            'permanentAddress': record.get('permanent_address') or record.get('Permanent Address') or '',
+            'email': email,
+            'photo': ''
         }
         
-        # Use email as doc ID since emp_no might be empty
-        doc_id = staff_data['email'].replace('@', '_at_').replace('.', '_dot_')  # Make email Firebase-safe
-        doc_ref = db.collection('staff').document(doc_id)
+        # Add to main staff collection
+        db.collection('staff').document(doc_id).set(staff_data)
         
-        # Check if staff already exists in database
-        if doc_ref.get().exists:
-            return jsonify({'success': False, 'error': 'Staff member already exists in database'})
+        # Remove from Firestore pending_registrations
+        db.collection('pending_registrations').document(doc_id).delete()
         
-        # Set the document
-        doc_ref.set(staff_data)
-        
-        # Verify the write succeeded
-        if not doc_ref.get().exists:
-            raise Exception('Failed to verify staff addition in Firestore')
-        
-        # Delete the row from Google Sheets
-        sheet.delete_rows(row_index)
-        
-        return jsonify({'success': True, 'message': 'Registration approved and added to database'})
+        # Delete row from Google Sheets if configured
+        if sheets_client and PENDING_SHEET_ID:
+            try:
+                sheet = sheets_client.open_by_key(PENDING_SHEET_ID).sheet1
+                records = sheet.get_all_records()
+                for idx, rec in enumerate(records, start=2):
+                    if rec.get('Email') == email or rec.get('email') == email:
+                        sheet.delete_rows(idx)
+                        break
+            except Exception as gs_del_err:
+                print(f"Warning: Failed to delete row from Google Sheets: {gs_del_err}")
+                
+        return jsonify({'success': True, 'message': 'Registration approved and added to staff database'})
         
     except Exception as e:
         print(f"Error approving registration: {e}")
@@ -245,31 +318,57 @@ def approve_registration():
 @admin_required
 def reject_registration():
     try:
-        if not sheets_client:
-            return jsonify({'success': False, 'error': 'Google Sheets not configured'})
-        
-        data = request.get_json()
-        # Use email as primary identifier instead of emp_no
-        email = data.get('email')
+        data = request.get_json() or {}
+        email = data.get('email', '').strip()
         
         if not email:
             return jsonify({'success': False, 'error': 'Email address required'})
+            
+        doc_id = email.replace('@', '_at_').replace('.', '_dot_')
         
-        # Open the pending registrations sheet
-        sheet = sheets_client.open_by_key(PENDING_SHEET_ID).sheet1
-        records = sheet.get_all_records()
+        # Remove from Firestore pending_registrations
+        db.collection('pending_registrations').document(doc_id).delete()
         
-        # Find and delete the record using email
-        for idx, record in enumerate(records, start=2):  # Start from 2 because row 1 is header
-            if record.get('Email') == email and record.get('Status') == 'PENDING':
-                sheet.delete_rows(idx)
-                return jsonify({'success': True, 'message': 'Registration rejected and removed'})
-        
-        return jsonify({'success': False, 'error': 'Registration not found'})
+        # Remove from Google Sheets if configured
+        if sheets_client and PENDING_SHEET_ID:
+            try:
+                sheet = sheets_client.open_by_key(PENDING_SHEET_ID).sheet1
+                records = sheet.get_all_records()
+                for idx, rec in enumerate(records, start=2):
+                    if rec.get('Email') == email or rec.get('email') == email:
+                        sheet.delete_rows(idx)
+                        break
+            except Exception as gs_del_err:
+                print(f"Warning: Failed to delete row from Google Sheets: {gs_del_err}")
+                
+        return jsonify({'success': True, 'message': 'Registration rejected and removed'})
         
     except Exception as e:
         print(f"Error rejecting registration: {e}")
         return jsonify({'success': False, 'error': str(e)})
+
+
+@app.route('/api/departments', methods=['GET'])
+def get_departments():
+    try:
+        docs = db.collection('staff').get()
+        depts = set()
+        for d in docs:
+            data = d.to_dict()
+            dept = data.get('department')
+            if dept and isinstance(dept, str) and dept.strip():
+                depts.add(dept.strip())
+        
+        if not depts:
+            default_depts = ['Computer Science', 'Electronics', 'Electrical', 'Mechanical', 'Civil', 'Administration']
+            return jsonify({'success': True, 'departments': default_depts})
+            
+        sorted_depts = sorted(list(depts))
+        return jsonify({'success': True, 'departments': sorted_depts})
+    except Exception as e:
+        print(f"Error fetching departments: {e}")
+        default_depts = ['Computer Science', 'Electronics', 'Electrical', 'Mechanical', 'Civil', 'Administration']
+        return jsonify({'success': True, 'departments': default_depts})
 
 # Helper function to get next serial number
 def get_next_sl_no():

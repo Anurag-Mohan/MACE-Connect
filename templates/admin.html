@@ -2434,8 +2434,8 @@
           headers: { 'Authorization': 'Bearer ' + token }
         });
         const result = await response.json();
-        if (result.pending) {
-          pendingData = result.pending;
+        if (result.success && (result.registrations || result.pending)) {
+          pendingData = result.registrations || result.pending || [];
           
           updateOverviewStats();
           renderPendingTable();
@@ -2929,18 +2929,24 @@
       emptyState.style.display = 'none';
 
       pendingData.forEach(req => {
+        const name = req.name || req.Name || 'N/A';
+        const empNo = req.emp_no || req.empNo || req['Employee ID'] || 'N/A';
+        const dept = req.department || req.Department || 'N/A';
+        const designation = req.designation || req.Designation || 'N/A';
+        const email = req.email || req.Email || 'N/A';
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td data-label="Select" style="text-align: center;"><input type="checkbox" class="pending-check" data-email="${req.email}" onclick="handlePendingRowCheck()"></td>
-          <td data-label="Name" style="font-weight: 700; color: #F3F4F6;">${req.name || 'N/A'}</td>
-          <td data-label="Emp No">${req.emp_no || 'N/A'}</td>
-          <td data-label="Dept">${req.department || 'N/A'}</td>
-          <td data-label="Designation">${req.designation || 'N/A'}</td>
-          <td data-label="Email">${req.email || 'N/A'}</td>
+          <td data-label="Select" style="text-align: center;"><input type="checkbox" class="pending-check" data-email="${email}" onclick="handlePendingRowCheck()"></td>
+          <td data-label="Name" style="font-weight: 700; color: #F3F4F6;">${name}</td>
+          <td data-label="Emp No">${empNo}</td>
+          <td data-label="Dept">${dept}</td>
+          <td data-label="Designation">${designation}</td>
+          <td data-label="Email">${email}</td>
           <td data-label="Actions" style="text-align: right;">
             <div style="display: inline-flex; gap: 6px;">
-              <button class="btn-icon-green" style="width: 32px; height: 32px; font-size: 0.85rem;" onclick="approveRegistration('${req.email}')"><i class="fa-solid fa-check"></i></button>
-              <button class="btn-icon-green" style="width: 32px; height: 32px; font-size: 0.85rem; background: var(--color-red);" onclick="rejectRegistration('${req.email}')"><i class="fa-solid fa-xmark"></i></button>
+              <button class="btn-icon-green" style="width: 32px; height: 32px; font-size: 0.85rem;" onclick="approveRegistration('${email}')"><i class="fa-solid fa-check"></i></button>
+              <button class="btn-icon-green" style="width: 32px; height: 32px; font-size: 0.85rem; background: var(--color-red);" onclick="rejectRegistration('${email}')"><i class="fa-solid fa-xmark"></i></button>
             </div>
           </td>
         `;
