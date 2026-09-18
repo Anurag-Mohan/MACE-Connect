@@ -262,6 +262,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-wrap: wrap;
       gap: 24px;
       margin-top: 24px;
       font-size: 0.85rem;
@@ -292,7 +293,7 @@
 
     .features-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
       gap: 24px;
       margin-bottom: 80px;
     }
@@ -404,7 +405,7 @@
       background: var(--bg-card);
       border: 1px solid var(--border-light);
       border-radius: var(--radius-md);
-      overflow: hidden;
+      overflow-x: auto;
       backdrop-filter: blur(12px);
     }
     .parts-table {
@@ -499,6 +500,8 @@
       .install-section { padding: 24px; }
       .nav-actions { gap: 8px; }
       .btn-nav-download span { display: none; }
+      .hero-subtitle { font-size: 0.95rem; }
+      .container { padding: 0 16px !important; }
     }
   </style>
 </head>

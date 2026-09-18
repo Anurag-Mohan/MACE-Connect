@@ -1642,12 +1642,23 @@
       .dept-grid { grid-template-columns: 1fr 1fr; }
       .header-logo-mark { width: 38px; height: 38px; font-size: 1rem; }
       .user-email-tag { display: none; }
+      .drawer-custom { width: 100vw !important; max-width: 100vw !important; border-radius: 0 !important; }
+      .modal-confirm { width: calc(100vw - 32px) !important; max-width: 420px; }
+      .view-header-row, .card-header, .interview-details { flex-wrap: wrap !important; gap: 10px !important; }
+      .table-search-box input { width: 100% !important; }
+      #directorySearchInput { min-width: 0 !important; width: 100% !important; }
+      #directoryDeptFilter, #directoryTypeFilter { width: 100% !important; }
+      .upload-dropzone { padding: 30px 20px !important; }
+      .pipeline-steps-container { flex-wrap: wrap !important; }
     }
 
     @media (max-width: 480px) {
       .stats-grid { grid-template-columns: 1fr; }
       .dept-grid { grid-template-columns: 1fr; }
       .header-right { gap: 6px; }
+      .header-greeting { font-size: 1rem; }
+      .main-content { padding: 12px 10px 70px !important; }
+      .drawer-form-grid { grid-template-columns: 1fr !important; }
     }
 
     @keyframes slide-up {
@@ -1668,6 +1679,23 @@
     @keyframes glow-pulse {
       0%, 100% { box-shadow: 0 0 15px rgba(124, 58, 237, 0.15); }
       50% { box-shadow: 0 0 30px rgba(124, 58, 237, 0.3); }
+    }
+
+    /* ── Mobile Bottom Nav ── */
+    .mobile-bottom-nav { display: none; }
+    @media (max-width: 768px) {
+      .mobile-bottom-nav {
+        display: flex; position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+        background: rgba(17,20,32,0.97); backdrop-filter: blur(16px); border-top: 1px solid rgba(255,255,255,0.07);
+        padding: 6px 0 max(6px, env(safe-area-inset-bottom)); justify-content: space-around;
+      }
+      .mob-nav-btn {
+        background: none; border: none; color: rgba(255,255,255,0.45); font-size: 0.6rem;
+        display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 4px 8px; cursor: pointer; transition: color 0.2s;
+      }
+      .mob-nav-btn i { font-size: 1.15rem; }
+      .mob-nav-btn.active, .mob-nav-btn:hover { color: #4facfe; }
+      .main-content { padding-bottom: 70px !important; }
     }
   </style>
 </head>
@@ -2088,6 +2116,13 @@
         </section>
 
       </div>
+      <nav class="mobile-bottom-nav">
+        <button class="mob-nav-btn" data-tab="dashboard"><i class="fa-solid fa-gauge-high"></i><span>Home</span></button>
+        <button class="mob-nav-btn" data-tab="directory"><i class="fa-solid fa-address-book"></i><span>Directory</span></button>
+        <button class="mob-nav-btn" data-tab="departments"><i class="fa-solid fa-building-columns"></i><span>Depts</span></button>
+        <button class="mob-nav-btn" data-tab="approvals"><i class="fa-solid fa-user-check"></i><span>Approvals</span></button>
+        <button class="mob-nav-btn admin-only" data-tab="upload"><i class="fa-solid fa-file-excel"></i><span>Upload</span></button>
+      </nav>
     </main>
   </div>
 
@@ -3490,6 +3525,18 @@
         }
       });
     }
+
+    // Mobile bottom nav
+    document.querySelectorAll('.mob-nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.tab;
+        document.querySelectorAll('.mob-nav-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        // Trigger existing tab switching
+        const sidebarBtn = document.querySelector(`.sidebar-btn[data-tab="${tab}"]`);
+        if (sidebarBtn) sidebarBtn.click();
+      });
+    });
   </script>
 </body>
 </html>

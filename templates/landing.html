@@ -534,6 +534,19 @@
         display: none;
       }
     }
+    
+    .mobile-menu-toggle { display: none; background: none; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; }
+    @media (max-width: 768px) {
+      .mobile-menu-toggle { display: block; }
+      .nav-links.nav-open { display: flex !important; position: absolute; top: 64px; left: 0; right: 0; flex-direction: column; background: rgba(11,15,25,0.97); backdrop-filter: blur(16px); padding: 16px; gap: 8px; border-radius: 0 0 16px 16px; border: 1px solid rgba(255,255,255,0.07); }
+      .footer-bottom { flex-wrap: wrap; justify-content: center !important; gap: 12px; }
+      .callout-left h2 { font-size: 1.8rem !important; }
+    }
+    @media (max-width: 480px) {
+      .hero-title { font-size: 2rem !important; }
+      section { padding: 3rem 0 !important; }
+      .animated-hero-img { transform: none !important; }
+    }
   </style>
 </head>
 <body>
@@ -548,6 +561,9 @@
       <li><a href="/login" class="nav-link-custom">Directory Login</a></li>
       <li><a href="#about" class="nav-link-custom">About</a></li>
     </ul>
+    <button class="mobile-menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('nav-open')" aria-label="Menu">
+      <i class="fa-solid fa-bars"></i>
+    </button>
     <a href="/login" class="btn-cta btn-cta-primary"><i class="fa-solid fa-right-to-bracket"></i> Sign In</a>
   </nav>
 

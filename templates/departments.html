@@ -155,6 +155,23 @@
       height: 300px;
       width: 100%;
     }
+
+    /* ── Responsive ── */
+    @media (max-width: 768px) {
+      body { padding-top: 80px !important; }
+      .dept-hero h1 { font-size: 2rem !important; }
+      .dept-hero p { font-size: 1rem; }
+      .dept-hero { padding: 2rem 1rem !important; }
+      .dept-grid { grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)) !important; padding: 0 1rem !important; }
+      .dept-card { padding: 1.5rem 1.2rem !important; }
+      .glass-navbar { padding: 0 1rem; height: 56px; }
+    }
+    @media (max-width: 480px) {
+      .dept-hero h1 { font-size: 1.6rem !important; }
+      .dept-grid { grid-template-columns: 1fr !important; }
+      .dept-card { padding: 1.2rem 1rem !important; }
+      body { padding-top: 70px !important; }
+    }
   </style>
 </head>
 <body>
