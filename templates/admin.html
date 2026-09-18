@@ -1807,7 +1807,7 @@
           <button class="header-tab" data-htab="directory">Staff</button>
           <button class="header-tab" data-htab="departments">Departments</button>
           <button class="header-tab admin-only" data-htab="pending">Approvals</button>
-          <button class="header-tab admin-only" data-htab="upload">Import</button>
+          <button class="header-tab admin-only" data-htab="upload">Add / Import</button>
         </nav>
 
         <div class="header-right">
@@ -2098,21 +2098,35 @@
           </div>
         </section>
 
-        <!-- ═══════ BULK EXCEL IMPORT PANEL ═══════ -->
+        <!-- ═══════ BULK EXCEL IMPORT & MANUAL ENTRY PANEL ═══════ -->
         <section class="dashboard-view" id="uploadView">
           <div class="view-header-row">
             <div>
-              <h2 class="view-title">Excel Bulk Import</h2>
-              <p class="view-desc">Drag and drop spreadsheet files to perform bulk roster creations.</p>
+              <h2 class="view-title">Add Staff & Excel Import</h2>
+              <p class="view-desc">Add staff members manually or perform bulk roster creations via spreadsheet.</p>
+            </div>
+            <div class="view-actions">
+              <button class="btn-primary admin-only" onclick="openFormDrawerForAdd()"><i class="fa-solid fa-user-plus"></i> Add Staff Manually</button>
             </div>
           </div>
 
           <div class="card" style="margin-top: 20px;">
-            <div class="upload-dropzone" id="uploadArea">
-              <i class="fa-regular fa-file-excel" style="font-size: 3.5rem; color: var(--color-purple); margin-bottom: 15px; display: block;"></i>
-              <h3 style="font-family: 'Syne', sans-serif; font-weight: 700;">Drag & Drop Excel Document Here</h3>
-              <p style="color: var(--text-muted); margin-top: 5px;">or click to browse from folders</p>
-              <input type="file" id="excelFileInput" style="display: none;" accept=".xlsx, .xls" onchange="handleFileSelected(this)">
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 10px;">
+              <!-- Excel Dropzone -->
+              <div class="upload-dropzone" id="uploadArea" style="flex: 2; min-width: 280px;">
+                <i class="fa-regular fa-file-excel" style="font-size: 3.5rem; color: var(--color-purple); margin-bottom: 15px; display: block;"></i>
+                <h3 style="font-family: 'Syne', sans-serif; font-weight: 700;">Drag & Drop Excel Document Here</h3>
+                <p style="color: var(--text-muted); margin-top: 5px;">or click to browse spreadsheet file</p>
+                <input type="file" id="excelFileInput" style="display: none;" accept=".xlsx, .xls" onchange="handleFileSelected(this)">
+              </div>
+
+              <!-- Manual Entry Option Card -->
+              <div style="flex: 1; min-width: 240px; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 30px 20px; background: rgba(124, 58, 237, 0.03); border: 2px dashed rgba(124, 58, 237, 0.25); border-radius: 16px;">
+                <i class="fa-solid fa-user-plus" style="font-size: 3rem; color: #4facfe; margin-bottom: 15px; display: block;"></i>
+                <h3 style="font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.2rem;">Manual Form Entry</h3>
+                <p style="color: var(--text-muted); margin-top: 6px; margin-bottom: 20px; font-size: 0.85rem; line-height: 1.4;">Fill out a single staff member profile manually using the form drawer.</p>
+                <button class="btn-primary admin-only" onclick="openFormDrawerForAdd()"><i class="fa-solid fa-user-plus"></i> Add Staff Manually</button>
+              </div>
             </div>
 
             <!-- Upload pipeline steps -->
