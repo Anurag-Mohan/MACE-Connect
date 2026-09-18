@@ -299,13 +299,16 @@
       body { padding-top: 100px !important; }
       .nav-links { display: none !important; }
       .glass-navbar { padding: 0 1rem; }
-      .sticky-search-bar, .premium-filter-row { position: relative !important; top: auto !important; }
+      .sticky-search-bar, .premium-filter-row { position: relative !important; top: auto !important; margin: 10px auto; width: calc(100% - 2rem); }
       .search-flex-row { flex-wrap: wrap; gap: 8px; }
-      .search-flex-row input { width: 100% !important; min-width: 0 !important; }
+      .search-flex-row input, .search-input-wrapper { width: 100% !important; min-width: 0 !important; }
       .results-pill-counter { width: 100%; text-align: center; }
       .cards-grid { grid-template-columns: repeat(auto-fill, minmax(min(300px, 100%), 1fr)) !important; padding: 0 1rem 2rem !important; }
       .drawer-custom { width: 100vw !important; right: -100vw !important; border-radius: 0 !important; }
       .drawer-actions-row { grid-template-columns: 1fr !important; }
+      .filter-chip-container { flex-wrap: wrap; justify-content: center; gap: 8px; }
+      .directory-hero { height: auto; min-height: 250px; padding: 2rem 1rem; }
+      .department-header { font-size: 1.4rem; flex-wrap: wrap; }
     }
     @media (max-width: 480px) {
       body { padding-top: 80px !important; }
@@ -313,6 +316,13 @@
       .cards-grid { grid-template-columns: 1fr !important; gap: 12px !important; }
       .page-title { font-size: 1.8rem !important; }
       .page-subtitle { font-size: 0.85rem !important; }
+      .staff-card { padding: 1.2rem; }
+      .staff-avatar-container { margin-bottom: 1rem; }
+      .drawer-profile-image { width: 120px; height: 120px; }
+      .drawer-profile-title h3 { font-size: 1.5rem; }
+      .drawer-detail-item { flex-direction: column; align-items: flex-start; }
+      .sticky-search-bar { padding: 0.5rem 1rem; }
+      .filter-chip { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
     }
   </style>
 </head>

@@ -1639,10 +1639,12 @@
       .main-content { margin-left: 0; padding: 18px 16px; max-width: 100vw; }
       .stats-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
       .header-greeting { font-size: 1.2rem; }
+      .header, .header-bar { flex-wrap: wrap; gap: 12px; }
+      .header-left, .header-right { width: 100%; justify-content: space-between; }
       .dept-grid { grid-template-columns: 1fr 1fr; }
       .header-logo-mark { width: 38px; height: 38px; font-size: 1rem; }
       .user-email-tag { display: none; }
-      .drawer-custom { width: 100vw !important; max-width: 100vw !important; border-radius: 0 !important; }
+      .drawer-custom, .notification-drawer { width: 100vw !important; max-width: 100vw !important; border-radius: 0 !important; right: -100vw; }
       .modal-confirm { width: calc(100vw - 32px) !important; max-width: 420px; }
       .view-header-row, .card-header, .interview-details { flex-wrap: wrap !important; gap: 10px !important; }
       .table-search-box input { width: 100% !important; }
@@ -1650,15 +1652,22 @@
       #directoryDeptFilter, #directoryTypeFilter { width: 100% !important; }
       .upload-dropzone { padding: 30px 20px !important; }
       .pipeline-steps-container { flex-wrap: wrap !important; }
+      .pagination { flex-wrap: wrap; justify-content: center; gap: 8px; }
+      .chart-container, .graph-container { min-width: 100%; overflow-x: auto; }
+      .spotlight-card, .quick-overview { padding: 16px; margin-bottom: 12px; }
     }
 
     @media (max-width: 480px) {
       .stats-grid { grid-template-columns: 1fr; }
       .dept-grid { grid-template-columns: 1fr; }
-      .header-right { gap: 6px; }
-      .header-greeting { font-size: 1rem; }
+      .header-right { gap: 6px; flex-wrap: wrap; justify-content: center; }
+      .header-left { flex-direction: column; align-items: flex-start; }
+      .header-greeting { font-size: 1.1rem; }
       .main-content { padding: 12px 10px 70px !important; }
       .drawer-form-grid { grid-template-columns: 1fr !important; }
+      .table-responsive { overflow-x: auto; }
+      .stat-card-number { font-size: 2rem; }
+      .card { padding: 16px 14px; }
     }
 
     @keyframes slide-up {

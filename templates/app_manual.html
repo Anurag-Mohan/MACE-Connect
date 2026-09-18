@@ -498,10 +498,17 @@
     @media (max-width: 768px) {
       .hero-title { font-size: 2.2rem; }
       .install-section { padding: 24px; }
-      .nav-actions { gap: 8px; }
+      .nav-actions { gap: 8px; flex-wrap: wrap; justify-content: center; }
       .btn-nav-download span { display: none; }
       .hero-subtitle { font-size: 0.95rem; }
       .container { padding: 0 16px !important; }
+      .features-grid { grid-template-columns: 1fr; }
+      .steps-grid { grid-template-columns: 1fr; }
+      .hero-cta-group { flex-direction: column; }
+      .btn-hero-primary, .btn-hero-secondary { width: 100%; justify-content: center; }
+      .faq-item { padding: 16px; }
+      .footer p { font-size: 0.8rem; }
+      .nav-wrapper { flex-wrap: wrap; gap: 12px; justify-content: center; }
     }
   </style>
 </head>

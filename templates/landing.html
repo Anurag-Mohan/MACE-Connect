@@ -533,6 +533,10 @@
       .nav-links {
         display: none;
       }
+      .hero-section { padding-top: 100px; padding-bottom: 40px; }
+      .timeline-step { padding: 1.5rem; }
+      .callout-container { gap: 2rem; }
+      .feature-marquee { padding: 0.8rem 0; }
     }
     
     .mobile-menu-toggle { display: none; background: none; border: 1px solid rgba(255,255,255,0.15); color: #fff; padding: 6px 10px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; }
@@ -545,7 +549,13 @@
     @media (max-width: 480px) {
       .hero-title { font-size: 2rem !important; }
       section { padding: 3rem 0 !important; }
-      .animated-hero-img { transform: none !important; }
+      .animated-hero-img { transform: none !important; width: 100%; height: auto; }
+      .hero-ctas { flex-direction: column; width: 100%; }
+      .btn-cta { width: 100%; justify-content: center; }
+      .stat-tile { padding: 1.5rem; }
+      .step-number { font-size: 3rem; }
+      .glass-navbar .btn-cta { padding: 0.4rem 0.8rem; font-size: 0.8rem; }
+      .footer-container { gap: 2rem; }
     }
   </style>
 </head>
